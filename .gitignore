@@ -1,0 +1,32 @@
+# Numerous always-ignore extensions
+*.diff
+*.err
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.vi
+*~
+
+# OS or Editor folders
+.DS_Store
+Thumbs.db
+
+# Libraries
+node_modules/
+bower_components/
+
+# Stuff
+npm-debug.log
+*.komodoproject
+dump.rdb
+.env
+bundle.js
+assets/css
+
+# Generated files
+assets/css/*
+assets/js/*
+assets/build/*
+build/

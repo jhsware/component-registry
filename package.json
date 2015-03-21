@@ -1,0 +1,23 @@
+{
+  "name": "component-registry",
+  "version": "0.1.0",
+  "description": "Simple JS component registry",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "main": "./lib/index.js",
+  "dependencies": {
+    "lodash": "^2.4.1",
+    "moment": "^2.8.4"
+  },
+  "devDependencies": {
+    "expect.js": "~0.3.1",
+    "mocha": "~1.18.2",
+    "mocha-better-spec-reporter": "^1.1.1"
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha --reporter mocha-better-spec-reporter"
+  },
+  "author": "Sebastian Ware",
+  "license": "Copyright Sebastian Ware"
+}
