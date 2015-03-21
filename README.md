@@ -1,12 +1,3 @@
-DONE: Create Node project
-TODO: Write document explaining how this works and then implement in code, if it can't be explained, it can't be understood...
-STARTED: Add tests with mocha
-STARTED: Implement Interface
-    - I want it to handle inheritance so I can override interfaces but perhaps this is on the adapter
-    - Need to implement inheritance in registry lookup, perhaps use chaining?
-TODO: Should I do this with ES6 classes?
-
-
 # Documentation #
 
 ## Object Prototypes ##
@@ -26,9 +17,13 @@ But also (left to right)
                  |- NewsProto
     SocialProto -|
 
-Object Prototypes can implement interfaces. This determines what capabilities they support. This is used for looking up Adapters among other things.
+Object Prototypes can implement interfaces. This declares what capabilities they are supposed to support. Interfaces are used for looking up Adapters among other things. An Object Prototype will inherit all interfaces from it's inherited Object Prototypes.
 
-NOTE: A prototype object that extends other prototype objects won't pass an instaceof check.
+NOTE: A prototype object that extends other prototype objects won't pass an instaceof check on the inherited prototype. Provided the above inheritance graph we get:
+
+    var obj = new NewsProto();
+    obj instanceof NewsProto == true;
+    obj instanceof BaseProto == false;
 
 ## Adapters ##
 
@@ -70,7 +65,7 @@ Another example of how to use a utility could be if you want to provide internat
 Or perhaps you want to use 
 
 
-# NOTES #
+# Some Random Doodles During Development #
 
 BaseObject implements IBaseObject
 
@@ -156,3 +151,13 @@ Open a second shell and run node-inspector
     
 When you open the inspector in a browser, just set the breakpoint in your code
 and resume the execution (play button)
+
+## TODO ##
+- DONE: Create Node project
+- TODO: Write document explaining how this works and then implement in code, if it can't be explained, it can't be understood...
+- STARTED: Add tests with mocha
+- STARTED: Implement Interface
+    - I want it to handle inheritance so I can override interfaces but perhaps this is on the adapter
+    - Need to implement inheritance in registry lookup, perhaps use chaining?
+- TODO: Should I do this with ES6 classes?
+
