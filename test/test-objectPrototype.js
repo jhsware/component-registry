@@ -2,11 +2,12 @@ var assert = require('assert');
 var expect = require('expect.js');
 
 var Interface = require('../lib').Interface;
+var createInterface = require('../lib').createInterface;
 var createObjectPrototype = require('../lib').createObjectPrototype;
 
 describe('Object Prototypes', function() {
     it('can be created', function() {
-        var IUser = new Interface();
+        var IUser = createInterface();
         
         var userPrototype = createObjectPrototype({
             implements: [IUser],
@@ -22,7 +23,7 @@ describe('Object Prototypes', function() {
     });
     
     it("can inherit from other object prototypes", function() {
-        var IUser = new Interface();
+        var IUser = createInterface();
         
         var userProto = createObjectPrototype({
             implements: [IUser],
@@ -31,7 +32,7 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var ISpecialUser = new Interface();
+        var ISpecialUser = createInterface();
         
         var specialUserProto = createObjectPrototype({
             extends: [userProto],

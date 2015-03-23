@@ -2,7 +2,7 @@ var assert = require('assert');
 var expect = require('expect.js');
 
 var AdapterRegistry = require('../lib').AdapterRegistry;
-var Interface = require('../lib').Interface;
+var createInterface = require('../lib').createInterface;
 var createObjectPrototype = require('../lib').createObjectPrototype;
 var createAdapter = require('../lib').createAdapter;
 
@@ -16,9 +16,9 @@ describe('Adapter Registry', function() {
     it('can get an adapter registered by interface', function() {
         var registry = new AdapterRegistry();
         
-        var IUser = new Interface();
+        var IUser = createInterface();
         
-        var IUserAdapter = new Interface();
+        var IUserAdapter = createInterface();
         
         var UserAdapter = createAdapter({
             implements: IUserAdapter,
@@ -44,7 +44,7 @@ describe('Adapter Registry', function() {
         
         var UserPrototype = createObjectPrototype({});
         
-        var IUserAdapter = new Interface();
+        var IUserAdapter = createInterface();
         
         var UserAdapter = createAdapter({
             implements: IUserAdapter,
@@ -66,13 +66,13 @@ describe('Adapter Registry', function() {
     it('can get an adapter for inherited prototype', function() {
         var registry = new AdapterRegistry();
         
-        var IBase = new Interface();
+        var IBase = createInterface();
         
         var BasePrototype = createObjectPrototype({
             implements: [IBase],
         });
         
-        var IListWidget = new Interface();
+        var IListWidget = createInterface();
         
         var BaseListWidget = createAdapter({
             implements: IListWidget,
@@ -96,13 +96,13 @@ describe('Adapter Registry', function() {
     it('can get an adapter for specific prototype', function() {
         var registry = new AdapterRegistry();
         
-        var IBase = new Interface({name: 'IBase'});
+        var IBase = createInterface({name: 'IBase'});
         
         var BasePrototype = createObjectPrototype({
             implements: [IBase],
         });
         
-        var IListWidget = new Interface({name: 'IListWidget'});
+        var IListWidget = createInterface({name: 'IListWidget'});
         
         var BaseListWidget = createAdapter({
             implements: IListWidget,
@@ -111,7 +111,7 @@ describe('Adapter Registry', function() {
         
         registry.registerAdapter(BaseListWidget);
         
-        var IUser = new Interface({name: 'IUser'});
+        var IUser = createInterface({name: 'IUser'});
         
         var UserPrototype = createObjectPrototype({
             extends: [BasePrototype],
