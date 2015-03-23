@@ -68,7 +68,7 @@ Or perhaps you want to use
 
 ### Object Prototypes ###
 
-**createObjectPrototype**
+**createObjectPrototype(params)**
 
 Create an object prototype that you can instantiate objects with
 
