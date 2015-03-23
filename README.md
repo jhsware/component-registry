@@ -62,8 +62,98 @@ This is a nice way to decouple and organise your code.
 
 Another example of how to use a utility could be if you want to provide internationalisation features. In which case you could give each utility a name that corresponds to the region it implements. So basically you would ask for (ILocalization, "us") for the United States and (ILocalization, "se") for Sweden. You can then query for all named utilities that implement ILocalization and get them as a list.
 
-Or perhaps you want to use 
+Or perhaps you want to use
 
+## API ##
+
+### Object Prototypes ###
+
+Create an object prototype that you can instantiate objects with
+
+    var UserPrototype = createObjectPrototype({
+        implements: [interface],
+        sayHi: function () {
+            return "Hi!"
+        }
+    })
+
+The object implements the provided list of interfaces and the method sayHi will be added to the object.prototype and available to instantiated objects.
+
+Create an object instance
+
+    var obj = new ObjectPrototype();
+
+Create an instance that inherits methods and implemented interfaces from other object prototypes
+
+    var AnotherObjectPrototype = createObjectPrototype({
+        extends: [UserPrototype],
+        implements: [another_interface],
+        sayHo: function () {
+            return "Ho!"
+        }
+    })
+
+This object prototype inherits the method *sayHi* and will implement *another_interface* and *interface*.
+
+### Interfaces ###
+
+Create an interface without a provided schema
+
+    var IInterface = createInterface();
+
+We use the convention of prefixing interfaces with "I" to improve readability.
+
+### Adapters ###
+
+Create a new adapter registry
+
+    var registry = new AdapterRegistry();
+
+Create and adapter that adapts an interface or an object prototype
+
+    var MyAdapter = createAdapter({
+        implements: interface,
+        adapts: interface || objPrototype
+    })
+
+Register the created adapter with the adapter registry
+
+    registry.registerAdapter(MyAdapter);
+
+Get an adapter for an object
+
+    var adapter = registry.getAdapter(object, interface);
+
+### Utilities ###
+
+Create a utility registry
+
+    var registry = new UtilityRegistry();
+
+Create an unamed utility that implements a given interface
+
+    var utility = createUtility({
+        implements: interface,
+    });
+
+Create a named utility that implements a given interface and has a variation name
+
+    var utility = createUtility({
+        implements: interface,
+        name: name
+    });
+
+Register the cerated utility with the utility registry
+
+    registry.registerUtility(utility);
+
+Get a utility that implements a given interface (pass name to get a named utility)
+
+    var util = registry.getUtility(interface [, name]);
+
+Get a list of utilities that implement a given interface (returns list of objects that contain the utility and name (if it is a named utility))
+
+    var utils = registry.getUtilities(interface);
 
 # Some Random Doodles During Development #
 
