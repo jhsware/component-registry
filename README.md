@@ -1,6 +1,6 @@
-# Documentation #
+# Concepts #
 
-## Object Prototypes ##
+### Object Prototypes ###
 
 We implement Object Prototypes as a means of creating base prototypes with support for inheritance. These support multiple inheritance so you can organise your code in a flexible way. The order of inheritance decides overloading, first in line is most important. You can create inheritance graphs like this (left to right)
 
@@ -25,7 +25,7 @@ NOTE: A prototype object that extends other prototype objects won't pass an inst
     obj instanceof NewsProto == true;
     obj instanceof BaseProto == false;
 
-## Adapters ##
+### Adapters ###
 
 Adapters provide functionality for objects. When you get an adapter from the adapter registry it matches registered adapters with the interface and object you are passing. This is what the registry does:
 
@@ -50,7 +50,7 @@ Now that you have the adapter you can start using it for a variety of scenarios:
     
 Adapters are basically a nice way of creating reusable business logic and render components that are loosly coupled (by interfaces) to the objects they manipulate. 
 
-## Utilities ##
+### Utilities ###
 
 A utilitiy is a stateless object that provides a set of functions in your code. You create a utility and register it in the utility registry. To identify the capabilities of the utility you define an interface. This can optionally declare what methods attributes you can call on the utility or just be a marker interface. Declaring the interface is a good way to architect your api before implementation.
 
@@ -58,13 +58,13 @@ The point of using utilities is that you can define the interface in a general c
 
 This is a nice way to decouple and organise your code.
 
-## Named Utilities ##
+### Named Utilities ###
 
 Another example of how to use a utility could be if you want to provide internationalisation features. In which case you could give each utility a name that corresponds to the region it implements. So basically you would ask for (ILocalization, "us") for the United States and (ILocalization, "se") for Sweden. You can then query for all named utilities that implement ILocalization and get them as a list.
 
 Or perhaps you want to use
 
-## API ##
+# API Docs #
 
 ### Object Prototypes ###
 
@@ -251,7 +251,7 @@ IChangeName(theUser).update('New Name')
 registry.getAdapter(theUser, IChangeName)
 
 
-## TO DEBUG TESTS ##
+## HOWTO DEBUG TESTS ##
 
 Run the tests with the mocha command with the debug option 
 
