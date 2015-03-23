@@ -68,6 +68,7 @@ Or perhaps you want to use
 
 ### Object Prototypes ###
 
+**createObjectPrototype**
 Create an object prototype that you can instantiate objects with
 
     var UserPrototype = createObjectPrototype({
@@ -97,6 +98,7 @@ This object prototype inherits the method *sayHi* and will implement *another_in
 
 ### Interfaces ###
 
+**createInterface**
 Create an interface without a provided schema
 
     var IInterface = createInterface();
@@ -105,10 +107,12 @@ We use the convention of prefixing interfaces with "I" to improve readability.
 
 ### Adapters ###
 
+**AdapterRegistry**
 Create a new adapter registry
 
     var registry = new AdapterRegistry();
 
+**createAdapter**
 Create and adapter that adapts an interface or an object prototype
 
     var MyAdapter = createAdapter({
@@ -116,20 +120,24 @@ Create and adapter that adapts an interface or an object prototype
         adapts: interface || objPrototype
     })
 
+**registerAdapter**
 Register the created adapter with the adapter registry
 
     registry.registerAdapter(MyAdapter);
 
+**getAdapter**
 Get an adapter for an object
 
     var adapter = registry.getAdapter(object, interface);
 
 ### Utilities ###
 
+**UtilityRegistry**
 Create a utility registry
 
     var registry = new UtilityRegistry();
 
+**createUtility**
 Create an unamed utility that implements a given interface
 
     var utility = createUtility({
@@ -143,14 +151,17 @@ Create a named utility that implements a given interface and has a variation nam
         name: name
     });
 
+**registerUtility**
 Register the cerated utility with the utility registry
 
     registry.registerUtility(utility);
 
+**getUtility**
 Get a utility that implements a given interface (pass name to get a named utility)
 
     var util = registry.getUtility(interface [, name]);
 
+**getUtilities**
 Get a list of utilities that implement a given interface (returns list of objects that contain the utility and name (if it is a named utility))
 
     var utils = registry.getUtilities(interface);
