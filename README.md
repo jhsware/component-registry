@@ -72,7 +72,7 @@ Or perhaps you want to use
 
 Create an object prototype that you can instantiate objects with
 
-    var UserPrototype = createObjectPrototype({
+    var ObjectPrototype = createObjectPrototype({
         implements: [interface],
         sayHi: function () {
             return "Hi!"
@@ -121,7 +121,7 @@ Create and adapter that adapts an interface or an object prototype
 
     var MyAdapter = createAdapter({
         implements: IInterface,
-        adapts: interface || objPrototype
+        adapts: IInterface || ObjectPrototype
     })
 
 **registerAdapter(Adapter)**
@@ -155,8 +155,8 @@ Create an unamed utility that implements a given interface
 Create a named utility that implements a given interface and has a variation name
 
     var utility = createUtility({
-        implements: interface,
-        name: name
+        implements: IInterface,
+        name: 'name'
     });
 
 **registerUtility(Utility)**
@@ -176,6 +176,16 @@ Get a utility that implements a given interface (pass name to get a named utilit
 Get a list of utilities that implement a given interface (returns list of objects that contain the utility and name (if it is a named utility))
 
     var utils = registry.getUtilities(IInterface);
+    
+    /*
+        [
+            {
+                utility: [Object object],
+                name: 'name'    // optional
+            }
+        ]
+    
+    */
 
 # Some Random Doodles During Development #
 
