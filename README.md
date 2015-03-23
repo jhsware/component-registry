@@ -99,7 +99,7 @@ This object prototype inherits the method *sayHi* and will implement *another_in
 
 ### Interfaces ###
 
-**createInterface**
+**createInterface()**
 
 Create an interface without a provided schema
 
@@ -115,26 +115,26 @@ Create a new adapter registry
 
     var registry = new AdapterRegistry();
 
-**createAdapter**
+**createAdapter(params)**
 
 Create and adapter that adapts an interface or an object prototype
 
     var MyAdapter = createAdapter({
-        implements: interface,
+        implements: IInterface,
         adapts: interface || objPrototype
     })
 
-**registerAdapter**
+**registerAdapter(Adapter)**
 
 Register the created adapter with the adapter registry
 
     registry.registerAdapter(MyAdapter);
 
-**getAdapter**
+**getAdapter(object, interface)**
 
 Get an adapter for an object
 
-    var adapter = registry.getAdapter(object, interface);
+    var adapter = registry.getAdapter(obj, IInterface);
 
 ### Utilities ###
 
@@ -144,12 +144,12 @@ Create a utility registry
 
     var registry = new UtilityRegistry();
 
-**createUtility**
+**createUtility(params)**
 
 Create an unamed utility that implements a given interface
 
     var utility = createUtility({
-        implements: interface,
+        implements: IInterface,
     });
 
 Create a named utility that implements a given interface and has a variation name
@@ -159,23 +159,23 @@ Create a named utility that implements a given interface and has a variation nam
         name: name
     });
 
-**registerUtility**
+**registerUtility(Utility)**
 
 Register the cerated utility with the utility registry
 
     registry.registerUtility(utility);
 
-**getUtility**
+**getUtility(Interface [, name])**
 
 Get a utility that implements a given interface (pass name to get a named utility)
 
-    var util = registry.getUtility(interface [, name]);
+    var util = registry.getUtility(Interface, 'name');
 
-**getUtilities**
+**getUtilities(Interface)**
 
 Get a list of utilities that implement a given interface (returns list of objects that contain the utility and name (if it is a named utility))
 
-    var utils = registry.getUtilities(interface);
+    var utils = registry.getUtilities(IInterface);
 
 # Some Random Doodles During Development #
 
