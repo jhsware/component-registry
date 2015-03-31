@@ -9,10 +9,10 @@ var React = require('react/addons'),
 
 module.exports = (
     <Route name="app" path="/" handler={require('./layouts/Master')}>
-        <DefaultRoute handler={require('./pages/start')(MasterTemplate)} />
+        <DefaultRoute handler={require('./pages/start')} />
     
-        <Route path="/start" handler={require('./pages/start')(MasterTemplate)} />
+        <Route path="/start" handler={require('./pages/start')} />
 
-        <NotFoundRoute handler={require('./pages/not_found')(MasterTemplate)} />
+        <NotFoundRoute handler={require('./pages/not_found')} />
     </Route>
 );

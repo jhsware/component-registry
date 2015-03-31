@@ -1,30 +1,34 @@
 'use strict';
-
 var React = require('react');
 
-var Page = function (Template) {
-    return React.createClass({
-        statics: {
-            fetchData: function (params, callback) {
-                var outp = {
-                    status: 200,
-                    body: {
-                        title: "This is the start page"
-                    }
-                };
-                callback(undefined, outp);
-            }
-        },
+var IDataFetcher = require('../interfaces').IDataFetcher;
+var IListItem = require('../interfaces').IListItem;
 
-        render: function() {
-            
-            return (
-                <Template>
-                    <h1>{this.props.title}</h1>
-                </Template>
-            );
+var Page = React.createClass({
+    statics: {
+        fetchData: function (params, callback) {
+            global.utilityRegistry.getUtility(IDataFetcher, 'contentPage').fetchData(params, callback);
         }
-    });
-}
+    },
+    
+    render: function() {
+        
+        var data = this.props.data;
+        
+        var contentEls = data.content.map(function (obj) {
+            var tmp = global.adapterRegistry.getAdapter(obj, IListItem);
+            return <tmp.component context={obj} />;
+        });
+        
+        return (
+            <div>
+                <h1>{data.title}</h1>
+                <div className="contentList">
+                    {contentEls}
+                </div>
+            </div>
+        );
+    }
+});
 
 module.exports = Page;

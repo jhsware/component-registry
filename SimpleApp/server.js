@@ -9,6 +9,21 @@ var express = require('express');
 var nodejsx = require('node-jsx').install({
     extension: '.jsx'
 });
+
+
+/*
+    Create the global component registry
+*/    
+console.log('*** Creating component registry');
+var UtilityRegistry = require('component-registry').UtilityRegistry;
+global.utilityRegistry = new UtilityRegistry();
+
+var AdapterRegistry = require('component-registry').AdapterRegistry;
+global.adapterRegistry = new AdapterRegistry();
+/*
+    /END COMPONENT REGISTRY/
+*/
+
 var renderApp = require('./app/app').renderApp;
 
 var app = express();

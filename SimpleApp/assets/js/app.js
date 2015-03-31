@@ -2,10 +2,13 @@
 
 'use strict';
 
-var _ = require('lodash'),
-    React = require('react/addons'),
-    Router = require('react-router'),
-    routes = require('./routes');
+var _ = require('lodash');
+var React = require('react');
+var Router = require('react-router');
+var routes = require('./routes');
+
+// Register dataFetchers
+require('./network');
 
 function renderApp(req, res, next) {
     Router.run(routes, req.path, function (Handler, state) {
@@ -77,7 +80,146 @@ if (typeof window !== 'undefined') {
 
 module.exports.renderApp = renderApp;
 
-},{"./routes":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/routes.jsx","lodash":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/lodash/dist/lodash.js","react-router":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react-router/modules/index.js","react/addons":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react/addons.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/layouts/Master.jsx":[function(require,module,exports){
+},{"./network":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/network/index.js","./routes":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/routes.jsx","lodash":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/lodash/dist/lodash.js","react":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react/react.js","react-router":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react-router/modules/index.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/base_object/index.js":[function(require,module,exports){
+'use strict';
+var createObjectPrototype = require('component-registry').createObjectPrototype;
+
+var IObject = require('../../interfaces').IObject;
+
+var BaseObjectPrototype = createObjectPrototype({
+    implements: [IObject],
+    title: undefined
+});
+
+module.exports = BaseObjectPrototype;
+
+// Import views
+require('./listItem');
+
+
+},{"../../interfaces":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/interfaces.js","./listItem":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/base_object/listItem.jsx","component-registry":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/index.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/base_object/listItem.jsx":[function(require,module,exports){
+(function (global){
+'use strict';
+var React = require('react');
+var createAdapter = require('component-registry').createAdapter;
+
+
+var IListItem = require('../../interfaces').IListItem;
+var IObject = require('../../interfaces').IObject;
+
+var RenderListItem = createAdapter({
+    implements: IListItem,
+    adapts: IObject,
+    
+    component: React.createClass({displayName: "component",
+    
+        render: function() {
+        
+            var context = this.props.context;
+                 
+            return (
+                React.createElement("div", {className: "IListItem"}, 
+                    React.createElement("h1", null, context.title)
+                )
+            );
+        }
+    })
+});
+
+global.adapterRegistry.registerAdapter(RenderListItem)
+
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{"../../interfaces":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/interfaces.js","component-registry":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/index.js","react":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react/react.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/news/index.js":[function(require,module,exports){
+'use strict';
+var createObjectPrototype = require('component-registry').createObjectPrototype;
+
+var BaseObjectProto = require('../base_object');
+var INews = require('../../interfaces').INews;
+
+var NewsPrototype = createObjectPrototype({
+    implements: [INews],
+    extends: [BaseObjectProto],
+    title: 'I am a news item!'
+})
+
+module.exports = NewsPrototype;
+},{"../../interfaces":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/interfaces.js","../base_object":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/base_object/index.js","component-registry":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/index.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/user/index.js":[function(require,module,exports){
+'use strict';
+var createObjectPrototype = require('component-registry').createObjectPrototype;
+
+var BaseObjectProto = require('../base_object');
+var IUser = require('../../interfaces').IUser;
+
+var UserPrototype = createObjectPrototype({
+    implements: [IUser],
+    extends: [BaseObjectProto],
+    title: 'I am a user!',
+    role: 'editor'
+})
+
+module.exports = UserPrototype;
+
+// Import views
+require('./listItem');
+},{"../../interfaces":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/interfaces.js","../base_object":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/base_object/index.js","./listItem":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/user/listItem.jsx","component-registry":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/index.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/user/listItem.jsx":[function(require,module,exports){
+(function (global){
+'use strict';
+var React = require('react');
+var createAdapter = require('component-registry').createAdapter;
+
+
+var IListItem = require('../../interfaces').IListItem;
+var IUser = require('../../interfaces').IUser;
+
+var RenderListItem = createAdapter({
+    implements: IListItem,
+    adapts: IUser,
+    
+    component: React.createClass({displayName: "component",
+    
+        render: function() {
+        
+            var context = this.props.context;
+                 
+            return (
+                React.createElement("div", {className: "IListItem"}, 
+                    React.createElement("h1", null, context.title), 
+                    React.createElement("h2", null, "My role is: ", context.role)
+                )
+            );
+        }
+    })
+});
+
+global.adapterRegistry.registerAdapter(RenderListItem)
+
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{"../../interfaces":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/interfaces.js","component-registry":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/index.js","react":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react/react.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/interfaces.js":[function(require,module,exports){
+'use strict';
+
+var createInterface = require('component-registry').createInterface;
+
+// Utility to fetch data from server
+module.exports.IDataFetcher = createInterface();
+
+
+// Adapter to render a list item
+module.exports.IListItem = createInterface();
+
+
+// Base Object
+module.exports.IObject = createInterface();
+
+// User object
+module.exports.IUser = createInterface();
+
+// News object
+module.exports.INews = createInterface();
+},{"component-registry":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/index.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/layouts/Master.jsx":[function(require,module,exports){
 
 'use strict';
 
@@ -86,15 +228,15 @@ var React = require('react'),
 
 var Master = React.createClass({displayName: "Master",
     render: function() {
-        var og = this.props.data && this.props.data.content ? this.props.data.content.og_tags : {};
+        var data = this.props.data || {};
         return (
             React.createElement("html", null, 
                 React.createElement("head", null, 
                     React.createElement("meta", {charSet: "utf-8"}), 
                     React.createElement("meta", {httpEquiv: "X-UA-Compatible", content: "IE=edge"}), 
 
-                    React.createElement("title", null, og['og:title']), 
-                    React.createElement("meta", {name: "description", content: og['og:description']}), 
+                    React.createElement("title", null, data.title), 
+                    React.createElement("meta", {name: "description", content: data.description || ''}), 
                     React.createElement("meta", {name: "viewport", content: "width=device-width, initial-scale=1.0, user-scalable=no"}), 
 
                     React.createElement("link", {rel: "stylesheet", href: "/assets/css/app.css"})
@@ -117,71 +259,146 @@ var Master = React.createClass({displayName: "Master",
 
 module.exports = Master;
 
-},{"react":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react/react.js","react-router":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react-router/modules/index.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/pages/not_found.jsx":[function(require,module,exports){
+},{"react":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react/react.js","react-router":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react-router/modules/index.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/network/contentPage.js":[function(require,module,exports){
+(function (global){
+'use strict';
+var createUtility = require('component-registry').createUtility;
+
+var IDataFetcher = require('../interfaces').IDataFetcher;
+
+var UserPrototype = require('../components/user');
+var NewsPrototype = require('../components/news');
+
+var FetchDataUtility = createUtility({
+    implements: IDataFetcher,
+    name: 'contentPage',
+    
+    fetchData: function (params, callback) {
+        
+        var content = []
+        for (var i = 0, imax = 10; i < imax; i++) {
+            if (i % 2 == 0) {
+                var tmp = new UserPrototype();
+            } else {
+                var tmp = new NewsPrototype();
+            }
+            content.push(tmp);
+        }
+        
+        var outp = {
+            status: 200,
+            body: {
+                title: "This is the start page",
+                description: 'No description',
+                content: content
+            }
+        };
+        callback(undefined, outp);
+    }
+});
+global.utilityRegistry.registerUtility(FetchDataUtility);
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{"../components/news":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/news/index.js","../components/user":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/user/index.js","../interfaces":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/interfaces.js","component-registry":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/index.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/network/index.js":[function(require,module,exports){
 'use strict';
 
+require('./contentPage');
+require('./notFound');
+},{"./contentPage":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/network/contentPage.js","./notFound":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/network/notFound.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/network/notFound.js":[function(require,module,exports){
+(function (global){
+'use strict';
+var createUtility = require('component-registry').createUtility;
+
+var IDataFetcher = require('../interfaces').IDataFetcher;
+
+var FetchDataUtility = createUtility({
+    implements: IDataFetcher,
+    name: 'notFound',
+    
+    fetchData: function (params, callback) {
+        var outp = {
+            status: 200,
+            body: {
+                title: "Sorry! We couldn't find the page you were looking for :(",
+                description: 'No description'
+            }
+        };
+        callback(undefined, outp);
+    }
+});
+global.utilityRegistry.registerUtility(FetchDataUtility);
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{"../interfaces":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/interfaces.js","component-registry":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/index.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/pages/not_found.jsx":[function(require,module,exports){
+(function (global){
+'use strict';
 var React       = require('react');
 
-var Page = function (Template) {
-    return React.createClass({
-        statics: {
-            fetchData: function (params, callback) {
-                var outp = {
-                    status: 200,
-                    body: {
-                        title: "Page not found"
-                    }
-                };
-                
-                callback(undefined, outp);
-            }
-        },
+var IDataFetcher = require('../interfaces').IDataFetcher;
 
-        render: function() {
-            return (
-                React.createElement(Template, null, 
-                    React.createElement("h1", null, "Sorry! We couldn't find the page you were looking for :(")
-                )
-            );
+var Page = React.createClass({displayName: "Page",
+    statics: {
+        fetchData: function (params, callback) {
+            global.utilityRegistry.getUtility(IDataFetcher, 'notFound').fetchData(params, callback);
         }
-    });
-}
+    },
+
+    render: function() {
+        var data = this.props.data;
+        return (
+            React.createElement("div", null, 
+                React.createElement("h1", null, data.title)
+            )
+        );
+    }
+});
 
 module.exports = Page;
 
-},{"react":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react/react.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/pages/start.jsx":[function(require,module,exports){
-'use strict';
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
+},{"../interfaces":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/interfaces.js","react":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react/react.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/pages/start.jsx":[function(require,module,exports){
+(function (global){
+'use strict';
 var React = require('react');
 
-var Page = function (Template) {
-    return React.createClass({
-        statics: {
-            fetchData: function (params, callback) {
-                var outp = {
-                    status: 200,
-                    body: {
-                        title: "This is the start page"
-                    }
-                };
-                callback(undefined, outp);
-            }
-        },
+var IDataFetcher = require('../interfaces').IDataFetcher;
+var IListItem = require('../interfaces').IListItem;
 
-        render: function() {
-            
-            return (
-                React.createElement(Template, null, 
-                    React.createElement("h1", null, this.props.title)
-                )
-            );
+var Page = React.createClass({displayName: "Page",
+    statics: {
+        fetchData: function (params, callback) {
+            global.utilityRegistry.getUtility(IDataFetcher, 'contentPage').fetchData(params, callback);
         }
-    });
-}
+    },
+    
+    render: function() {
+        
+        var data = this.props.data;
+        
+        var contentEls = data.content.map(function (obj) {
+            var tmp = global.adapterRegistry.getAdapter(obj, IListItem);
+            return React.createElement(tmp.component, {context: obj});
+        });
+        
+        return (
+            React.createElement("div", null, 
+                React.createElement("h1", null, data.title), 
+                React.createElement("div", {className: "contentList"}, 
+                    contentEls
+                )
+            )
+        );
+    }
+});
 
 module.exports = Page;
 
-},{"react":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react/react.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/routes.jsx":[function(require,module,exports){
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{"../interfaces":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/interfaces.js","react":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react/react.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/routes.jsx":[function(require,module,exports){
 'use strict';
 
 var React = require('react/addons'),
@@ -193,11 +410,11 @@ var React = require('react/addons'),
 
 module.exports = (
     React.createElement(Route, {name: "app", path: "/", handler: require('./layouts/Master')}, 
-        React.createElement(DefaultRoute, {handler: require('./pages/start')(MasterTemplate)}), 
+        React.createElement(DefaultRoute, {handler: require('./pages/start')}), 
     
-        React.createElement(Route, {path: "/start", handler: require('./pages/start')(MasterTemplate)}), 
+        React.createElement(Route, {path: "/start", handler: require('./pages/start')}), 
 
-        React.createElement(NotFoundRoute, {handler: require('./pages/not_found')(MasterTemplate)})
+        React.createElement(NotFoundRoute, {handler: require('./pages/not_found')})
     )
 );
 
@@ -1869,6 +2086,461 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
+},{}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/adapterFactory.js":[function(require,module,exports){
+'use strict';
+var common = require('./common');
+
+var create = function (params) {
+    /*
+        extends -- (optional) list of object prototypes to inherit from
+        implements -- interface this prototype implements (besides those that are inherited)
+        adapts -- interface OR object prototype that this adapter can work with
+
+        create({
+            extends: [],
+            implements: [IRenderListItem],
+            adapts: IListableItem
+        })
+    */
+    
+    var extendThese = params.extends,
+        implementsInterface = params.implements,
+        adapts = params.adapts;
+        
+    if (params.extends) {
+        delete params.extends;
+    }
+    
+    if (params.implements) {
+        delete params.implements
+    }
+    
+    if (params.adapts) {
+        delete params.adapts
+    }
+    
+    var outp = function (obj) {
+        this.context = obj
+    };
+    
+    outp.prototype._implements = []
+    
+    // If extends other do first so they get overridden by those passed as params
+    // Inehrited prototypes with lower index have precedence
+    common.extendPrototypeWithThese(outp, extendThese)
+        
+    // The rest of the params are added as methods, overriding previous
+    common.addMembers(outp, params);
+    
+    // Add the interfaces so they can be checked
+    // TODO: Filer so we remove duplicates from existing list (order makes difference)
+    outp.prototype._implements = [implementsInterface].concat(outp.prototype._implements);
+    outp.prototype._adapts = adapts;
+        
+    return outp;
+}
+
+module.exports.create = create;
+},{"./common":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/common.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/adapterRegistry.js":[function(require,module,exports){
+'use strict';
+
+var AdapterRegistry = function () {
+    this.adapters = {};
+} 
+
+AdapterRegistry.prototype.registerAdapter = function (adapter) {
+    /*
+        Add an adapter to the registry
+    
+        adapts -- interface or object prototype that the adapter decorates
+        implementsInterface -- the interface that the adapter implements
+        adapter -- the prototype of the adapter to instantiate on get
+    */
+    var adapts = adapter.prototype._adapts, 
+        implementsInterfaces = adapter.prototype._implements;
+        
+    // TODO: Check that the adapter implements the interface
+    // TODO: else throw InterfaceNotImplementedError
+    
+    // Register the adapter
+    var tmpInterfaceId = implementsInterfaces[0].interfaceId;
+    if (typeof this.adapters[tmpInterfaceId] === 'undefined') {
+        this.adapters[tmpInterfaceId] = {
+            implementsInterface: implementsInterfaces[0],
+            interfaceAdapters: [],
+            objectAdapters: []
+        }
+    }
+    
+    var adapters = this.adapters[tmpInterfaceId];
+    
+    if (adapts.interfaceId) {
+        // This should be registered as an interface
+        adapters.interfaceAdapters.push({
+            adapts: adapts,
+            adapter: adapter
+        });
+    } else {
+        // This should be registered as an object adaptor
+        adapters.objectAdapters.push({
+            adapts: adapts,
+            adapter: adapter
+        });
+        
+    }    
+}
+
+// TODO: implement hasAdapter (returns true or false), look at getAdapter
+
+AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface) {
+    /*
+        Return an instance of an adapter for the provided object which implements
+        the provided interface.
+    */
+    var adapters = this.adapters[implementsInterface.interfaceId];
+    
+    if (adapters) {
+        // First check if an object adapter matches
+        for (var i = 0, imax = adapters.objectAdapters.length; i < imax; i++) {
+            var tmp = adapters.objectAdapters[i];
+            if (obj.interfaceId === tmp.adapts.interfaceId) {
+                // Found the adapter, instansiate and return (adapter should set obj as context on creation)
+                var outp = new tmp.adapter(obj);
+                return outp;
+            }
+            
+        } 
+        // Then check if an interface adapter matches, iterate over each interface implemented by the
+        // passed object to find the first match.
+        for (var j = 0, jmax = obj._implements.length; j < jmax; j++) {
+            var tmpInterface = obj._implements[j];
+            for (var i = 0, imax = adapters.interfaceAdapters.length; i < imax; i++) {
+                var tmp = adapters.interfaceAdapters[i];
+                if (tmpInterface.interfaceId === tmp.adapts.interfaceId) {
+                    // Found the adapter, instansiate and return (adapter should set obj as context on creation)
+                    var outp = new tmp.adapter(obj);
+                    return outp;
+                }
+                
+            }
+        }
+        // TODO: If we get this far, throw AdapterNotFoundError
+    } else {
+        // TODO: Throw AdapterNotFoundError
+    }
+}
+
+module.exports = AdapterRegistry;
+},{}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/common.js":[function(require,module,exports){
+'use strict';
+
+var extendPrototypeWithThese = function (prototype, extendThese) {
+    /*
+        Helper method to implement a simple inheritance model for object prototypes.
+    */
+    
+    var outp = prototype;
+    
+    if (extendThese) {
+    
+        for (var i = extendThese.length - 1; i >= 0; i--) {
+            // I need to create the object in order to copy the prototype functions
+            var tmpObj = new extendThese[i]();
+            for (var key in tmpObj) {
+                if (key == '_implements') {
+                    // Implements should be extended with later coming before earlier
+                    // TODO: Filer so we remove duplicates from existing list (order makes difference)
+                    outp.prototype._implements = tmpObj._implements.concat(outp.prototype._implements); 
+                } else {
+                    // All others added and lower indexes override higher
+                   outp.prototype[key] = tmpObj[key]; 
+                }
+            }
+        }
+        
+    }
+    
+    return outp;
+}
+module.exports.extendPrototypeWithThese = extendPrototypeWithThese;
+
+var addMembers = function (outp, params) {
+    /*
+        Helper method to add each item in params dictionary to the prototype of outp.
+    */
+    
+    for (var key in params) {
+        if (params.hasOwnProperty(key)) {
+            outp.prototype[key] = params[key];
+        }
+    }
+    
+    return outp;
+}
+module.exports.addMembers = addMembers;
+},{}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/index.js":[function(require,module,exports){
+'use strict';
+
+module.exports.AdapterRegistry = require('./adapterRegistry');
+module.exports.UtilityRegistry = require('./utilityRegistry');
+
+module.exports.createInterface = require('./interfaceFactory').create;
+
+module.exports.createAdapter = require('./adapterFactory').create;
+
+module.exports.createUtility = require('./utilityFactory').create;
+
+module.exports.createObjectPrototype = require('./objectFactory').create;
+},{"./adapterFactory":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/adapterFactory.js","./adapterRegistry":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/adapterRegistry.js","./interfaceFactory":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/interfaceFactory.js","./objectFactory":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/objectFactory.js","./utilityFactory":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/utilityFactory.js","./utilityRegistry":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/utilityRegistry.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/interfaceFactory.js":[function(require,module,exports){
+'use strict';
+
+var _generateId = function () {
+    var nr = Math.abs(Math.random() * 1000000);
+    var now = Date.now();
+    return now + '_' + nr;
+}
+
+var Interface = function (params) {
+    /*
+        schema will be optional, but isn't implemented yet
+    */
+    this.schema = params.schema;
+    this.name = params.name;
+    
+    this.interfaceId = _generateId();
+}
+
+var createInterface = function (params) {
+    // Make sure we don't get an undefined params list
+    params = params || {};
+    
+    var extendsThese = params.extends,
+        schema = params.schema,
+        name = params.name;
+        
+    // TODO: If extends other interfaces then concatenate schemas from those, order sets precedence (first is overrides).
+    // Then superimpose given schema on top of these.
+    
+    var newInterface = new Interface({
+        schema: schema,
+        name: name
+    });
+    
+    return newInterface
+}
+
+module.exports.create = createInterface;
+},{}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/objectFactory.js":[function(require,module,exports){
+'use strict';
+
+var common = require('./common');
+
+var create = function (params) {
+    /*
+        extends -- (optional) list of object prototypes to inherit from
+        implements -- (optional) list of interfaces this prototype implements (besides those that are inherited)
+    
+        create({
+            extends: [SuperObjectPrototype_1, SuperObjectPrototype_2],
+            implements: [IMyObjectInterface, IListableItem]
+        })
+    */
+    
+    var extendThese = params.extends,
+        implementsInterfaces = params.implements || [];
+        
+    if (params.extends) {
+        delete params.extends;
+    }
+    
+    if (params.implements) {
+        delete params.implements
+    }
+    
+    var outp = function () {};
+    
+    outp.prototype._implements = []
+    
+    // If extends other do first so they get overridden by those passed as params
+    // Inehrited prototypes with lower index have precedence
+    common.extendPrototypeWithThese(outp, extendThese)
+        
+    // The rest of the params are added as methods, overriding previous
+    common.addMembers(outp, params);
+    
+    // Add the interfaces so they can be checked
+    // TODO: Filer so we remove duplicates from existing list (order makes difference)
+    outp.prototype._implements = implementsInterfaces.concat(outp.prototype._implements);
+        
+    return outp;
+}
+
+module.exports.create = create;
+},{"./common":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/common.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/utilityFactory.js":[function(require,module,exports){
+'use strict';
+var common = require('./common');
+
+var create = function (params) {
+    /*
+        extends -- (optional) list of object prototypes to inherit from
+        implements -- interface this prototype implements (besides those that are inherited)
+        name -- (optional) name of utility variant
+
+        create({
+            extends: [],
+            implements: IRenderListItem,
+            name: 'normal'
+        })
+    */
+    
+    var extendThese = params.extends,
+        implementsInterface = params.implements,
+        name = params.name;
+        
+    if (params.extends) {
+        delete params.extends;
+    }
+    
+    if (params.implements) {
+        delete params.implements
+    }
+    
+    if (params.name) {
+        delete params.name
+    }
+    
+    var outp = function () {};
+    
+    // If extends other do first so they get overridden by those passed as params
+    // Inehrited prototypes with lower index have precedence
+    common.extendPrototypeWithThese(outp, extendThese)
+        
+    // The rest of the params are added as methods, overriding previous
+    common.addMembers(outp, params);
+    
+    // Add the interfaces so they can be checked
+    outp.prototype._implements = implementsInterface;
+    outp.prototype._name = name;
+        
+    return outp;
+}
+
+module.exports.create = create;
+},{"./common":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/common.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/utilityRegistry.js":[function(require,module,exports){
+'use strict';
+
+var UtilityRegistry = function () {
+    this.utilities = {};
+} 
+
+UtilityRegistry.prototype.registerUtility = function (utility) {
+    /*
+        Add a utility to the registry
+    
+        implementsInterface -- the interface that the utility implements
+        utility -- the prototype of the utility to instantiate on get
+        name -- OPTIONAL add as named utility
+    */
+    var implementsInterface = utility.prototype._implements,  
+        name = utility.prototype._name;
+    
+    // TODO: Check that the utility implements the interface
+    // TODO: else throw InterfaceNotImplementedError
+    
+    // Register the utility
+    if (typeof this.utilities[implementsInterface.interfaceId] === 'undefined') {
+        this.utilities[implementsInterface.interfaceId] = {
+            implementsInterface: implementsInterface,
+            unnamedUtility: undefined,
+            namedUtility: {}
+        }
+    }
+    
+    var utilities = this.utilities[implementsInterface.interfaceId];
+    
+    if (name) {
+        // Register as a named utility
+        if (utilities.namedUtility[name]) {
+            // TODO: Utility already registered, throw RegistrationError
+            return
+        }
+        utilities.namedUtility[name] = {
+            utility: utility,
+            name: name
+        }
+    } else {
+        // Register as an unnamed utility
+        if (utilities.unnamedUtility) {
+            // TODO: Utility already registered, throw RegistrationError
+            return
+        }
+        
+        utilities.unnamedUtility = {
+            utility: utility
+        }
+    }
+};
+
+// TODO: Implement hasUtility (return true/false), look at getUtility
+
+UtilityRegistry.prototype.getUtility = function (implementsInterface, name) {
+    /*
+        Return an instance of a utility that implements the given interface
+        and optionally has provided name.
+    */
+    var utilities = this.utilities[implementsInterface.interfaceId];
+    if (name) {
+        if (utilities.namedUtility[name]) {
+            var outp = new utilities.namedUtility[name].utility();
+            return outp;
+        } else {
+            // TODO: Throw UtilityNotFoundError
+            return
+        }
+    } else {
+        if (utilities.unnamedUtility) {
+            var outp = new utilities.unnamedUtility.utility();
+            return outp;
+        } else {
+            // TODO: Throw UtilityNotFoundError
+            return
+        }
+    }
+}
+
+UtilityRegistry.prototype.getUtilities = function (implementsInterface) {
+    /*
+        Return a list of objects with utilities implementing the given interface. The name
+        of named utilities is included.
+            { name: 'whatever', utility: obj }
+    */
+    var utilities = this.utilities[implementsInterface.interfaceId];
+    
+    // We can find any utilities so we return an empty list
+    if (!utilities) {
+        return []
+    }
+    
+    var outp = [];
+
+    // Add the unnamed utility
+    if (utilities.unnamedUtility) {
+        outp.push({
+            utility: new utilities.unnamedUtility.utility()
+        });
+    }
+    
+    // Add named utilities
+    for (var key in utilities.namedUtility) {
+        outp.push({
+            name: key,
+            utility: new utilities.namedUtility[key].utility()
+        });
+    }
+    return outp;
+}
+
+module.exports = UtilityRegistry;
 },{}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/lodash/dist/lodash.js":[function(require,module,exports){
 (function (global){
 /**

@@ -1,10 +1,13 @@
 
 'use strict';
 
-var _ = require('lodash'),
-    React = require('react/addons'),
-    Router = require('react-router'),
-    routes = require('./routes');
+var _ = require('lodash');
+var React = require('react');
+var Router = require('react-router');
+var routes = require('./routes');
+
+// Register dataFetchers
+require('./network');
 
 function renderApp(req, res, next) {
     Router.run(routes, req.path, function (Handler, state) {

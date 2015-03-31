@@ -1,30 +1,23 @@
 'use strict';
-
 var React       = require('react');
 
-var Page = function (Template) {
-    return React.createClass({
-        statics: {
-            fetchData: function (params, callback) {
-                var outp = {
-                    status: 200,
-                    body: {
-                        title: "Page not found"
-                    }
-                };
-                
-                callback(undefined, outp);
-            }
-        },
+var IDataFetcher = require('../interfaces').IDataFetcher;
 
-        render: function() {
-            return (
-                <Template>
-                    <h1>Sorry! We couldn't find the page you were looking for :(</h1>
-                </Template>
-            );
+var Page = React.createClass({
+    statics: {
+        fetchData: function (params, callback) {
+            global.utilityRegistry.getUtility(IDataFetcher, 'notFound').fetchData(params, callback);
         }
-    });
-}
+    },
+
+    render: function() {
+        var data = this.props.data;
+        return (
+            <div>
+                <h1>{data.title}</h1>
+            </div>
+        );
+    }
+});
 
 module.exports = Page;

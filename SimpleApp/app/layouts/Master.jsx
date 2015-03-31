@@ -6,15 +6,15 @@ var React = require('react'),
 
 var Master = React.createClass({
     render: function() {
-        var og = this.props.data && this.props.data.content ? this.props.data.content.og_tags : {};
+        var data = this.props.data || {};
         return (
             <html>
                 <head>
                     <meta charSet="utf-8" />
                     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
 
-                    <title>{og['og:title']}</title>
-                    <meta name="description" content={og['og:description']} />
+                    <title>{data.title}</title>
+                    <meta name="description" content={data.description || ''} />
                     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
                     <link rel="stylesheet" href="/assets/css/app.css" />
