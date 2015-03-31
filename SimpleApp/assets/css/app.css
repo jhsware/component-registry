@@ -1,3 +1,11 @@
 /* This is the CSS-file */
+h1 {
+  text-align: center;
+}
+.IListItem {
+  margin: 0.5em 0;
+  padding: 0.5em 1em;
+  background-color: #eee;
+}
 
-/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImFwcC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsMkJBQTBCIiwiZmlsZSI6ImFwcC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyIvKiBUaGlzIGlzIHRoZSBDU1MtZmlsZSAqL1xuIl0sInNvdXJjZVJvb3QiOiIvc291cmNlLyJ9 */
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImFwcC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsMkJBQTBCO0FBQzFCO0VBQ0Usb0JBQW1CO0VBQ3BCO0FBQ0Q7RUFDRSxpQkFBZ0I7RUFDaEIsb0JBQW1CO0VBQ25CLHdCQUF1QjtFQUN4QiIsImZpbGUiOiJhcHAuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLyogVGhpcyBpcyB0aGUgQ1NTLWZpbGUgKi9cbmgxIHtcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xufVxuLklMaXN0SXRlbSB7XG4gIG1hcmdpbjogMC41ZW0gMDtcbiAgcGFkZGluZzogMC41ZW0gMWVtO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiAjZWVlO1xufVxuIl0sInNvdXJjZVJvb3QiOiIvc291cmNlLyJ9 */

@@ -18,8 +18,8 @@ var RenderListItem = createAdapter({
                  
             return (
                 <div className="IListItem">
-                    <h1>{context.title}</h1>
-                    <h2>My role is: {context.role}</h2>
+                    <h2>{context.title}</h2>
+                    <h3>My role is: {context.role}</h3>
                 </div>
             );
         }

@@ -106,8 +106,7 @@ gulp.task('clean', function (callback) {
 
 // Default watch task
 gulp.task('watch', ['stylus', 'watch-scripts'], function () {
-    gulp.watch(['app/stylus/**/*.{styl,css}', 'app_nej/stylus/**/*.{styl,css}'], ['stylus']);
-    gulp.watch(['assets/css/*.css', 'assets/js/*.js']);
+    gulp.watch(['app/**/*.{styl,css}', 'app_nej/stylus/**/*.{styl,css}'], ['stylus']);
 });
 
 // Default build task

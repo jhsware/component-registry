@@ -18,7 +18,7 @@ var RenderListItem = createAdapter({
                  
             return (
                 <div className="IListItem">
-                    <h1>{context.title}</h1>
+                    <h2>{context.title}</h2>
                 </div>
             );
         }

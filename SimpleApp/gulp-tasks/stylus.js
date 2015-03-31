@@ -19,7 +19,7 @@ module.exports = function () {
 
         onError = function(error) {
             notify.onError({
-                title: 'Cancerfonden Build',
+                title: 'Simple App',
                 subtitle: 'Stylus Compilation Failed!',
                 message: 'Error: <%= error.message %>'
             })(error);

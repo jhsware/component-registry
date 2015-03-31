@@ -1,4 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"./app/app.jsx":[function(require,module,exports){
+(function (global){
 
 'use strict';
 
@@ -6,6 +7,23 @@ var _ = require('lodash');
 var React = require('react');
 var Router = require('react-router');
 var routes = require('./routes');
+
+/*
+    Create the global component registry
+*/    
+if (!global.utilityRegistry) {
+    console.log('[App] Creating component utility registry');
+    var UtilityRegistry = require('component-registry').UtilityRegistry;
+    global.utilityRegistry = new UtilityRegistry();
+}
+if (!global.adapterRegistry) {
+    console.log('[App] Creating component adapter registry');
+    var AdapterRegistry = require('component-registry').AdapterRegistry;
+    global.adapterRegistry = new AdapterRegistry();    
+}
+/*
+    /END COMPONENT REGISTRY/
+*/
 
 // Register dataFetchers
 require('./network');
@@ -80,14 +98,16 @@ if (typeof window !== 'undefined') {
 
 module.exports.renderApp = renderApp;
 
-},{"./network":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/network/index.js","./routes":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/routes.jsx","lodash":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/lodash/dist/lodash.js","react":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react/react.js","react-router":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react-router/modules/index.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/base_object/index.js":[function(require,module,exports){
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{"./network":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/network/index.js","./routes":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/routes.jsx","component-registry":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/index.js","lodash":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/lodash/dist/lodash.js","react":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react/react.js","react-router":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/react-router/modules/index.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/components/base_object/index.js":[function(require,module,exports){
 'use strict';
 var createObjectPrototype = require('component-registry').createObjectPrototype;
 
-var IObject = require('../../interfaces').IObject;
+var IBaseObject = require('../../interfaces').IBaseObject;
 
 var BaseObjectPrototype = createObjectPrototype({
-    implements: [IObject],
+    implements: [IBaseObject],
     title: undefined
 });
 
@@ -105,13 +125,13 @@ var createAdapter = require('component-registry').createAdapter;
 
 
 var IListItem = require('../../interfaces').IListItem;
-var IObject = require('../../interfaces').IObject;
+var IBaseObject = require('../../interfaces').IBaseObject;
 
 var RenderListItem = createAdapter({
     implements: IListItem,
-    adapts: IObject,
+    adapts: IBaseObject,
     
-    component: React.createClass({displayName: "component",
+    ReactComponent: React.createClass({displayName: "ReactComponent",
     
         render: function() {
         
@@ -119,7 +139,7 @@ var RenderListItem = createAdapter({
                  
             return (
                 React.createElement("div", {className: "IListItem"}, 
-                    React.createElement("h1", null, context.title)
+                    React.createElement("h2", null, context.title)
                 )
             );
         }
@@ -177,7 +197,7 @@ var RenderListItem = createAdapter({
     implements: IListItem,
     adapts: IUser,
     
-    component: React.createClass({displayName: "component",
+    ReactComponent: React.createClass({displayName: "ReactComponent",
     
         render: function() {
         
@@ -185,8 +205,8 @@ var RenderListItem = createAdapter({
                  
             return (
                 React.createElement("div", {className: "IListItem"}, 
-                    React.createElement("h1", null, context.title), 
-                    React.createElement("h2", null, "My role is: ", context.role)
+                    React.createElement("h2", null, context.title), 
+                    React.createElement("h3", null, "My role is: ", context.role)
                 )
             );
         }
@@ -203,22 +223,44 @@ global.adapterRegistry.registerAdapter(RenderListItem)
 
 var createInterface = require('component-registry').createInterface;
 
-// Utility to fetch data from server
-module.exports.IDataFetcher = createInterface();
+/*
+    Network Utilities
+*/
+
+module.exports.IDataFetcher = createInterface({
+    // Utility to fetch data from server
+    name: 'IDataFetcher'
+    
+});
+
+/*
+    UI Rendering Adapters
+*/
+
+module.exports.IListItem = createInterface({
+    // Adapter to render a list item
+    name: 'IListItem'
+});
 
 
-// Adapter to render a list item
-module.exports.IListItem = createInterface();
+/*
+    Object Prototypes
+*/
 
+module.exports.IBaseObject = createInterface({
+    // Base Object
+    name: 'IBaseObject'
+});
 
-// Base Object
-module.exports.IObject = createInterface();
+module.exports.IUser = createInterface({
+    // User object
+    name: 'IUser'
+});
 
-// User object
-module.exports.IUser = createInterface();
-
-// News object
-module.exports.INews = createInterface();
+module.exports.INews = createInterface({
+    // News object
+    name: 'INews'
+});
 },{"component-registry":"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/node_modules/component-registry/lib/index.js"}],"/Users/jhsware/node/SimpleJSRegistry/SimpleApp/app/layouts/Master.jsx":[function(require,module,exports){
 
 'use strict';
@@ -276,8 +318,8 @@ var FetchDataUtility = createUtility({
     fetchData: function (params, callback) {
         
         var content = []
-        for (var i = 0, imax = 10; i < imax; i++) {
-            if (i % 2 == 0) {
+        for (var i = 0, imax = 200; i < imax; i++) {
+            if (Math.random() < 0.3) {
                 var tmp = new UserPrototype();
             } else {
                 var tmp = new NewsPrototype();
@@ -378,9 +420,9 @@ var Page = React.createClass({displayName: "Page",
         
         var data = this.props.data;
         
-        var contentEls = data.content.map(function (obj) {
-            var tmp = global.adapterRegistry.getAdapter(obj, IListItem);
-            return React.createElement(tmp.component, {context: obj});
+        var contentEls = data.content.map(function (obj, i) {
+            var ReactComponent = global.adapterRegistry.getAdapter(obj, IListItem).ReactComponent;
+            return React.createElement(ReactComponent, {key: 'item-' + i, context: obj});            
         });
         
         return (

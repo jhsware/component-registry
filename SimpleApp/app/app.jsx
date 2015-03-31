@@ -9,12 +9,16 @@ var routes = require('./routes');
 /*
     Create the global component registry
 */    
-console.log('*** Creating component registry');
-var UtilityRegistry = require('component-registry').UtilityRegistry;
-global.utilityRegistry = new UtilityRegistry();
-
-var AdapterRegistry = require('component-registry').AdapterRegistry;
-global.adapterRegistry = new AdapterRegistry();
+if (!global.utilityRegistry) {
+    console.log('[App] Creating component utility registry');
+    var UtilityRegistry = require('component-registry').UtilityRegistry;
+    global.utilityRegistry = new UtilityRegistry();
+}
+if (!global.adapterRegistry) {
+    console.log('[App] Creating component adapter registry');
+    var AdapterRegistry = require('component-registry').AdapterRegistry;
+    global.adapterRegistry = new AdapterRegistry();    
+}
 /*
     /END COMPONENT REGISTRY/
 */

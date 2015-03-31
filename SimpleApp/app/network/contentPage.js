@@ -13,8 +13,8 @@ var FetchDataUtility = createUtility({
     fetchData: function (params, callback) {
         
         var content = []
-        for (var i = 0, imax = 10; i < imax; i++) {
-            if (i % 2 == 0) {
+        for (var i = 0, imax = 200; i < imax; i++) {
+            if (Math.random() < 0.3) {
                 var tmp = new UserPrototype();
             } else {
                 var tmp = new NewsPrototype();
