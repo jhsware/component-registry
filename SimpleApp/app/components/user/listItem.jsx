@@ -10,7 +10,7 @@ var RenderListItem = createAdapter({
     implements: IListItem,
     adapts: IUser,
     
-    component: React.createClass({
+    ReactComponent: React.createClass({
     
         render: function() {
         

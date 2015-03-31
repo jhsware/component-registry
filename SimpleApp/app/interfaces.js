@@ -2,19 +2,28 @@
 
 var createInterface = require('component-registry').createInterface;
 
-// Utility to fetch data from server
-module.exports.IDataFetcher = createInterface();
+module.exports.IDataFetcher = createInterface({
+    // Utility to fetch data from server
+    name: 'IDataFetcher'
+    
+});
 
+module.exports.IListItem = createInterface({
+    // Adapter to render a list item
+    name: 'IListItem'
+});
 
-// Adapter to render a list item
-module.exports.IListItem = createInterface();
+module.exports.IBaseObject = createInterface({
+    // Base Object
+    name: 'IBaseObject'
+});
 
+module.exports.IUser = createInterface({
+    // User object
+    name: 'IUser'
+});
 
-// Base Object
-module.exports.IObject = createInterface();
-
-// User object
-module.exports.IUser = createInterface();
-
-// News object
-module.exports.INews = createInterface();
+module.exports.INews = createInterface({
+    // News object
+    name: 'INews'
+});

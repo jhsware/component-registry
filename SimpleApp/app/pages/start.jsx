@@ -15,9 +15,9 @@ var Page = React.createClass({
         
         var data = this.props.data;
         
-        var contentEls = data.content.map(function (obj) {
-            var tmp = global.adapterRegistry.getAdapter(obj, IListItem);
-            return <tmp.component context={obj} />;
+        var contentEls = data.content.map(function (obj, i) {
+            var ReactComponent = global.adapterRegistry.getAdapter(obj, IListItem).ReactComponent;
+            return <ReactComponent key={'item-' + i} context={obj} />;            
         });
         
         return (

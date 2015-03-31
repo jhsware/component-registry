@@ -6,6 +6,19 @@ var React = require('react');
 var Router = require('react-router');
 var routes = require('./routes');
 
+/*
+    Create the global component registry
+*/    
+console.log('*** Creating component registry');
+var UtilityRegistry = require('component-registry').UtilityRegistry;
+global.utilityRegistry = new UtilityRegistry();
+
+var AdapterRegistry = require('component-registry').AdapterRegistry;
+global.adapterRegistry = new AdapterRegistry();
+/*
+    /END COMPONENT REGISTRY/
+*/
+
 // Register dataFetchers
 require('./network');
 

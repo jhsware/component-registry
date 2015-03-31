@@ -1,10 +1,10 @@
 'use strict';
 var createObjectPrototype = require('component-registry').createObjectPrototype;
 
-var IObject = require('../../interfaces').IObject;
+var IBaseObject = require('../../interfaces').IBaseObject;
 
 var BaseObjectPrototype = createObjectPrototype({
-    implements: [IObject],
+    implements: [IBaseObject],
     title: undefined
 });
 

@@ -4,13 +4,13 @@ var createAdapter = require('component-registry').createAdapter;
 
 
 var IListItem = require('../../interfaces').IListItem;
-var IObject = require('../../interfaces').IObject;
+var IBaseObject = require('../../interfaces').IBaseObject;
 
 var RenderListItem = createAdapter({
     implements: IListItem,
-    adapts: IObject,
+    adapts: IBaseObject,
     
-    component: React.createClass({
+    ReactComponent: React.createClass({
     
         render: function() {
         
