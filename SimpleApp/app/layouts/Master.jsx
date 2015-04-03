@@ -3,6 +3,8 @@
 
 var React = require('react'),
     RouteHandler = require('react-router').RouteHandler;
+var ReactRouter = require('react-router');
+var Link        = ReactRouter.Link;
 
 var Master = React.createClass({
     render: function() {
@@ -22,7 +24,10 @@ var Master = React.createClass({
                 </head>
 
                 <body>
-
+                    <ul className="menu">
+                        <li><Link to="/">Start</Link></li>
+                        <li><Link to="/blaj">Not Found</Link></li>
+                    </ul>
                     <div className="page">
                         <RouteHandler {...this.props} />
                     </div>

@@ -267,6 +267,8 @@ module.exports.INews = createInterface({
 
 var React = require('react'),
     RouteHandler = require('react-router').RouteHandler;
+var ReactRouter = require('react-router');
+var Link        = ReactRouter.Link;
 
 var Master = React.createClass({displayName: "Master",
     render: function() {
@@ -286,7 +288,10 @@ var Master = React.createClass({displayName: "Master",
                 ), 
 
                 React.createElement("body", null, 
-
+                    React.createElement("ul", {className: "menu"}, 
+                        React.createElement("li", null, React.createElement(Link, {to: "/"}, "Start")), 
+                        React.createElement("li", null, React.createElement(Link, {to: "/blaj"}, "Not Found"))
+                    ), 
                     React.createElement("div", {className: "page"}, 
                         React.createElement(RouteHandler, React.__spread({},  this.props))
                     ), 
@@ -319,10 +324,14 @@ var FetchDataUtility = createUtility({
         
         var content = []
         for (var i = 0, imax = 200; i < imax; i++) {
-            if (Math.random() < 0.3) {
-                var tmp = new UserPrototype();
+            if (i % 4 == 0) {
+                var tmp = new UserPrototype({
+                    title: "I am User Nr " + i + "!"
+                });
             } else {
-                var tmp = new NewsPrototype();
+                var tmp = new NewsPrototype({
+                    title: "I am a News Item (" + i + ")"
+                });
             }
             content.push(tmp);
         }
@@ -2399,7 +2408,11 @@ var create = function (params) {
         delete params.implements
     }
     
-    var outp = function () {};
+    var outp = function (data) {
+        for (var key in data) {
+            this[key] = data[key];
+        };
+    };
     
     outp.prototype._implements = []
     

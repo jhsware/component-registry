@@ -14,10 +14,14 @@ var FetchDataUtility = createUtility({
         
         var content = []
         for (var i = 0, imax = 200; i < imax; i++) {
-            if (Math.random() < 0.3) {
-                var tmp = new UserPrototype();
+            if (i % 4 == 0) {
+                var tmp = new UserPrototype({
+                    title: "I am User Nr " + i + "!"
+                });
             } else {
-                var tmp = new NewsPrototype();
+                var tmp = new NewsPrototype({
+                    title: "I am a News Item (" + i + ")"
+                });
             }
             content.push(tmp);
         }
