@@ -7,7 +7,7 @@ var createObjectPrototype = require('../lib').createObjectPrototype;
 
 describe('Object Prototypes', function() {
     it('can be created', function() {
-        var IUser = createInterface();
+        var IUser = createInterface({name: 'IUser'});
         
         var userPrototype = createObjectPrototype({
             implements: [IUser],
@@ -23,7 +23,7 @@ describe('Object Prototypes', function() {
     });
     
     it("can inherit from other object prototypes", function() {
-        var IUser = createInterface();
+        var IUser = createInterface({name: 'IUser'});
         
         var userProto = createObjectPrototype({
             implements: [IUser],
@@ -32,7 +32,7 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var ISpecialUser = createInterface();
+        var ISpecialUser = createInterface({name: 'ISpecialUser'});
         
         var specialUserProto = createObjectPrototype({
             extends: [userProto],
@@ -50,7 +50,7 @@ describe('Object Prototypes', function() {
     });
     
     it("can inherit from other object prototypes two levels deep", function() {
-        var IUser = createInterface();
+        var IUser = createInterface({name: 'IUser'});
         
         var userProto = createObjectPrototype({
             implements: [IUser],
@@ -59,7 +59,7 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var ISpecialUser = createInterface();
+        var ISpecialUser = createInterface({name: 'ISpecialUser'});
         
         var specialUserProto = createObjectPrototype({
             extends: [userProto],
@@ -71,7 +71,7 @@ describe('Object Prototypes', function() {
         
         var user = new specialUserProto();
         
-        var ISuperSpecialUser = createInterface();
+        var ISuperSpecialUser = createInterface({name: 'ISuperSpecialUser'});
         
         var superSpecialUserProto = createObjectPrototype({
             extends: [specialUserProto],
@@ -90,9 +90,9 @@ describe('Object Prototypes', function() {
     });
     
     it("can inherit from other object prototypes two levels deep and call all constructors", function() {
-        var IUser = createInterface();
+        var IUser = createInterface({name: 'IUser'});
         
-        var userProto = createObjectPrototype({
+        var User = createObjectPrototype({
             implements: [IUser],
             constructor: function () {
                 this.storedVal = (this.storedVal || '') + '1';
@@ -102,34 +102,33 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var ISpecialUser = createInterface();
+        var ISpecialUser = createInterface({name: 'ISpecialUser'});
         
-        var specialUserProto = createObjectPrototype({
-            extends: [userProto],
+        var SpecialUser = createObjectPrototype({
+            extends: [User],
             implements: [ISpecialUser],
-            constructor: function (data, _super_) {
-                _super_._constructor.call(this, data);
+            constructor: function (data) {
+                this._IUser.constructor.call(this, data);
                 this.storedVal = (this.storedVal || '') + '2';
             },
         })
+                
+        var ISuperSpecialUser = createInterface({name: 'ISuperSpecialUser'});
         
-        var user = new specialUserProto();
-        
-        var ISuperSpecialUser = createInterface();
-        
-        var superSpecialUserProto = createObjectPrototype({
-            extends: [specialUserProto],
+        var SuperSpecialUser = createObjectPrototype({
+            extends: [SpecialUser],
             implements: [ISuperSpecialUser],
-            constructor: function (data, _super_) {
-                _super_._constructor.call(this, data);
+            constructor: function (data) {
+                this._ISpecialUser.constructor.call(this, data);
                 this.storedVal = (this.storedVal || '') + '3';
             },
         })
         
-        var user = new superSpecialUserProto();
+        var user = new SuperSpecialUser();
         
-        expect(user).to.be.a(superSpecialUserProto);
+        expect(user).to.be.a(SuperSpecialUser);
         expect(user.getStoredVal()).to.be("123");
+        expect(user._IUser.getStoredVal.call(user)).to.be("123");
     });
     
     it("todo...", function() {});
