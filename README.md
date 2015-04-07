@@ -73,13 +73,15 @@ Or perhaps you want to use
 Create an object prototype that you can instantiate objects with
 
     var ObjectPrototype = createObjectPrototype({
-        implements: [interface],
+        implements: [IObject],
         sayHi: function () {
             return "Hi!"
         }
     })
 
 The object implements the provided list of interfaces and the method sayHi will be added to the object.prototype and available to instantiated objects.
+
+The first interface in the list is significant. It should be a unique interface describing the object. The name of this interface is used for inheritance.
 
 Create an object instance
 
@@ -88,14 +90,25 @@ Create an object instance
 Create an instance that inherits methods and implemented interfaces from other object prototypes
 
     var AnotherObjectPrototype = createObjectPrototype({
-        extends: [UserPrototype],
-        implements: [another_interface],
+        extends: [ObjectPrototype],
+        implements: [IAnotherObject],
         sayHo: function () {
             return "Ho!"
         }
     })
 
-This object prototype inherits the method *sayHi* and will implement *another_interface* and *interface*.
+This object prototype inherits the method *sayHi* and will implement *another_interface* and *interface*. Inherited methods are accessed by their method name on an instance of the object. If you want to access the overridden method you can access it through the _[interfaceNname] but you must use the .call-syntax to set the this variable:
+
+    var OverridingPrototype = createObjectPrototype({
+        extends: [UserPrototype],
+        implements: [IOverriding],
+        sayHi: function () {
+            return "Ho! " + this._IObject.sayHi.call(this);
+        }
+    })
+
+The method sayHi() returns "Ho! Hi!".
+
 
 ### Interfaces ###
 
