@@ -288,6 +288,8 @@ When you open the inspector in a browser, just set the breakpoint in your code
 and resume the execution (play button)
 
 ## TODO ##
+- TODO: Throw an better error if we try to create an adapter or utility with out proper interfaces or objects provided
+- TODO: Helper to debug registered components (when they aren't found)
 - DONE: Create Node project
 - TODO: Write document explaining how this works and then implement in code, if it can't be explained, it can't be understood...
 - STARTED: Add tests with mocha
