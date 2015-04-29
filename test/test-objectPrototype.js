@@ -127,8 +127,47 @@ describe('Object Prototypes', function() {
         var user = new SuperSpecialUser();
         
         expect(user).to.be.a(SuperSpecialUser);
-        expect(user.getStoredVal()).to.be("123");
-        expect(user._IUser.getStoredVal.call(user)).to.be("123");
+        expect(user.getStoredVal()).to.equal("123");
+        expect(user._IUser.getStoredVal.call(user)).to.equal("123");
+    });
+    
+    it("can inherit from several other object prototypes call all constructors", function() {
+        var IUser = createInterface({name: 'IUser'});
+        
+        var User = createObjectPrototype({
+            implements: [IUser],
+            constructor: function () {
+                this.userVal = 1;
+            }
+        })
+        
+        var ISpecial = createInterface({name: 'ISpecial'});
+        
+        var Special = createObjectPrototype({
+            implements: [ISpecial],
+            constructor: function (data) {
+                this.specialVal = 2;
+            },
+        })
+                
+        var ISuperSpecialUser = createInterface({name: 'ISuperSpecialUser'});
+        
+        var SuperSpecialUser = createObjectPrototype({
+            extends: [Special, User],
+            implements: [ISuperSpecialUser],
+            constructor: function (data) {
+                this._ISpecial.constructor.call(this, data);
+                this._IUser.constructor.call(this, data);
+                this.superSpecialVal = 3;
+            },
+        })
+        
+        var user = new SuperSpecialUser();
+        
+        expect(user).to.be.a(SuperSpecialUser);
+        expect(user.userVal).to.equal(1);
+        expect(user.specialVal).to.equal(2);
+        expect(user.superSpecialVal).to.equal(3);
     });
     
     it("todo...", function() {});
