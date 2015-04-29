@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Simple JS component registry",
   "engines": {
-    "node": "0.10.x"
+    "node": "0.12.x"
   },
   "main": "./lib/index.js",
   "dependencies": {
