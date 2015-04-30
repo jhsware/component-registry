@@ -169,6 +169,57 @@ describe('Object Prototypes', function() {
         expect(user.specialVal).to.equal(2);
         expect(user.superSpecialVal).to.equal(3);
     });
+
+    it("can convert simple object to JSON", function() {
+        var IUser = createInterface({name: 'IUser'});
+        
+        var User = createObjectPrototype({
+            implements: [IUser],
+            constructor: function () {
+                this._userVal = 1;
+                this.title = "title"
+            }
+        })
+                
+        var user = new User();
+        
+        var data = user.toJSON(data);
+        
+        expect(data).to.not.be(undefined);
+        expect(data._userVal).to.equal(1);
+        expect(data.title).to.equal("title");
+        expect(data._implements).to.be(undefined);
+        expect(JSON.stringify(user)).to.not.be(undefined);
+    });
+    
+    it("can convert nested objects to JSON", function() {
+        var IUser = createInterface({name: 'IUser'});
+        
+        var User = createObjectPrototype({
+            implements: [IUser],
+        })
+                
+        var user = new User({
+            _userVal: 1,
+            title: "parent"
+        });
+        
+        var child = new User({
+            title: "child"
+        });
+        
+        user.child = child;
+        
+        var data = user.toJSON(data);
+        
+        expect(data).to.not.be(undefined);
+        expect(data._userVal).to.equal(1);
+        expect(data.title).to.equal("parent");
+        expect(data.child._implements).to.not.be(undefined);
+        expect(data.child.title).to.be("child");
+        expect(JSON.stringify(user)).to.not.be(undefined);
+    });
+   
     
     it("todo...", function() {});
 });
