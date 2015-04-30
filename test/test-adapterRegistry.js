@@ -16,9 +16,9 @@ describe('Adapter Registry', function() {
     it('can get an adapter registered by interface', function() {
         var registry = new AdapterRegistry();
         
-        var IUser = createInterface();
+        var IUser = createInterface({name: "IUser"});
         
-        var IUserAdapter = createInterface();
+        var IUserAdapter = createInterface({name: "IUserAdapter"});
         
         var UserAdapter = createAdapter({
             implements: IUserAdapter,
@@ -44,7 +44,7 @@ describe('Adapter Registry', function() {
         
         var UserPrototype = createObjectPrototype({});
         
-        var IUserAdapter = createInterface();
+        var IUserAdapter = createInterface({name: "IUserAdapter"});
         
         var UserAdapter = createAdapter({
             implements: IUserAdapter,
@@ -66,13 +66,13 @@ describe('Adapter Registry', function() {
     it('can get an adapter for inherited prototype', function() {
         var registry = new AdapterRegistry();
         
-        var IBase = createInterface();
+        var IBase = createInterface({name: "IBase"});
         
         var BasePrototype = createObjectPrototype({
             implements: [IBase],
         });
         
-        var IListWidget = createInterface();
+        var IListWidget = createInterface({name: "IListWidget"});
         
         var BaseListWidget = createAdapter({
             implements: IListWidget,
