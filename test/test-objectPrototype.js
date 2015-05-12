@@ -219,6 +219,26 @@ describe('Object Prototypes', function() {
         expect(data.child.title).to.be("child");
         expect(JSON.stringify(user)).to.not.be(undefined);
     });
+    
+    it("can convert object with null values to JSON", function() {
+        var IUser = createInterface({name: 'IUser'});
+        
+        var User = createObjectPrototype({
+            implements: [IUser],
+        })
+                
+        var user = new User({
+            _userVal: 1,
+            title: "parent",
+            empty: null
+        });
+                
+        var data = user.toJSON(data);
+        
+        expect(data).to.not.be(undefined);
+        expect(data._userVal).to.equal(1);
+        expect(JSON.stringify(user)).to.not.be(undefined);
+    });
    
     
     it("todo...", function() {});
