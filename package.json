@@ -1,10 +1,20 @@
 {
   "name": "component-registry",
   "version": "0.1.1",
-  "description": "Simple JS component registry",
+  "description": "Javascript component registry inspired by the ZTK component registry. Build nice reusable components with interfaces, adapters and utilities.",
+  "author": {
+    "name": "Sebastian Ware",
+    "email": "sebastian@urbantalk.se",
+    "url": "https://github.com/jhsware"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/jhsware/SimpleJSRegistry",
+  "bugs": {
+    "url": "https://github.com/jhsware/SimpleJSRegistry/issues"
+  },
   "repository" : { 
       "type" : "git",
-      "url" : "https://github.com/jhsware/SimpleJSSRegistry.git"
+      "url" : "git+https://github.com/jhsware/SimpleJSRegistry.git"
   },
   "main": "./lib/index.js",
   "dependencies": {
@@ -19,7 +29,5 @@
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --reporter mocha-better-spec-reporter"
-  },
-  "author": "Sebastian Ware",
-  "license": "Copyright Sebastian Ware"
+  }
 }
