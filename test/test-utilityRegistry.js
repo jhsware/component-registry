@@ -155,7 +155,7 @@ describe('Utility Registry', function() {
         });
         registry.registerUtility(DummyUtility_1);
         
-        var utils = registry.getUtility(IDummyUtility, 'two', true);
+        var utils = registry.getUtility(IDummyUtility, 'two', undefined);
         
         expect(utils).to.be(undefined);
     });
