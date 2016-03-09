@@ -144,6 +144,19 @@ describe('Utility Registry', function() {
         expect(utils.length).to.be(0);
     });
     
-    it("returns an error when registering an adapter that doesn't implement interface", function() {});
-    it("returns an error when trying to get an adapter that doesn't exist", function() {});
+    it("returns 'undefined' if named utility isn't found and we have passed true at end", function() {
+        var registry = new UtilityRegistry();
+        
+        var IDummyUtility = createInterface({name: "IDummyUtility"});
+        
+        var DummyUtility_1 = createUtility({
+            implements: IDummyUtility,
+            name: 'one'
+        });
+        registry.registerUtility(DummyUtility_1);
+        
+        var utils = registry.getUtility(IDummyUtility, 'two', true);
+        
+        expect(utils).to.be(undefined);
+    });
 });
