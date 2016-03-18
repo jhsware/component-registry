@@ -92,8 +92,8 @@ describe('Utility Registry', function() {
         
         var utils = registry.getUtilities(IDummyUtility);
         
-        expect(utils[0].utility).not.to.be(undefined);
-        expect(utils[0].name).not.to.be(undefined);
+        expect(utils[0]).not.to.be(undefined);
+        expect(utils[0]._name).not.to.be(undefined);
         expect(utils.length).to.be(3);
     });
     
@@ -129,7 +129,7 @@ describe('Utility Registry', function() {
         
         var utils = registry.getUtilities(IDummyUtility);
         
-        expect(utils[0].utility).not.to.be(undefined);
+        expect(utils[0]).not.to.be(undefined);
         expect(utils[0].name).to.be(undefined);
         expect(utils.length).to.be(4);
     });
