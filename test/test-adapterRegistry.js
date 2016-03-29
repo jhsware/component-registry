@@ -62,6 +62,34 @@ describe('Adapter Registry', function() {
         expect(ua).to.be.a(UserAdapter);
     });
     
+    it('can get an adapter by specifying the adaptsInterface param', function() {
+        var registry = new AdapterRegistry();
+        
+        var IUser = createInterface({name: "IUser"});
+        
+        var IStrong = createInterface({name: "IStrong"});
+        
+        var IUserAdapter = createInterface({name: "IUserAdapter"});
+        
+        var StrongAdapter = createAdapter({
+            implements: IUserAdapter,
+            adapts: IStrong
+        })
+        
+        registry.registerAdapter(StrongAdapter);
+        
+        
+        var UserPrototype = createObjectPrototype({
+            implements: [IUser, IStrong]
+        });
+        
+        var theUser = new UserPrototype();
+        
+        var ua = registry.getAdapter(theUser, IUserAdapter, IStrong);
+
+        expect(ua).to.be.a(StrongAdapter);
+    });
+    
     it('can get an adapter registered by object', function() {
         var registry = new AdapterRegistry();
         
