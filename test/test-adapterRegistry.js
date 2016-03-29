@@ -13,6 +13,29 @@ describe('Adapter Registry', function() {
         expect(registry).to.not.be(undefined);
     });
     
+    it('can register adapter with convenience method', function() {
+        var registry = new AdapterRegistry();
+        
+        var IUser = createInterface({name: "IUser"});
+        
+        var IUserAdapter = createInterface({name: "IUserAdapter"});
+        
+        var UserAdapter = createAdapter({
+            implements: IUserAdapter,
+            adapts: IUser
+        }).registerWith(registry);        
+        
+        var UserPrototype = createObjectPrototype({
+            implements: [IUser]
+        });
+        
+        var theUser = new UserPrototype();
+        
+        var ua = registry.getAdapter(theUser, IUserAdapter);
+
+        expect(ua).to.be.a(UserAdapter);
+    });
+    
     it('can get an adapter registered by interface', function() {
         var registry = new AdapterRegistry();
         

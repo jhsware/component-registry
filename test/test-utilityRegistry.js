@@ -12,6 +12,21 @@ describe('Utility Registry', function() {
         expect(registry).to.not.be(undefined);
     });
         
+    it('can register with convenience method .registerWith', function() {
+        var registry = new UtilityRegistry();
+        
+        var IDummyUtility = createInterface({name: "IDummyUtility"});
+        
+        var DummyUtility = createUtility({
+            implements: IDummyUtility
+        });
+        DummyUtility.registerWith(registry);
+        
+        var util = registry.getUtility(IDummyUtility);
+        
+        expect(util).to.be.a(DummyUtility);
+    });
+
     it('can get an unnamed utility', function() {
         var registry = new UtilityRegistry();
         
