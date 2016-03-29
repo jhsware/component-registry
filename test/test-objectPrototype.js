@@ -239,6 +239,59 @@ describe('Object Prototypes', function() {
         expect(data._userVal).to.equal(1);
         expect(JSON.stringify(user)).to.not.be(undefined);
     });
+    
+    it("can update value of properties", function() {
+        var IUser = createInterface({
+            name: 'IUser',
+            schema: {
+                _fields: {
+                    title: "",
+                    empty: ""                    
+                }
+            }
+        });
+        
+        var User = createObjectPrototype({
+            implements: [IUser],
+        })
+                
+        var user = new User({
+            _userVal: 1,
+            title: "parent",
+            empty: null
+        });
+        user.title = "updated";
+        user.empty = "nope";
+        
+        expect(user.title).to.equal("updated");
+        expect(user.empty).to.equal("nope");
+    });
+    
+    it("can't remove schema field property", function() {
+        var IUser = createInterface({
+            name: 'IUser',
+            schema: {
+                _fields: {
+                    title: "",
+                    empty: ""                    
+                }
+            }
+        });
+        
+        var User = createObjectPrototype({
+            implements: [IUser],
+        })
+                
+        var user = new User({
+            _userVal: 1,
+            title: "parent",
+            empty: null
+        });
+        
+        delete user.title;
+        
+        expect(user.title).to.equal("parent");
+    });
    
     
     it("todo...", function() {});
