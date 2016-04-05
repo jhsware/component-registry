@@ -111,6 +111,26 @@ describe('Adapter Registry', function() {
         expect(ua).to.be.a(UserAdapter);
     });
     
+    
+    it('can get an adapter registered by interface by providing interface', function() {
+        var registry = new AdapterRegistry();
+        
+        var IUser = createInterface({name: "IUser"});
+        
+        var IUserAdapter = createInterface({name: "IUserAdapter"});
+        
+        var UserAdapter = createAdapter({
+            implements: IUserAdapter,
+            adapts: IUser
+        })
+        
+        registry.registerAdapter(UserAdapter);
+        
+        var ua = registry.getAdapter(IUser, IUserAdapter);
+
+        expect(ua).to.be.a(UserAdapter);
+    });
+    
     it("returns an error when registering an adapter that doesn't implement interface", function() {});
     it("returns an error when trying to get an adapter that doesn't exist", function() {});
     
