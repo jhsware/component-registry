@@ -292,6 +292,35 @@ describe('Object Prototypes', function() {
         
         expect(user.title).to.equal("parent");
     });
+    
+    
+    it("won't overwrite prototype properties", function() {
+        var IUser = createInterface({
+            name: 'IUser',
+            schema: {
+                _fields: {
+                    title: "",
+                    empty: ""                    
+                }
+            }
+        });
+        
+        var User = createObjectPrototype({
+            implements: [IUser],
+        })
+                
+        var user = new User({
+            _userVal: 1,
+            title: "parent",
+            empty: null
+        });
+        
+        var data = user.toJSON();
+        
+        var newUser = new User(data);
+        
+        expect(newUser.hasOwnProperty('_implements')).to.equal(false);
+    });
    
     
     it("todo...", function() {});
