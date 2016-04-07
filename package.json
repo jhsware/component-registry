@@ -1,6 +1,6 @@
 {
   "name": "component-registry",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Javascript component registry inspired by the ZTK component registry. Build nice reusable components with interfaces, adapters and utilities.",
   "author": {
     "name": "Sebastian Ware",
