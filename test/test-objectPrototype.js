@@ -267,7 +267,7 @@ describe('Object Prototypes', function() {
         expect(user.empty).to.equal("nope");
     });
     
-    it("can't remove schema field property", function() {
+    it("can remove schema field property", function() {
         var IUser = createInterface({
             name: 'IUser',
             schema: {
@@ -290,7 +290,7 @@ describe('Object Prototypes', function() {
         
         delete user.title;
         
-        expect(user.title).to.equal("parent");
+        expect(user.title).to.be(undefined);
     });
     
     
