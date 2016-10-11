@@ -1,5 +1,39 @@
 # Concepts #
 
+## Public API ##
+
+```
+var registry = require('component-registry').globalRegistry;
+```
+Use the global registry to register you adapters and utilities.
+
+WARNING! The registry is also available as a global variable. You should not make
+your code dependent on using the global variable, it is mainly intended for
+debugging purposes. Always require the registry for proper use. The global variable
+might be removed when run in production mode.
+
+You will also use these extensively:
+
+```
+var createInterface = require('component-registry').createInterface;
+
+var createAdapter = require('component-registry').createAdapter
+
+var createUtility = require('component-registry').createUtility
+
+var createObjectPrototype = require('component-registry').createObjectPrototype
+```
+
+For advanced use, you can create your own adapter and/or utility registry. The use
+case could be to create a sub system that can't be accessed by the rest of your app.
+```
+var AdapterRegistry = require('component-registry').AdapterRegistry;
+
+var UtilityRegistry = require('component-registry').UtilityRegistry;
+```
+
+Here is an explanation of the concepts:
+
 ### Object Prototypes ###
 
 We implement Object Prototypes as a means of creating base prototypes with support for inheritance. These support multiple inheritance so you can organise your code in a flexible way. The order of inheritance decides overloading, first in line is most important. You can create inheritance graphs like this (left to right)
