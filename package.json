@@ -1,7 +1,7 @@
 {
   "name": "component-registry",
-  "version": "0.2.0",
-  "description": "Javascript component registry inspired by the ZTK component registry. Build nice reusable components with interfaces, adapters and utilities.",
+  "version": "0.2.1",
+  "description": "Javascript component registry inspired by the awesome ZTK component registry written for Python. Build nice reusable components with interfaces, adapters and utilities. Supports composition through a Javascript friendly implementation of multiple inheritance",
   "author": {
     "name": "Sebastian Ware",
     "email": "sebastian@urbantalk.se",
@@ -18,9 +18,7 @@
   },
   "main": "./lib/index.js",
   "dependencies": {
-    "node-uuid": "^1.4.3",
-    "lodash": "^2.4.1",
-    "moment": "^2.8.4"
+    "node-uuid": "^1.4.3"
   },
   "devDependencies": {
     "expect.js": "~0.3.1",
