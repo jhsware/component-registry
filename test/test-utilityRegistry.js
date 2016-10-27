@@ -159,7 +159,7 @@ describe('Utility Registry', function() {
         expect(utils.length).to.be(0);
     });
     
-    it("returns 'undefined' if named utility isn't found and we have passed true at end", function() {
+    it("returns 'undefined' if named utility isn't found and we have passed undefined as default", function() {
         var registry = new UtilityRegistry();
         
         var IDummyUtility = createInterface({name: "IDummyUtility"});
@@ -171,6 +171,16 @@ describe('Utility Registry', function() {
         registry.registerUtility(DummyUtility_1);
         
         var utils = registry.getUtility(IDummyUtility, 'two', undefined);
+        
+        expect(utils).to.be(undefined);
+    });
+
+    it("returns 'undefined' if UNNAMED utility isn't found and we have passed undefined as default", function() {
+        var registry = new UtilityRegistry();
+        
+        var IDummyUtility = createInterface({name: "IDummyUtility"});
+        
+        var utils = registry.getUtility(IDummyUtility, undefined, undefined);
         
         expect(utils).to.be(undefined);
     });

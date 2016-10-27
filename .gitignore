@@ -30,3 +30,4 @@ assets/css/*
 assets/js/*
 assets/build/*
 build/
+.vscode
