@@ -21,7 +21,7 @@
     "node-uuid": "^1.4.3"
   },
   "devDependencies": {
-    "expect.js": "^1.20.2",
+    "expect.js": "^0.3.1",
     "mocha": "^3.1.2",
     "mocha-better-spec-reporter": "^3.0.2"
   },
