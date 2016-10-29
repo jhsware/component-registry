@@ -8,13 +8,13 @@
     "url": "https://github.com/jhsware"
   },
   "license": "MIT",
-  "homepage": "https://github.com/jhsware/SimpleJSRegistry",
+  "homepage": "https://github.com/jhsware/component-registry",
   "bugs": {
-    "url": "https://github.com/jhsware/SimpleJSRegistry/issues"
+    "url": "https://github.com/jhsware/component-registry/issues"
   },
   "repository" : { 
       "type" : "git",
-      "url" : "git+https://github.com/jhsware/SimpleJSRegistry.git"
+      "url" : "git+https://github.com/jhsware/component-registry.git"
   },
   "main": "./lib/index.js",
   "dependencies": {
