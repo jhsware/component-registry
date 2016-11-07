@@ -30,7 +30,7 @@ Another brilliant side-effect is that you can move your implementation code arou
 ### More on ObjectPrototypes and Adapters ##
 ObjectPrototypes contain a bit more than just data. They also have a property called `implements` that contains an array of Interfaces that describe the capabilities of that object. The order is important, the first Interface in this array tells us what this ObjectPrototype is. The rest tell us what other things this ObjectPrototype contains or can be used for. This could be a list of implemented Interfaces:
 
-```
+```JavaScript
 const Employee = createObjectPrototype({
     implements: [IEmployee, IUser, IHasAvatar],
     ...
@@ -41,7 +41,7 @@ The ObjectPrototype should be called Employee, which corresponds to the most sig
 
 The `globalRegistry` uses these interfaces in order to find Adapters for you that can be used with your Employee objects. Say that you want to render a directory listing of your employees. You decide you want each row to be rendered by using an Adapter that you find with the interface `IDirectoryListEntryWidget`, you can call the Interface what ever you want. Now you need to implement that Adapter so it can render your Employee object. It would look something like this:
 
-```
+```JavaScript
 const DirectoryListEntryWidget = createAdapter({
     implements: IDirectoryListEntryWidget,
     adapts: IEmployee,
@@ -53,7 +53,7 @@ The property **implements** tells the globalRegistry what the Adapter can do. Th
 
 So when you want to render the list you would write something like this:
 
-```
+```JavaScript
 function renderList (entries) {
     var outp = entries.map((entry) => {
         const widget = globalRegistry.getAdapter(entry, IDirectoryListEntryWidget)
@@ -70,7 +70,7 @@ In the most simple case with only a single object type this still makes the code
 ### The Power of Inheritance ##
 The ObjectPrototype doesn't only have Interfaces, it can also extend other Object Prototypes. When you inherit another ObjectPrototype, you will also inherit all the interfaces it implements. This allows us to gradually refine the capabilities of our entity objects. Employee could inherit from BaseObject. SalesRep and Manager could inherit from Employee. This is done by adding an `extends` property when creating your ObjectPrototype:
 
-```
+```JavaScript
 const Manager = createObjectPrototype({
     implements: [IManager],
     extends: [Employee],
@@ -88,7 +88,7 @@ SIDE NOTE: Since Javascript is a dynamicly typed language and all lookups can be
 
 ## Public API ##
 
-```
+```JavaScript
 var registry = require('component-registry').globalRegistry;
 ```
 Use the global registry to register you adapters and utilities.
@@ -100,7 +100,7 @@ might be removed when run in production mode.
 
 You will also use these extensively:
 
-```
+```JavaScript
 var createInterface = require('component-registry').createInterface;
 
 var createAdapter = require('component-registry').createAdapter
@@ -112,7 +112,7 @@ var createObjectPrototype = require('component-registry').createObjectPrototype
 
 For advanced use, you can create your own adapter and/or utility registry. The use
 case could be to create a sub system that can't be accessed by the rest of your app.
-```
+```JavaScript
 var AdapterRegistry = require('component-registry').AdapterRegistry;
 
 var UtilityRegistry = require('component-registry').UtilityRegistry;
@@ -145,7 +145,7 @@ NOTE: A prototype object that extends other prototype objects won't pass an inst
 
 In stead you should use Interfaces to figure out what the obj is:
 
-```
+```JavaScript
 INewsProto.providedBy(obj) == true
 IBaseProto.providedBy(obj) == true
 ```
@@ -197,12 +197,14 @@ Another example of how to use a utility could be if you want to provide internat
 
 Create an object prototype that you can instantiate objects with
 
+```JavaScript
     var ObjectPrototype = createObjectPrototype({
         implements: [IObject],
         sayHi: function () {
             return "Hi!"
         }
     })
+```
 
 The object implements the provided list of interfaces and the method sayHi will be added to the object.prototype and available to instantiated objects.
 
@@ -210,10 +212,12 @@ The first interface in the list is significant. It should be a unique interface 
 
 Create an object instance
 
+```JavaScript
     var obj = new ObjectPrototype();
-
+```
 Create an instance that inherits methods and implemented interfaces from other object prototypes
 
+```JavaScript
     var AnotherObjectPrototype = createObjectPrototype({
         extends: [ObjectPrototype],
         implements: [IAnotherObject],
@@ -221,9 +225,11 @@ Create an instance that inherits methods and implemented interfaces from other o
             return "Ho!"
         }
     })
+```
 
 This object prototype inherits the method *sayHi* and will implement *another_interface* and *interface*. Inherited methods are accessed by their method name on an instance of the object. If you want to access the overridden method you can access it through the _[interfaceNname] but you must use the .call-syntax to set the this variable:
 
+```JavaScript
     var OverridingPrototype = createObjectPrototype({
         extends: [UserPrototype],
         implements: [IOverriding],
@@ -231,6 +237,7 @@ This object prototype inherits the method *sayHi* and will implement *another_in
             return "Ho! " + this._IObject.sayHi.call(this);
         }
     })
+```
 
 The method sayHi() returns "Ho! Hi!".
 
@@ -241,7 +248,9 @@ The method sayHi() returns "Ho! Hi!".
 
 Create an interface without a provided schema
 
+```JavaScript
     var IInterface = createInterface();
+```
 
 We use the convention of prefixing interfaces with "I" to improve readability.
 
@@ -251,28 +260,36 @@ We use the convention of prefixing interfaces with "I" to improve readability.
 
 Create a new adapter registry
 
+```JavaScript
     var registry = new AdapterRegistry();
+```
 
 **createAdapter(params)**
 
 Create and adapter that adapts an interface or an object prototype
 
+```JavaScript
     var MyAdapter = createAdapter({
         implements: IInterface,
         adapts: IInterface || ObjectPrototype
     })
+```
 
 **registerAdapter(Adapter)**
 
 Register the created adapter with the adapter registry
 
+```JavaScript
     registry.registerAdapter(MyAdapter);
+```
 
 **getAdapter(object, interface)**
 
 Get an adapter for an object
 
+```JavaScript
     var adapter = registry.getAdapter(obj, IInterface);
+```
 
 ### Utilities ###
 
@@ -280,39 +297,50 @@ Get an adapter for an object
 
 Create a utility registry
 
+```JavaScript
     var registry = new UtilityRegistry();
+```
 
 **createUtility(params)**
 
 Create an unamed utility that implements a given interface
 
+```JavaScript
     var utility = createUtility({
         implements: IInterface,
     });
+```
 
 Create a named utility that implements a given interface and has a variation name
 
+```JavaScript
     var utility = createUtility({
         implements: IInterface,
         name: 'name'
     });
+```
 
 **registerUtility(Utility)**
 
 Register the cerated utility with the utility registry
 
+```JavaScript
     registry.registerUtility(utility);
+```
 
 **getUtility(Interface [, name])**
 
 Get a utility that implements a given interface (pass name to get a named utility)
 
+```JavaScript
     var util = registry.getUtility(Interface, 'name');
+```
 
 **getUtilities(Interface)**
 
 Get a list of utilities that implement a given interface (returns list of objects that contain the utility and name (if it is a named utility))
 
+```JavaScript
     var utils = registry.getUtilities(IInterface);
     
     /*
@@ -324,6 +352,7 @@ Get a list of utilities that implement a given interface (returns list of object
         ]
     
     */
+```
 
 # Some Random Doodles During Development #
 
@@ -341,6 +370,7 @@ When you get a list of UserObjects and AnotherObjects you can get the render ada
 
 In other words, I need to create a list of implemented interfaces for the object including those implemented by the parent
 
+```JavaScript
 IBaseObject = createInterface({
     extends: [],    // Optional
     schemaName: '', // Optional
@@ -361,10 +391,10 @@ RenderBaseObjectAdapter = createAdapter({
     extends: [],    // optional
     implementsInterfaces: [IRenderObjectAdapter]
 });
-
+```
 
 /* IMPLEMENTATION NOTES */
-
+```JavaScript
 registry.registerUtility(interface, name, object)
 register.getUtility(interface, name)
     # Returns instance of utility
@@ -397,18 +427,22 @@ var theUser = new User();
 IChangeName(theUser).update('New Name')
 
 registry.getAdapter(theUser, IChangeName)
-
+```
 
 ## HOWTO DEBUG TESTS ##
 
 Run the tests with the mocha command with the debug option 
 
+```
     $ node_modules/mocha/bin/mocha --debug-brk
-    
+```
+
 Open a second shell and run node-inspector
 
+```
     $ node-inspector
-    
+```
+
 When you open the inspector in a browser, just set the breakpoint in your code
 and resume the execution (play button)
 
