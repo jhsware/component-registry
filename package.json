@@ -12,13 +12,13 @@
   "bugs": {
     "url": "https://github.com/jhsware/component-registry/issues"
   },
-  "repository" : { 
-      "type" : "git",
-      "url" : "git+https://github.com/jhsware/component-registry.git"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhsware/component-registry.git"
   },
   "main": "./lib/index.js",
   "dependencies": {
-    "node-uuid": "^1.4.3"
+    "uuid": "^3.0.0"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
