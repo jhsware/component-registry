@@ -170,6 +170,29 @@ describe('Object Prototypes', function() {
         expect(user.superSpecialVal).to.equal(3);
     });
 
+    it("can inherit from other object prototype and calls inherited constructor if none is specified", function() {
+        var IUser = createInterface({name: 'IUser'});
+        
+        var userProto = createObjectPrototype({
+            implements: [IUser],
+            constructor: function () {
+                this.constructorCalled = true
+            }
+        })
+        
+        var ISpecialUser = createInterface({name: 'ISpecialUser'});
+        
+        var specialUserProto = createObjectPrototype({
+            extends: [userProto],
+            implements: [ISpecialUser]
+        })
+        
+        var user = new specialUserProto();
+        
+        expect(user).to.be.a(specialUserProto);
+        expect(user.constructorCalled).to.be(true);
+    });
+
     it("can convert simple object to JSON", function() {
         var IUser = createInterface({name: 'IUser'});
         
