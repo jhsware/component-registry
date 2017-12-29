@@ -2,3 +2,12 @@ language: node_js
 node_js:
   - "4.4"
   - "6.1"
+  - "8.7"
+deploy:
+  provider: npm
+  email: sebastian@urbantalk.se
+  api_key:
+    secure: fY2iW9+r92p+t/mM3ypsjmDh0rvOcDk4hEWjbpRUZsaSQXbkx4FShCDAVUPi821DMAiuosjkp04gNO/g6ZrNXyneJPpNCfgQnNbq0PlyZEcKtvYF+TB5Rg/hufO+Uz9DprX13F4r76CaLHqcOMfRrJCC4fkMpdIcrA5CEPywFHIzHvVKBUGrQOTQ4DcubDkstj05/SOmMkCF8rhkEhJrI/r5VGmWpc6jmio/PY2421yDuQ/YoWRAMHzRmcQuzhSrVscl70iqPAbyMlk7XPaIIbpMLehQ45dg0Jpha7VFnq3S/kDr6V+P74kuZ3U0QWdOHffpn1QIpDckBQ15rE9eh7m+CzzrIZ1DaGHBWZhi9ODG+NFm3v2b5tXMDMTzQ69xiQMZdyko4TL/GQ7X1DJNWJ/6h/OmyWFWpAk6MzuZuZIkm+Btoap2JIq4bTYXVRW7laYmsX1Dfxr0Vyu6f0eE74k79k4U3dNHIZzsZbGiBfYX9scB7Q16HEpAxwObR+0GIE5PrhGJLefI+BJNwrnrbgR5mwFJIyXS2xQNauMvybsXUlLrCl12HHqc1Vw4mey9ka2Ulh1ag2Bftzk+rDmuZ752Rukd+Co6VcqOCRqzPx6PL+hJ9fFlxuTZTc5JSM+oOmGdPhJ31wPjjKx6Mk9EnfOd6CYeHuRSfCM2pmnDfgs=
+  on:
+    tags: true
+    repo: jhsware/component-registry
