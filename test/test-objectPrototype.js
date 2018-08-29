@@ -1,7 +1,6 @@
 var assert = require('assert');
 var expect = require('expect.js');
 
-var Interface = require('../lib').Interface;
 var createInterface = require('../lib').createInterface;
 var createObjectPrototype = require('../lib').createObjectPrototype;
 
@@ -344,9 +343,22 @@ describe('Object Prototypes', function() {
         
         expect(newUser.hasOwnProperty('_implements')).to.equal(false);
     });
-   
-    
-    it("todo...", function() {});
+
+    it("adds schema fields for all implemented interfaces", function() {
+        var IUser = createInterface({name: 'IUser', schema: { _fields: { name: '', age: '' }}});
+        var ILooks = createInterface({name: 'ILooks', schema: { _fields: { eyes: '', height: ''}}});
+        
+        var userProto = createObjectPrototype({
+            implements: [IUser, ILooks]
+        })
+        var user = new userProto();
+
+        expect(user).to.have.property('name');
+        expect(user).to.have.property('age');
+        expect(user).to.have.property('eyes');
+        expect(user).to.have.property('height');
+    });
+
     it("checks for existence of all members in all interfaces", function() {
         var ITalker = createInterface({name: 'ITalker', members: { talk: 'function: do talk' }});
         var IFlexer = createInterface({name: 'IFlexer', members: { flex: 'function: do flex'}});
