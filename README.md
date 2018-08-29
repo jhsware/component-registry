@@ -200,12 +200,12 @@ Another example of how to use a utility could be if you want to provide internat
 Create an object prototype that you can instantiate objects with
 
 ```JavaScript
-    var ObjectPrototype = createObjectPrototype({
-        implements: [IObject],
-        sayHi: function () {
-            return "Hi!"
-        }
-    })
+const ObjectPrototype = createObjectPrototype({
+    implements: [IObject],
+    sayHi: function () {
+        return "Hi!"
+    }
+})
 ```
 
 The object implements the provided list of interfaces and the method sayHi will be added to the object.prototype and available to instantiated objects.
@@ -215,30 +215,30 @@ The first interface in the list is significant. It should be a unique interface 
 Create an object instance
 
 ```JavaScript
-    var obj = new ObjectPrototype();
+const obj = new ObjectPrototype();
 ```
 Create an instance that inherits methods and implemented interfaces from other object prototypes
 
 ```JavaScript
-    var AnotherObjectPrototype = createObjectPrototype({
-        extends: [ObjectPrototype],
-        implements: [IAnotherObject],
-        sayHo: function () {
-            return "Ho!"
-        }
-    })
+const AnotherObjectPrototype = createObjectPrototype({
+    extends: [ObjectPrototype],
+    implements: [IAnotherObject],
+    sayHo: function () {
+        return "Ho!"
+    }
+})
 ```
 
 This object prototype inherits the method *sayHi* and will implement *another_interface* and *interface*. Inherited methods are accessed by their method name on an instance of the object. If you want to access the overridden method you can access it through the _[interfaceNname] but you must use the .call-syntax to set the this variable:
 
 ```JavaScript
-    var OverridingPrototype = createObjectPrototype({
-        extends: [UserPrototype],
-        implements: [IOverriding],
-        sayHi: function () {
-            return "Ho! " + this._IObject.sayHi.call(this);
-        }
-    })
+const OverridingPrototype = createObjectPrototype({
+    extends: [UserPrototype],
+    implements: [IOverriding],
+    sayHi: function () {
+        return "Ho! " + this._IObject.sayHi.call(this);
+    }
+})
 ```
 
 The method sayHi() returns "Ho! Hi!".
@@ -251,10 +251,67 @@ The method sayHi() returns "Ho! Hi!".
 Create an interface without a provided schema
 
 ```JavaScript
-    var IInterface = createInterface();
+const IInterface = createInterface();
 ```
 
 We use the convention of prefixing interfaces with "I" to improve readability.
+
+An interface can optionally contain the following properties:
+
+- schema (for ObjectPrototypes)
+- members (for ObjectPrototypes, Adpaters and Utilities)
+
+The `.schema` is an `isomorphic-schema` field definition that will add properties to the instantiated objects respecting `readOnly`.
+
+```JavaScript
+import { Schema } from 'isomorphic-schema'
+import { TextField } from 'isomorphic-schema/lib/field_validators/TextField'
+const IUser = createInterface({
+    name: 'IUser',
+    schema: new Schema({
+        schemaName: 'IUser Schema',
+        fields: {
+            name: new TextField({})
+        }
+    })
+})
+
+const User = createObjectPrototype({
+    implements: [IUser]
+})
+
+const user = new User()
+user.hasOwnProperty('name')
+// true
+user.name
+// undefined
+```
+
+The `.members` are used to verify the existence of required properties and methods. There is currently only a check for existence. The check is done when creating an adapter, utility or ObjectPrototype.
+
+```JavaScript
+import { IUser } from './my/app/interfaces'
+
+const IDisplayWidget = createInterface({
+    name: 'IDisplayWidget',
+    members: {
+        render: 'function - Render widget'
+    }
+})
+
+const a = createAdapter({
+    implements: IDisplayWidget,
+    adapts: IUser,
+    render: function () {}
+})
+// The render member exists so createAdapter completes without issues
+
+const b = createAdapter({
+    implements: IDisplayWidget,
+    adapts: IUser
+})
+// The render member is missing and creaateAdapter will throw an error
+```
 
 ### Adapters ###
 
@@ -263,7 +320,7 @@ We use the convention of prefixing interfaces with "I" to improve readability.
 Create a new adapter registry
 
 ```JavaScript
-    var registry = new AdapterRegistry();
+const registry = new AdapterRegistry();
 ```
 
 **createAdapter(params)**
@@ -271,10 +328,10 @@ Create a new adapter registry
 Create and adapter that adapts an interface or an object prototype
 
 ```JavaScript
-    var MyAdapter = createAdapter({
-        implements: IInterface,
-        adapts: IInterface || ObjectPrototype
-    })
+const MyAdapter = createAdapter({
+    implements: IInterface,
+    adapts: IInterface || ObjectPrototype
+})
 ```
 
 **registerAdapter(Adapter)**
@@ -290,7 +347,7 @@ Register the created adapter with the adapter registry
 Get an adapter for an object
 
 ```JavaScript
-    var adapter = registry.getAdapter(obj, IInterface);
+const adapter = registry.getAdapter(obj, IInterface);
 ```
 
 ### Utilities ###
@@ -300,7 +357,7 @@ Get an adapter for an object
 Create a utility registry
 
 ```JavaScript
-    var registry = new UtilityRegistry();
+const registry = new UtilityRegistry();
 ```
 
 **createUtility(params)**
@@ -308,18 +365,18 @@ Create a utility registry
 Create an unamed utility that implements a given interface
 
 ```JavaScript
-    var utility = createUtility({
-        implements: IInterface,
-    });
+const utility = createUtility({
+    implements: IInterface,
+});
 ```
 
 Create a named utility that implements a given interface and has a variation name
 
 ```JavaScript
-    var utility = createUtility({
-        implements: IInterface,
-        name: 'name'
-    });
+const utility = createUtility({
+    implements: IInterface,
+    name: 'name'
+});
 ```
 
 **registerUtility(Utility)**
@@ -335,7 +392,7 @@ Register the cerated utility with the utility registry
 Get a utility that implements a given interface (pass name to get a named utility)
 
 ```JavaScript
-    var util = registry.getUtility(Interface, 'name');
+const util = registry.getUtility(Interface, 'name');
 ```
 
 **getUtilities(Interface)**
@@ -343,17 +400,16 @@ Get a utility that implements a given interface (pass name to get a named utilit
 Get a list of utilities that implement a given interface (returns list of objects that contain the utility and name (if it is a named utility))
 
 ```JavaScript
-    var utils = registry.getUtilities(IInterface);
-    
-    /*
-        [
-            {
-                utility: [Object object],
-                name: 'name'    // optional
-            }
-        ]
-    
-    */
+const utils = registry.getUtilities(IInterface);
+
+/*
+    [
+        {
+            utility: [Object object],
+            name: 'name'    // optional
+        }
+    ]
+*/
 ```
 
 # Some Random Doodles During Development #
@@ -411,20 +467,20 @@ IInterface(obj)
     # Returns instance of adapter with provided object as context (this.context)
     
     
-var Interface = function (schema) {
+const Interface = function (schema) {
     this.schema = schema;
     this.interfaceId = randomId();
 }    
     
-var IUser = new Interface(schema)
+const IUser = new Interface(schema)
     
-var IChangeName = new Interface(schema)
+const IChangeName = new Interface(schema)
     
-var User = {
+const User = {
     implements: [IUser, IChangeName]
 }
 
-var theUser = new User();
+const theUser = new User();
 
 IChangeName(theUser).update('New Name')
 
@@ -452,13 +508,14 @@ and resume the execution (play button)
 
 ## TODO ##
 - DONE: Added Travis CI-support
-- TODO: Throw an better error if we try to create an adapter or utility with out proper interfaces or objects provided
+- DONE: Throw an better error if we try to create an adapter or utility with out proper interfaces or objects provided
 - TODO: Helper to debug registered components (when they aren't found)
 - DONE: Create Node project
 - TODO: Write document explaining how this works and then implement in code, if it can't be explained, it can't be understood...
-- STARTED: Add tests with mocha
-- STARTED: Implement Interface
-    - I want it to handle inheritance so I can override interfaces but perhaps this is on the adapter
-    - Need to implement inheritance in registry lookup, perhaps use chaining?
-- TODO: Should I do this with ES6 classes?
+- DONE: Add tests with mocha
+- DONE: Implement Interface
+    DEFER - I want it to handle inheritance so I can override interfaces but perhaps this is on the adapter
+    DEFER - Need to implement inheritance in registry lookup, perhaps use chaining?
+- DEFER: Should I do this with ES6 classes?
+    - The factory method has real advantages in this case
 
