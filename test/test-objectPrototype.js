@@ -347,4 +347,26 @@ describe('Object Prototypes', function() {
    
     
     it("todo...", function() {});
+    it("checks for existence of all members in all interfaces", function() {
+        var ITalker = createInterface({name: 'ITalker', members: { talk: 'function: do talk' }});
+        var IFlexer = createInterface({name: 'IFlexer', members: { flex: 'function: do flex'}});
+        
+        var userProto = createObjectPrototype({
+            implements: [ITalker, IFlexer],
+            talk: function () {},
+            flex: function () {}
+        })
+        expect(userProto).to.not.be(undefined);
+
+        var failed
+        try {
+            var userProto = createObjectPrototype({
+                implements: [ITalker, IFlexer],
+                flex: function () {}
+            })
+        } catch (e) {
+            failed = true
+        }
+        expect(failed).to.equal(true);
+    });
 });
