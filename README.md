@@ -61,7 +61,7 @@ function renderList (entries) {
         const widget = globalRegistry.getAdapter(entry, IDirectoryListEntryWidget)
         return widget.render()
     })
-    return outp.join('\n)
+    return outp.join('\n')
 }
 ```
 
