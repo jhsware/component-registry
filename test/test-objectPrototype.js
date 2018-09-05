@@ -1,12 +1,12 @@
 var assert = require('assert');
 var expect = require('expect.js');
 
-var createInterface = require('../lib').createInterface;
+const Interface = require('../lib').createInterfaceClass('test');
 var createObjectPrototype = require('../lib').createObjectPrototype;
 
 describe('Object Prototypes', function() {
     it('can be created', function() {
-        var IUser = createInterface({name: 'IUser'});
+        var IUser = new Interface({name: 'IUser'});
         
         var userPrototype = createObjectPrototype({
             implements: [IUser],
@@ -22,7 +22,7 @@ describe('Object Prototypes', function() {
     });
     
     it("can inherit from other object prototypes", function() {
-        var IUser = createInterface({name: 'IUser'});
+        var IUser = new Interface({name: 'IUser'});
         
         var userProto = createObjectPrototype({
             implements: [IUser],
@@ -31,7 +31,7 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var ISpecialUser = createInterface({name: 'ISpecialUser'});
+        var ISpecialUser = new Interface({name: 'ISpecialUser'});
         
         var specialUserProto = createObjectPrototype({
             extends: [userProto],
@@ -49,7 +49,7 @@ describe('Object Prototypes', function() {
     });
     
     it("can inherit from other object prototypes two levels deep", function() {
-        var IUser = createInterface({name: 'IUser'});
+        var IUser = new Interface({name: 'IUser'});
         
         var userProto = createObjectPrototype({
             implements: [IUser],
@@ -58,7 +58,7 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var ISpecialUser = createInterface({name: 'ISpecialUser'});
+        var ISpecialUser = new Interface({name: 'ISpecialUser'});
         
         var specialUserProto = createObjectPrototype({
             extends: [userProto],
@@ -70,7 +70,7 @@ describe('Object Prototypes', function() {
         
         var user = new specialUserProto();
         
-        var ISuperSpecialUser = createInterface({name: 'ISuperSpecialUser'});
+        var ISuperSpecialUser = new Interface({name: 'ISuperSpecialUser'});
         
         var superSpecialUserProto = createObjectPrototype({
             extends: [specialUserProto],
@@ -89,7 +89,7 @@ describe('Object Prototypes', function() {
     });
     
     it("can inherit from other object prototypes two levels deep and call all constructors", function() {
-        var IUser = createInterface({name: 'IUser'});
+        var IUser = new Interface({name: 'IUser'});
         
         var User = createObjectPrototype({
             implements: [IUser],
@@ -101,7 +101,7 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var ISpecialUser = createInterface({name: 'ISpecialUser'});
+        var ISpecialUser = new Interface({name: 'ISpecialUser'});
         
         var SpecialUser = createObjectPrototype({
             extends: [User],
@@ -112,7 +112,7 @@ describe('Object Prototypes', function() {
             },
         })
                 
-        var ISuperSpecialUser = createInterface({name: 'ISuperSpecialUser'});
+        var ISuperSpecialUser = new Interface({name: 'ISuperSpecialUser'});
         
         var SuperSpecialUser = createObjectPrototype({
             extends: [SpecialUser],
@@ -131,7 +131,7 @@ describe('Object Prototypes', function() {
     });
     
     it("can inherit from several other object prototypes call all constructors", function() {
-        var IUser = createInterface({name: 'IUser'});
+        var IUser = new Interface({name: 'IUser'});
         
         var User = createObjectPrototype({
             implements: [IUser],
@@ -140,7 +140,7 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var ISpecial = createInterface({name: 'ISpecial'});
+        var ISpecial = new Interface({name: 'ISpecial'});
         
         var Special = createObjectPrototype({
             implements: [ISpecial],
@@ -149,7 +149,7 @@ describe('Object Prototypes', function() {
             },
         })
                 
-        var ISuperSpecialUser = createInterface({name: 'ISuperSpecialUser'});
+        var ISuperSpecialUser = new Interface({name: 'ISuperSpecialUser'});
         
         var SuperSpecialUser = createObjectPrototype({
             extends: [Special, User],
@@ -170,7 +170,7 @@ describe('Object Prototypes', function() {
     });
 
     it("can inherit from other object prototype and calls inherited constructor if none is specified", function() {
-        var IUser = createInterface({name: 'IUser'});
+        var IUser = new Interface({name: 'IUser'});
         
         var userProto = createObjectPrototype({
             implements: [IUser],
@@ -179,7 +179,7 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var ISpecialUser = createInterface({name: 'ISpecialUser'});
+        var ISpecialUser = new Interface({name: 'ISpecialUser'});
         
         var specialUserProto = createObjectPrototype({
             extends: [userProto],
@@ -193,7 +193,7 @@ describe('Object Prototypes', function() {
     });
 
     it("can convert simple object to JSON", function() {
-        var IUser = createInterface({name: 'IUser'});
+        var IUser = new Interface({name: 'IUser'});
         
         var User = createObjectPrototype({
             implements: [IUser],
@@ -215,7 +215,7 @@ describe('Object Prototypes', function() {
     });
     
     it("can convert nested objects to JSON", function() {
-        var IUser = createInterface({name: 'IUser'});
+        var IUser = new Interface({name: 'IUser'});
         
         var User = createObjectPrototype({
             implements: [IUser],
@@ -243,7 +243,7 @@ describe('Object Prototypes', function() {
     });
     
     it("can convert object with null values to JSON", function() {
-        var IUser = createInterface({name: 'IUser'});
+        var IUser = new Interface({name: 'IUser'});
         
         var User = createObjectPrototype({
             implements: [IUser],
@@ -263,7 +263,7 @@ describe('Object Prototypes', function() {
     });
     
     it("can update value of properties", function() {
-        var IUser = createInterface({
+        var IUser = new Interface({
             name: 'IUser',
             schema: {
                 _fields: {
@@ -290,7 +290,7 @@ describe('Object Prototypes', function() {
     });
     
     it("can remove schema field property", function() {
-        var IUser = createInterface({
+        var IUser = new Interface({
             name: 'IUser',
             schema: {
                 _fields: {
@@ -317,7 +317,7 @@ describe('Object Prototypes', function() {
     
     
     it("won't overwrite prototype properties", function() {
-        var IUser = createInterface({
+        var IUser = new Interface({
             name: 'IUser',
             schema: {
                 _fields: {
@@ -345,8 +345,8 @@ describe('Object Prototypes', function() {
     });
 
     it("adds schema fields for all implemented interfaces", function() {
-        var IUser = createInterface({name: 'IUser', schema: { _fields: { name: '', age: '' }}});
-        var ILooks = createInterface({name: 'ILooks', schema: { _fields: { eyes: '', height: ''}}});
+        var IUser = new Interface({name: 'IUser', schema: { _fields: { name: '', age: '' }}});
+        var ILooks = new Interface({name: 'ILooks', schema: { _fields: { eyes: '', height: ''}}});
         
         var userProto = createObjectPrototype({
             implements: [IUser, ILooks]
@@ -360,8 +360,11 @@ describe('Object Prototypes', function() {
     });
 
     it("checks for existence of all members in all interfaces", function() {
-        var ITalker = createInterface({name: 'ITalker', members: { talk: 'function: do talk' }});
-        var IFlexer = createInterface({name: 'IFlexer', members: { flex: 'function: do flex'}});
+        var ITalker = new Interface({name: 'ITalker'});
+        ITalker.prototype.talk = function () {};
+        
+        var IFlexer = new Interface({name: 'IFlexer'});
+        IFlexer.prototype.flex = function () {};
         
         var userProto = createObjectPrototype({
             implements: [ITalker, IFlexer],

@@ -1,23 +1,23 @@
 var assert = require('assert');
 var expect = require('expect.js');
 
-var Interface = require('../lib').Interface;
-var createInterface = require('../lib').createInterface;
+const Interface = require('../lib').createInterfaceClass('test');
 var createObjectPrototype = require('../lib').createObjectPrototype;
 var createUtility = require('../lib').createUtility;
 var createAdapter = require('../lib').createAdapter;
 
 describe('Interfaces', function() {
     it('can be created', function() {
-        var IUser = createInterface({name: 'IUser'});
+        var IUser = new Interface({name: 'IUser'});
                 
-        expect(IUser.name).to.be('IUser');
+        expect(IUser._name).to.be('IUser');
+        expect(IUser.interfaceId).not.to.be(undefined);
     });
     
     it('can test if an object implements it', function() {
-        var IUser = createInterface({name: 'IUser'});
+        var IUser = new Interface({name: 'IUser'});
         
-        var INotImplemented = createInterface({name: 'INotImplemented'});
+        var INotImplemented = new Interface({name: 'INotImplemented'});
         
         var userPrototype = createObjectPrototype({
             implements: [IUser],
@@ -33,9 +33,9 @@ describe('Interfaces', function() {
     });
 
     it('can test if an adapter implements it', function() {
-        var INotImplemented = createInterface({name: 'INotImplemented'});
+        var INotImplemented = new Interface({name: 'INotImplemented'});
 
-        var IUser = createInterface({name: 'IUser'});        
+        var IUser = new Interface({name: 'IUser'});        
         var userPrototype = createObjectPrototype({
             implements: [IUser],
             sayHi: function () {
@@ -43,7 +43,7 @@ describe('Interfaces', function() {
             }
         })
         
-        var IPrintUser = createInterface({name: 'IPrintUser'});
+        var IPrintUser = new Interface({name: 'IPrintUser'});
         var printAdapter = createAdapter({
             implements: IPrintUser,
             adapts: IUser,
@@ -61,9 +61,9 @@ describe('Interfaces', function() {
 
     
     it('can test if a utility impelements it (single interface)', function() {
-        var IUserFactory = createInterface({name: 'IUser'});
+        var IUserFactory = new Interface({name: 'IUser'});
         
-        var INotImplemented = createInterface({name: 'INotImplemented'});
+        var INotImplemented = new Interface({name: 'INotImplemented'});
         
         var userPrototypeFactory = createUtility({
             implements: IUserFactory,
