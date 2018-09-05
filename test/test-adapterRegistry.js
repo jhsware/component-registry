@@ -33,6 +33,30 @@ describe('Adapter Registry', function() {
         
         var theUser = new UserPrototype();
         
+        var ua = new IUserAdapter(theUser, { registry: registry });
+
+        expect(ua).to.be.a(UserAdapter);
+    });
+
+    it('can get adapter with custom registry using registry.getAdapter', function() {
+        var registry = new AdapterRegistry();
+        
+        var IUser = new Interface({name: "IUser"});
+        
+        var IUserAdapter = new Interface({name: "IUserAdapter"});
+        
+        var UserAdapter = new Adapter({
+            registry: registry,
+            implements: IUserAdapter,
+            adapts: IUser
+        })
+        
+        var UserPrototype = createObjectPrototype({
+            implements: [IUser]
+        });
+        
+        var theUser = new UserPrototype();
+        
         var ua = registry.getAdapter(theUser, IUserAdapter);
 
         expect(ua).to.be.a(UserAdapter);
@@ -58,7 +82,7 @@ describe('Adapter Registry', function() {
         
         var theUser = new UserPrototype();
         
-        var ua = registry.getAdapter(theUser, IUserAdapter);
+        var ua = new IUserAdapter(theUser, { registry: registry });
 
         expect(ua).to.be.a(UserAdapter);
     });
@@ -85,6 +109,7 @@ describe('Adapter Registry', function() {
         
         var theUser = new UserPrototype();
         
+        // TODO: Do we want to keep this? How about short form?
         var ua = registry.getAdapter(theUser, IUserAdapter, IStrong);
 
         expect(ua).to.be.a(StrongAdapter);
@@ -105,7 +130,7 @@ describe('Adapter Registry', function() {
         
         var theUser = new UserPrototype();
         
-        var ua = registry.getAdapter(theUser, IUserAdapter);
+        var ua = new IUserAdapter(theUser, { registry: registry });
         
         expect(ua).to.be.a(UserAdapter);
     });
@@ -124,6 +149,7 @@ describe('Adapter Registry', function() {
             adapts: IUser
         })
         
+        // TODO: This looks pretty useless, should we support this?
         var ua = registry.getAdapter(IUser, IUserAdapter);
 
         expect(ua).to.be.a(UserAdapter);
@@ -155,7 +181,7 @@ describe('Adapter Registry', function() {
         
         var theUser = new UserPrototype();
         
-        var listWidget = registry.getAdapter(theUser, IListWidget);
+        var listWidget = new IListWidget(theUser, { registry: registry });
 
         expect(listWidget).to.be.a(BaseListWidget);
     });
@@ -192,7 +218,7 @@ describe('Adapter Registry', function() {
         
         var theUser = new UserPrototype();
         
-        var listWidget = registry.getAdapter(theUser, IListWidget);
+        var listWidget = new IListWidget(theUser, { registry: registry });
 
         expect(listWidget).to.be.a(UserListWidget);
         expect(listWidget).not.to.be.a(BaseListWidget);

@@ -24,7 +24,7 @@ describe('Global Registry', function() {
             implements: IDummyUtility
         });
         
-        var util = registry.getUtility(IDummyUtility);
+        var util = new IDummyUtility();
         
         expect(util).to.be.a(DummyUtility);
     });
@@ -37,7 +37,7 @@ describe('Global Registry', function() {
             name: 'basic'
         });
         
-        var util = registry.getUtility(IDummyUtility, 'basic');
+        var util = new IDummyUtility('basic');
         
         expect(util).to.be.a(DummyUtility);
     });
@@ -55,7 +55,7 @@ describe('Global Registry', function() {
             name: 'not me'
         });
         
-        var util = registry.getUtility(IDummyUtility, 'basic');
+        var util = new IDummyUtility('basic');
         
         expect(util).to.be.a(DummyUtility);
         expect(util).not.to.be.a(NotMeUtility);
@@ -90,7 +90,7 @@ describe('Global Registry', function() {
         
         var theUser = new UserPrototype();
         
-        var ua = registry.getAdapter(theUser, IUserAdapter);
+        var ua = new IUserAdapter(theUser);
 
         expect(ua).to.be.a(UserAdapter);
     });
@@ -105,16 +105,13 @@ describe('Global Registry', function() {
             adapts: IUser
         })
         
-        registry.registerAdapter(UserAdapter);
-        
-        
         var UserPrototype = createObjectPrototype({
             implements: [IUser]
         });
         
         var theUser = new UserPrototype();
         
-        var ua = registry.getAdapter(theUser, IUserAdapter);
+        var ua = new IUserAdapter(theUser);
 
         expect(ua).to.be.a(UserAdapter);
     });
@@ -130,9 +127,6 @@ describe('Global Registry', function() {
             implements: IUserAdapter,
             adapts: IStrong
         })
-        
-        registry.registerAdapter(StrongAdapter);
-        
         
         var UserPrototype = createObjectPrototype({
             implements: [IUser, IStrong]
@@ -155,11 +149,9 @@ describe('Global Registry', function() {
             adapts: UserPrototype
         })
         
-        registry.registerAdapter(UserAdapter);
-        
         var theUser = new UserPrototype();
         
-        var ua = registry.getAdapter(theUser, IUserAdapter);
+        var ua = new IUserAdapter(theUser);
         
         expect(ua).to.be.a(UserAdapter);
     });
@@ -175,8 +167,7 @@ describe('Global Registry', function() {
             adapts: IUser
         })
         
-        registry.registerAdapter(UserAdapter);
-        
+        // TODO: This is pretty useless, should we support it?
         var ua = registry.getAdapter(IUser, IUserAdapter);
 
         expect(ua).to.be.a(UserAdapter);
@@ -196,8 +187,6 @@ describe('Global Registry', function() {
             adapts: IBase
         })
         
-        registry.registerAdapter(BaseListWidget);
-        
         var IUser = new Interface({name: 'IUser'});
         
         var UserPrototype = createObjectPrototype({
@@ -210,12 +199,9 @@ describe('Global Registry', function() {
             adapts: IUser
         })
         
-        registry.registerAdapter(UserListWidget);
-        
-        
         var theUser = new UserPrototype();
         
-        var listWidget = registry.getAdapter(theUser, IListWidget);
+        var listWidget = new IListWidget(theUser);
 
         expect(listWidget).to.be.a(UserListWidget);
         expect(listWidget).not.to.be.a(BaseListWidget);
