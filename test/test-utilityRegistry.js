@@ -3,7 +3,7 @@ var expect = require('expect.js');
 
 var UtilityRegistry = require('../lib').UtilityRegistry;
 const Interface = require('../lib').createInterfaceClass('test');
-var createUtility = require('../lib').createUtility;
+const { Utility } = require('../lib');
 
 describe('Utility Registry', function() {
     beforeEach(function () {
@@ -21,10 +21,10 @@ describe('Utility Registry', function() {
         
         var IDummyUtility = new Interface({name: "IDummyUtility"});
         
-        var DummyUtility = createUtility({
+        var DummyUtility = new Utility({
+            registry: registry,
             implements: IDummyUtility
         });
-        DummyUtility.registerWith(registry);
         
         var util = registry.getUtility(IDummyUtility);
         
@@ -36,10 +36,10 @@ describe('Utility Registry', function() {
         
         var IDummyUtility = new Interface({name: "IDummyUtility"});
         
-        var DummyUtility = createUtility({
+        var DummyUtility = new Utility({
+            registry: registry,
             implements: IDummyUtility
         });
-        registry.registerUtility(DummyUtility);
         
         var util = registry.getUtility(IDummyUtility);
         
@@ -51,11 +51,11 @@ describe('Utility Registry', function() {
         
         var IDummyUtility = new Interface({name: "IDummyUtility"});
         
-        var DummyUtility = createUtility({
+        var DummyUtility = new Utility({
+            registry: registry,
             implements: IDummyUtility,
             name: 'basic'
         });
-        registry.registerUtility(DummyUtility);
         
         var util = registry.getUtility(IDummyUtility, 'basic');
         
@@ -67,17 +67,17 @@ describe('Utility Registry', function() {
         
         var IDummyUtility = new Interface({name: "IDummyUtility"});
         
-        var DummyUtility = createUtility({
+        var DummyUtility = new Utility({
+            registry: registry,
             implements: IDummyUtility,
             name: 'basic'
         });
-        registry.registerUtility(DummyUtility);
         
-        var NotMeUtility = createUtility({
+        var NotMeUtility = new Utility({
+            registry: registry,
             implements: IDummyUtility,
             name: 'not me'
         });
-        registry.registerUtility(NotMeUtility);
         
         var util = registry.getUtility(IDummyUtility, 'basic');
         
@@ -90,24 +90,23 @@ describe('Utility Registry', function() {
         
         var IDummyUtility = new Interface({name: "IDummyUtility"});
         
-        var DummyUtility_1 = createUtility({
+        var DummyUtility_1 = new Utility({
+            registry: registry,
             implements: IDummyUtility,
             name: 'one'
         });
-        registry.registerUtility(DummyUtility_1);
 
-        var DummyUtility_2 = createUtility({
+        var DummyUtility_2 = new Utility({
+            registry: registry,
             implements: IDummyUtility,
             name: 'two'
         });
-        registry.registerUtility(DummyUtility_2);
         
-        var DummyUtility_3 = createUtility({
+        var DummyUtility_3 = new Utility({
+            registry: registry,
             implements: IDummyUtility,
             name: 'three'
         });
-        registry.registerUtility(DummyUtility_3);
-        
         
         var utils = registry.getUtilities(IDummyUtility);
         
@@ -121,30 +120,28 @@ describe('Utility Registry', function() {
         
         var IDummyUtility = new Interface({name: "IDummyUtility"});
 
-        var DummyUtility = createUtility({
+        var DummyUtility = new Utility({
+            registry: registry,
             implements: IDummyUtility
         });
-        registry.registerUtility(DummyUtility);
-
         
-        var DummyUtility_1 = createUtility({
+        var DummyUtility_1 = new Utility({
+            registry: registry,
             implements: IDummyUtility,
             name: 'one'
         });
-        registry.registerUtility(DummyUtility_1);
 
-        var DummyUtility_2 = createUtility({
+        var DummyUtility_2 = new Utility({
+            registry: registry,
             implements: IDummyUtility,
             name: 'two'
         });
-        registry.registerUtility(DummyUtility_2);
         
-        var DummyUtility_3 = createUtility({
+        var DummyUtility_3 = new Utility({
+            registry: registry,
             implements: IDummyUtility,
             name: 'three'
         });
-        registry.registerUtility(DummyUtility_3);
-        
         
         var utils = registry.getUtilities(IDummyUtility);
         
@@ -168,11 +165,11 @@ describe('Utility Registry', function() {
         
         var IDummyUtility = new Interface({name: "IDummyUtility"});
         
-        var DummyUtility_1 = createUtility({
+        var DummyUtility_1 = new Utility({
+            registry: registry,
             implements: IDummyUtility,
             name: 'one'
         });
-        registry.registerUtility(DummyUtility_1);
         
         var utils = registry.getUtility(IDummyUtility, 'two', undefined);
         
