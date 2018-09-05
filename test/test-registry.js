@@ -4,8 +4,7 @@ var expect = require('expect.js');
 var registry = require('../lib/globalRegistry');
 
 const Interface = require('../lib').createInterfaceClass('test');
-var createUtility = require('../lib').createUtility;
-const { Adapter } = require('../lib');
+const { Adapter, Utility } = require('../lib');
 var createObjectPrototype = require('../lib').createObjectPrototype;
 
 describe('Global Registry', function() {
@@ -21,10 +20,9 @@ describe('Global Registry', function() {
     it('can get an unnamed utility', function() {
         var IDummyUtility = new Interface({name: "IDummyUtility"});
         
-        var DummyUtility = createUtility({
+        var DummyUtility = new Utility({
             implements: IDummyUtility
         });
-        registry.registerUtility(DummyUtility);
         
         var util = registry.getUtility(IDummyUtility);
         
@@ -34,11 +32,10 @@ describe('Global Registry', function() {
     it('can get a named utility', function() {
         var IDummyUtility = new Interface({name: "IDummyUtility"});
         
-        var DummyUtility = createUtility({
+        var DummyUtility = new Utility({
             implements: IDummyUtility,
             name: 'basic'
         });
-        registry.registerUtility(DummyUtility);
         
         var util = registry.getUtility(IDummyUtility, 'basic');
         
@@ -48,17 +45,15 @@ describe('Global Registry', function() {
     it('can get the correct named utility', function() {
         var IDummyUtility = new Interface({name: "IDummyUtility"});
         
-        var DummyUtility = createUtility({
+        var DummyUtility = new Utility({
             implements: IDummyUtility,
             name: 'basic'
         });
-        registry.registerUtility(DummyUtility);
         
-        var NotMeUtility = createUtility({
+        var NotMeUtility = new Utility({
             implements: IDummyUtility,
             name: 'not me'
         });
-        registry.registerUtility(NotMeUtility);
         
         var util = registry.getUtility(IDummyUtility, 'basic');
         
@@ -69,11 +64,10 @@ describe('Global Registry', function() {
     it("returns 'undefined' if named utility isn't found and we have passed true at end", function() {
         var IDummyUtility = new Interface({name: "IDummyUtility"});
         
-        var DummyUtility_1 = createUtility({
+        var DummyUtility_1 = new Utility({
             implements: IDummyUtility,
             name: 'one'
         });
-        registry.registerUtility(DummyUtility_1);
         
         var utils = registry.getUtility(IDummyUtility, 'two', undefined);
         

@@ -1,10 +1,8 @@
-var assert = require('assert');
 var expect = require('expect.js');
 
 const Interface = require('../lib').createInterfaceClass('test');
 var createObjectPrototype = require('../lib').createObjectPrototype;
-var createUtility = require('../lib').createUtility;
-const { Adapter } = require('../lib');
+const { Adapter, Utility } = require('../lib');
 
 describe('Interfaces', function() {
     it('can be created', function() {
@@ -65,7 +63,7 @@ describe('Interfaces', function() {
         
         var INotImplemented = new Interface({name: 'INotImplemented'});
         
-        var userPrototypeFactory = createUtility({
+        var userPrototypeFactory = new Utility({
             implements: IUserFactory,
             doStuff: function () {
                 return "Hi!"

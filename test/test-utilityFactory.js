@@ -1,14 +1,17 @@
-var assert = require('assert');
 var expect = require('expect.js');
 
 const Interface = require('../lib').createInterfaceClass('test');
-var createUtility = require('../lib').createUtility;
+const { Utility } = require('../lib');
 
 describe('Utility Factory', function() {
+    beforeEach(function () {
+        registry.utilities = {}
+    })
+    
     it('can create an utility', function() {
         var IService = new Interface({name: 'IService'});
 
-        var util = createUtility({
+        var util = new Utility({
             implements: IService
         })
         
@@ -18,7 +21,7 @@ describe('Utility Factory', function() {
     it('can create a named utility', function() {
         var IService = new Interface({name: 'IService'});
 
-        var util = createUtility({
+        var util = new Utility({
             implements: IService,
             name: 'hallo'
         })
@@ -32,16 +35,16 @@ describe('Utility Factory', function() {
 
         IService.prototype.doSomething = function () {}
 
-        var util = createUtility({
+        var util = new Utility({
             implements: IService,
-            doSomething: function () {}
+            doSomething () {}
         })
         
         expect(util).not.to.be(undefined);
     
         var failed
         try {
-            createUtility({
+            new Utility({
                 implements: IService
             })
         } catch (e) {
