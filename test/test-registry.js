@@ -5,7 +5,7 @@ var registry = require('../lib/globalRegistry');
 
 const Interface = require('../lib').createInterfaceClass('test');
 var createUtility = require('../lib').createUtility;
-var createAdapter = require('../lib').createAdapter;
+const { Adapter } = require('../lib');
 var createObjectPrototype = require('../lib').createObjectPrototype;
 
 describe('Global Registry', function() {
@@ -85,10 +85,10 @@ describe('Global Registry', function() {
         
         var IUserAdapter = new Interface({name: "IUserAdapter"});
         
-        var UserAdapter = createAdapter({
+        var UserAdapter = new Adapter({
             implements: IUserAdapter,
             adapts: IUser
-        }).registerWith(registry);        
+        })
         
         var UserPrototype = createObjectPrototype({
             implements: [IUser]
@@ -106,7 +106,7 @@ describe('Global Registry', function() {
         
         var IUserAdapter = new Interface({name: "IUserAdapter"});
         
-        var UserAdapter = createAdapter({
+        var UserAdapter = new Adapter({
             implements: IUserAdapter,
             adapts: IUser
         })
@@ -132,7 +132,7 @@ describe('Global Registry', function() {
         
         var IUserAdapter = new Interface({name: "IUserAdapter"});
         
-        var StrongAdapter = createAdapter({
+        var StrongAdapter = new Adapter({
             implements: IUserAdapter,
             adapts: IStrong
         })
@@ -156,7 +156,7 @@ describe('Global Registry', function() {
         
         var IUserAdapter = new Interface({name: "IUserAdapter"});
         
-        var UserAdapter = createAdapter({
+        var UserAdapter = new Adapter({
             implements: IUserAdapter,
             adapts: UserPrototype
         })
@@ -176,7 +176,7 @@ describe('Global Registry', function() {
         
         var IUserAdapter = new Interface({name: "IUserAdapter"});
         
-        var UserAdapter = createAdapter({
+        var UserAdapter = new Adapter({
             implements: IUserAdapter,
             adapts: IUser
         })
@@ -197,7 +197,7 @@ describe('Global Registry', function() {
         
         var IListWidget = new Interface({name: 'IListWidget'});
         
-        var BaseListWidget = createAdapter({
+        var BaseListWidget = new Adapter({
             implements: IListWidget,
             adapts: IBase
         })
@@ -211,7 +211,7 @@ describe('Global Registry', function() {
             implements: [IUser]
         });
         
-        var UserListWidget = createAdapter({
+        var UserListWidget = new Adapter({
             implements: IListWidget,
             adapts: IUser
         })

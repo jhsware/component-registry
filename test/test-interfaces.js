@@ -4,7 +4,7 @@ var expect = require('expect.js');
 const Interface = require('../lib').createInterfaceClass('test');
 var createObjectPrototype = require('../lib').createObjectPrototype;
 var createUtility = require('../lib').createUtility;
-var createAdapter = require('../lib').createAdapter;
+const { Adapter } = require('../lib');
 
 describe('Interfaces', function() {
     it('can be created', function() {
@@ -44,7 +44,7 @@ describe('Interfaces', function() {
         })
         
         var IPrintUser = new Interface({name: 'IPrintUser'});
-        var printAdapter = createAdapter({
+        var printAdapter = new Adapter({
             implements: IPrintUser,
             adapts: IUser,
             print: function () {

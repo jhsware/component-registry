@@ -2,14 +2,14 @@ var assert = require('assert');
 var expect = require('expect.js');
 
 const Interface = require('../lib').createInterfaceClass('test');
-var createAdapter = require('../lib').createAdapter;
+const { Adapter } = require('../lib');
 
 describe('Adapter Factory', function() {
     it('can create an adapter', function() {
         var IUser = new Interface({name: 'IUser'});
         var IDisplayWidget = new Interface({name: 'IDisplayWidget'});
 
-        var adapter = createAdapter({
+        var adapter = new Adapter({
             implements: IDisplayWidget,
             adapts: IUser
         })
@@ -23,7 +23,7 @@ describe('Adapter Factory', function() {
         
         IDisplayWidget.prototype.render = function () {}
         
-        var adapter = createAdapter({
+        var adapter = new Adapter({
           implements: IDisplayWidget,
           adapts: IUser,
           render: function () {}
@@ -33,7 +33,7 @@ describe('Adapter Factory', function() {
 
         var failed
         try {
-            var adapter = createAdapter({
+            var adapter = new Adapter({
               implements: IDisplayWidget,
               adapts: IUser
             })

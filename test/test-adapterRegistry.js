@@ -1,16 +1,12 @@
-var assert = require('assert');
 var expect = require('expect.js');
 
-var AdapterRegistry = require('../lib').AdapterRegistry;
+const AdapterRegistry = require('../lib').AdapterRegistry;
 
 const Interface = require('../lib').createInterfaceClass('test');
 var createObjectPrototype = require('../lib').createObjectPrototype;
-var createAdapter = require('../lib').createAdapter;
+const { Adapter } = require('../lib');
 
 describe('Adapter Registry', function() {
-    beforeEach(function () {
-        registry.adapters = {}
-    })
 
     it('can be created', function() {        
         var registry = new AdapterRegistry();
@@ -18,17 +14,18 @@ describe('Adapter Registry', function() {
         expect(registry).to.not.be(undefined);
     });
     
-    it('can register adapter with convenience method', function() {
+    it('can register adapter with custom registry', function() {
         var registry = new AdapterRegistry();
         
         var IUser = new Interface({name: "IUser"});
         
         var IUserAdapter = new Interface({name: "IUserAdapter"});
         
-        var UserAdapter = createAdapter({
+        var UserAdapter = new Adapter({
+            registry: registry,
             implements: IUserAdapter,
             adapts: IUser
-        }).registerWith(registry);        
+        })
         
         var UserPrototype = createObjectPrototype({
             implements: [IUser]
@@ -48,12 +45,11 @@ describe('Adapter Registry', function() {
         
         var IUserAdapter = new Interface({name: "IUserAdapter"});
         
-        var UserAdapter = createAdapter({
+        var UserAdapter = new Adapter({
+            registry: registry,
             implements: IUserAdapter,
             adapts: IUser
         })
-        
-        registry.registerAdapter(UserAdapter);
         
         
         var UserPrototype = createObjectPrototype({
@@ -76,12 +72,11 @@ describe('Adapter Registry', function() {
         
         var IUserAdapter = new Interface({name: "IUserAdapter"});
         
-        var StrongAdapter = createAdapter({
+        var StrongAdapter = new Adapter({
+            registry: registry,
             implements: IUserAdapter,
             adapts: IStrong
         })
-        
-        registry.registerAdapter(StrongAdapter);
         
         
         var UserPrototype = createObjectPrototype({
@@ -102,12 +97,11 @@ describe('Adapter Registry', function() {
         
         var IUserAdapter = new Interface({name: "IUserAdapter"});
         
-        var UserAdapter = createAdapter({
+        var UserAdapter = new Adapter({
+            registry: registry,
             implements: IUserAdapter,
             adapts: UserPrototype
         })
-        
-        registry.registerAdapter(UserAdapter);
         
         var theUser = new UserPrototype();
         
@@ -124,12 +118,11 @@ describe('Adapter Registry', function() {
         
         var IUserAdapter = new Interface({name: "IUserAdapter"});
         
-        var UserAdapter = createAdapter({
+        var UserAdapter = new Adapter({
+            registry: registry,
             implements: IUserAdapter,
             adapts: IUser
         })
-        
-        registry.registerAdapter(UserAdapter);
         
         var ua = registry.getAdapter(IUser, IUserAdapter);
 
@@ -150,13 +143,11 @@ describe('Adapter Registry', function() {
         
         var IListWidget = new Interface({name: "IListWidget"});
         
-        var BaseListWidget = createAdapter({
+        var BaseListWidget = new Adapter({
+            registry: registry,
             implements: IListWidget,
             adapts: IBase
         })
-        
-        registry.registerAdapter(BaseListWidget);
-        
         
         var UserPrototype = createObjectPrototype({
             extends: [BasePrototype]
@@ -180,12 +171,11 @@ describe('Adapter Registry', function() {
         
         var IListWidget = new Interface({name: 'IListWidget'});
         
-        var BaseListWidget = createAdapter({
+        var BaseListWidget = new Adapter({
+            registry: registry,
             implements: IListWidget,
             adapts: IBase
         })
-        
-        registry.registerAdapter(BaseListWidget);
         
         var IUser = new Interface({name: 'IUser'});
         
@@ -194,13 +184,11 @@ describe('Adapter Registry', function() {
             implements: [IUser]
         });
         
-        var UserListWidget = createAdapter({
+        var UserListWidget = new Adapter({
+            registry: registry,
             implements: IListWidget,
             adapts: IUser
         })
-        
-        registry.registerAdapter(UserListWidget);
-        
         
         var theUser = new UserPrototype();
         
