@@ -16,7 +16,7 @@ describe('Utility Registry', function() {
         expect(registry).to.not.be(undefined);
     });
         
-    it('can register with convenience method .registerWith', function() {
+    it('can get with registry.getUtility', function() {
         var registry = new UtilityRegistry();
         
         var IDummyUtility = new Interface({name: "IDummyUtility"});
@@ -41,7 +41,7 @@ describe('Utility Registry', function() {
             implements: IDummyUtility
         });
         
-        var util = registry.getUtility(IDummyUtility);
+        var util = new IDummyUtility(IDummyUtility, { registry: registry });
         
         expect(util).to.be.a(DummyUtility);
     });
@@ -79,7 +79,7 @@ describe('Utility Registry', function() {
             name: 'not me'
         });
         
-        var util = registry.getUtility(IDummyUtility, 'basic');
+        var util = new IDummyUtility('basic', { registry: registry });
         
         expect(util).to.be.a(DummyUtility);
         expect(util).not.to.be.a(NotMeUtility);
