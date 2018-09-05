@@ -18,11 +18,11 @@
   },
   "main": "./lib/index.js",
   "dependencies": {
-    "uuid": "^3.0.0"
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
-    "mocha": "^3.1.2",
+    "mocha": "^3.5.3",
     "mocha-better-spec-reporter": "^3.0.2"
   },
   "scripts": {
