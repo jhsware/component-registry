@@ -1,12 +1,12 @@
 var assert = require('assert');
 var expect = require('expect.js');
 
-var createInterface = require('../lib').createInterface;
+const Interface = require('../lib').createInterfaceClass('test');
 var createUtility = require('../lib').createUtility;
 
 describe('Utility Factory', function() {
     it('can create an utility', function() {
-        var IService = createInterface({name: 'IService'});
+        var IService = new Interface({name: 'IService'});
 
         var util = createUtility({
             implements: IService
@@ -16,7 +16,7 @@ describe('Utility Factory', function() {
     });
 
     it('can create a named utility', function() {
-        var IService = createInterface({name: 'IService'});
+        var IService = new Interface({name: 'IService'});
 
         var util = createUtility({
             implements: IService,
@@ -27,8 +27,10 @@ describe('Utility Factory', function() {
         expect(util.name).to.equal('hallo');
     });
 
-    it("checks for existence of members in implemnented interface", function() {
-        var IService = createInterface({name: 'IService', members: { doSomething: 'function: does something...'}});
+    it("checks for existence of members in implemented interface", function() {
+        var IService = new Interface({name: 'IService'});
+
+        IService.prototype.doSomething = function () {}
 
         var util = createUtility({
             implements: IService,
