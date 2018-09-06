@@ -6,6 +6,44 @@ The purpose of component-registry is to help you create reusable components that
 
 Think of it as decoupled imports and a straightforward way of doing composition.
 
+### Migration to 1.0 ###
+Check the end of this document for a migration guide!
+
+Version 1.0 should be a drop in replacement for 0.2.x and 0.3.x. All tests from 0.3 have been moved to the refactored 1.0 release.
+
+### Sample Code ###
+```JavaScript
+import { createInterfaceClass, Adapter, createObjectPrototype } from 'component-registry'
+const Interface = createInterfaceClass('test')
+
+const IUser = new Interface({name: 'IUser'})
+
+const IDisplayWidget = new Interface({name: 'IDisplayWidget'})
+IDisplayWidget.prototype.render = function () {}
+
+const adapter = new Adapter({
+    implements: IDisplayWidget,
+    adapts: IUser,
+    render: function () {
+        console.log(`I am a ${this._type}`)
+    }
+})
+
+const User = createObjectPrototype({
+    implements: [IUser],
+    constructor(params) {
+        this._type = 'User'
+    }
+})
+
+const oneUser = new User()
+
+new IDisplay(oneUser).render()
+// [console]$ I am a User
+
+
+```
+
 ### The Global Registry ##
 The brain of the component-registry is the `globalRegistry` which keeps track of all the components you have available in your application. These are normally registered at startup, but can be added at any time during your application lifecycle.
 
@@ -432,3 +470,56 @@ When you have created a scoped registry you might want to register some of your 
 Get a list of utilities that implement a given interface (returns list of objects that contain the utility and name (if it is a named utility))
 
 Good luck!
+
+## Migrating to 1.0 ##
+
+Migration is mostly about search and replace, all params are the same. Note, if you do introspection there might be a slight change of naming of props on the created objects. We have had ".schema" which now should be "._schema". If you rely on .schema you need to change this.
+
+### Interface ###
+```JavaScript
+// Old syntax
+import { createInterface } from 'component-registry'
+
+const IDummy = createInterface({ name: 'IDummy' })
+
+// New syntax
+import { createInterfaceClass } from 'component-registry'
+const Interface = createInterfaceClass('my-app-namespace')
+
+const IDummy = new Interface({ name: 'IDummy' })
+```
+
+### Adapter ###
+```JavaScript
+// Old syntax
+import { createAdapter } from 'component-registry'
+createAdapter({
+    implements: 'IWidget',
+    adapts: 'IMyObject'
+}).registerWith(globalRegistry)
+
+// New syntax
+import { Adapter } from 'component-registry'
+new Adapter({
+    implements: 'IWidget',
+    adapts: 'IMyObject'
+})
+```
+
+### Utility ###
+```JavaScript
+// Old syntax
+import { createUtility } from 'component-registry'
+createUtility({
+    implements: 'IService'
+}).registerWith(globalRegistry)
+
+// New syntax
+import { Utility } from 'component-registry'
+new Utility({
+    implements: 'IService'
+})
+```
+
+### ObjectPrototype ###
+No changes!
