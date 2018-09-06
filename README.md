@@ -415,7 +415,7 @@ const utils = registry.getUtilities(IInterface);
 ```
 Find all registered utilities (named and unnamed) that implement the given interface.
 
-##Registry##
+## Registry ##
 ```JavaScript
 import { AdapterRegistry, UtilityRegistry, Registry } from 'comonent-registry'
 const myRegistry = new Registry();
@@ -424,10 +424,11 @@ const myUtilityRegistry = new UtilityRegistry();
 ```
 
 When you have created a scoped registry you might want to register some of your existing adapters. In this case you would use the registration API:
+
 ```JavaScript
     registry.registerAdapter(MyAdapter);
     registry.registerUtility(utility);
 ```
-
-
 Get a list of utilities that implement a given interface (returns list of objects that contain the utility and name (if it is a named utility))
+
+Good luck!
