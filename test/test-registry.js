@@ -1,7 +1,7 @@
 var assert = require('assert');
 var expect = require('expect.js');
 
-var registry = require('../lib/globalRegistry');
+const { globalRegistry: registry } = require('../lib');
 
 const Interface = require('../lib').createInterfaceClass('test');
 const { Adapter, Utility } = require('../lib');
