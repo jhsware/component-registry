@@ -3,33 +3,35 @@
 
 The purpose of component-registry is to help you create reusable components that are easy to extend and customise. It is heavily inspired by battle proven concepts that have been available for many years in the Python community through the Zope Toolkit(ZTK).
 
+Think of it as decoupled imports and a straightforward way of doing composition.
+
 ### The Global Registry ##
 The brain of the component-registry is the `globalRegistry` which keeps track of all the components you have available in your application. These are normally registered at startup, but can be added at any time during your application lifecycle.
 
 ### Adapters, Utilities and ObjectPrototypes ##
 There are three main object types that are available in component-registry. Adapters, Utilities and ObjectPrototypes.
 
-**ObjectPrototypes** are basially entity objects. They contain data and often nothing more. ObjectPrototypes will look a lot like the JSON you would send between subsystems. 
+**ObjectPrototypes** are basially entity objects. They contain data and often nothing more. ObjectPrototypes will normally look a lot like the JSON you would send between subsystems. 
 
 An **Adapter** most of the time works in concert with an ObjectPrototype. You would ask the registry to find an adapter that has certain capabilities, perhaps methods that can convert the ObjectPrototype to JSON or HTML markup. The most obvious use of Adapters is to implement UI-widgets, but you can also use it for business logic that operates on an entity object. Basically you can move any methods you would otherwise place on an entity object to the adapter. This keeps the ObjectPrototypes lean and data centric.
 
-**Utilities** are stateless components. They provide you with utility methods or system settings. You could get DB-credentials through a Utility, or you could provide methods for i18n-translations in a Utility. Just like Adapters you would ask the registry to find a Utility with the capabilities you require.
+**Utilities** are stateless components. They provide you with utility methods or services. You could get DB-credentials through a Utility, or you could provide methods for i18n-translations. Similar to Adapters you would ask the registry to find a Utility with the capabilities you require.
 
 ### Interfaces ##
-The capabilities of your Adapters and Utilities are identified by **Interfaces**. These are marker objects with human readable names that you use to tell the `globalRegistry` what kind of Adapter or Utility you are looking for.
+The capabilities of your Adapters and Utilities are specified by **Interfaces**. Interfaces are what some would call developer contracts, literally a promise to implement a given set of methods and properties. When doing a lookup of adapters or utilities, the `globalRegistry` uses interfaces to find what you are looking for.
 
-By using Interfaes you decouple your code. When asking the globalRegistry for an Adapter or Utility that implements a specific Interface you have no idea where or how it has been implemented. All you know is that it should be registered with the globalRegistry. In your application the benefit might not be obvious, but if you create an NPM package that requires your application to perform certain tasks, such as providing application specific i18n-translations, all the package needs to know is that it should ask for a Utility that implements a certain interface, say ITranslationUtil. Then it is up to your application to provide that utility so the package can access it at runtime.
+By using Interfaces you decouple your code. When asking the globalRegistry for an Adapter or Utility that implements a specific Interface you have no idea where or how it has been implemented. All you know is that it should be registered with the globalRegistry. In your application the benefit might not be obvious. However, if you create an NPM package that requires your application to perform certain tasks, such as providing application specific i18n-translations, all that package needs to know is that it should ask for a Utility that implements a certain interface, say ITranslationUtil. Your application can provide that utility through the globalRegistry so the package can access it at runtime.
 
-This is a two way street, because if you want to change the package that consume ITranslationUtil, you won't have to worry about ripping out initialisation code etc. You only make sure the new package you have created asks for the same Interface and it is automatically hooked up with your existing Utility.
+This is a two way street. If you want to change the package that consume ITranslationUtil, you won't have to worry about ripping out initialisation code etc. All you have to do is make sure the new package you have created asks for the same Interface and it is automatically hooked up with your existing Utility.
 
 This becomes even more powerful when you have several NPM-packages that need to consume the same ITranslationUtil. You could create a meta-package that literally only contains Interfaces and then have both consuming packages and your application use those common Interfaces as glue.
 
-Why is this good? Well it forces you to think about the architecture of your application. And it will automatically make you write reusable code without any added effort.
+Why is this good? Well it forces you to think about the architecture of your application. And it will automatically makes you write reusable code with next to no added effort.
 
-Another brilliant side-effect is that you can move your implementation code around, and also split it into it's own NPM-packages at any time, and as long as you don't move the Interface all the components will still find what it is looking without changing a single line of code. And if you need to move an Interface, it is easy to change the imports. This makes refactoring simple, fun and helps in agile development.  
+Another brilliant side-effect is that you can move your implementation code around, and also split it into it's own NPM-packages at any time. As long as you don't move the Interface, all the components can still do their lookups without changing a single line of code. This makes refactoring simple, fun and helps in agile development.  
 
 ### More on ObjectPrototypes and Adapters ##
-ObjectPrototypes contain a bit more than just data. They also have a property called `implements` that contains an array of Interfaces that describe the capabilities of that object. The order is important, the first Interface in this array tells us what this ObjectPrototype is. The rest tell us what other things this ObjectPrototype contains or can be used for. This could be a list of implemented Interfaces:
+ObjectPrototypes contain a bit more than just data. They are passed `implements` that contains an array of Interfaces that describe the capabilities of that object. The order is important, the first Interface in this array tells us what this ObjectPrototype is. The rest tell us what other things this ObjectPrototype contains or can be used for. This could be a list of implemented Interfaces:
 
 ```JavaScript
 import { createObjectPrototype } from 'component-registry'
@@ -38,7 +40,6 @@ const Employee = createObjectPrototype({
     ...
 })
 ```
-
 The ObjectPrototype should be called Employee, which corresponds to the most significant Interface it implements. When you instantiate an object of type Employee you will find the Interfaces as the property `_implements`.
 
 The `globalRegistry` uses these interfaces in order to find Adapters for you that can be used with your Employee objects. Say that you want to render a directory listing of your employees. You decide you want each row to be rendered by using an Adapter that you find with the interface `IDirectoryListEntryWidget`, you can call the Interface what ever you want. Now you need to implement that Adapter so it can render your Employee object. It would look something like this:
@@ -52,8 +53,7 @@ const DirectoryListEntryWidget = new Adapter({
     render: function () { ... }
 })
 ```
-
-The property **implements** tells the globalRegistry what the Adapter can do. The property **adapts** tells the globalRegistry what kind of object it can do this with.
+The parameter **implements** tells the globalRegistry what the Adapter can do. The parameter **adapts** tells the globalRegistry what kind of object it can do this with.
 
 So when you want to render the list you would write something like this:
 
@@ -64,13 +64,12 @@ function renderList (entries) {
     return outp.join('\n')
 }
 ```
+Your list rendering code has no idea how the individual widgets are rendered, it is all done by the widget. All it knows is that it should get the `IDirectoryListEntryWidget` adapter that adapts the `entry` object.
 
-Your list rendering code has no idea how the individual widgets are rendered, it is done by the widget. All it knows is that it should get the IDirectoryListEntryWidget that adapts the entry object we passed to the `globalRegistry.getAdapter` call.
-
-In the most simple case with only a single object type this still makes the code compact and readable. But the power becomes more apparent if we have more object types in our entries list. There could be ten different object types, each with their own registered Adapter that implements IDirectoryListEntryWidget and they would all be rendered by the same code which is blissfully unaware of how different the implementations are.
+In a simple case with only a single object type this still makes the code compact and readable. But the power becomes more apparent if we have more object types in our entries list. There could be ten different object types, each with their own registered Adapter that implements IDirectoryListEntryWidget. These list items can all be rendered by the same code which is blissfully unaware of how different the implementations are.
 
 ### The Power of Inheritance ##
-The ObjectPrototype doesn't only have Interfaces, it can also extend other Object Prototypes. When you inherit another ObjectPrototype, you will also inherit all the interfaces it implements. This allows us to gradually refine the capabilities of our entity objects. Employee could inherit from BaseObject. SalesRep and Manager could inherit from Employee. This is done by adding an `extends` property when creating your ObjectPrototype:
+The ObjectPrototype doesn't only have Interfaces, it can also inherit interfaces and methods from other ObjectPrototypes. This allows us to gradually refine the capabilities of our entity objects. Employee could inherit from BaseObject. SalesRep and Manager could inherit from Employee. This is done by adding an `extends` property when creating your ObjectPrototype:
 
 ```JavaScript
 const Manager = createObjectPrototype({
@@ -81,7 +80,6 @@ const Manager = createObjectPrototype({
     }
 }) 
 ```
-
 The cool thing with Adapters is that since we have extended Employee, our new Manager object will also implement IEmployee. This means that if we ask for IDirectoryListEntryWidget it will return the Adapter we created to render the Employee (i.e. which adapts IEmployee). In other words, by extending Employee we get everything available to Employee objects out of the box. However, once we create a specialised Adapter which implements IManager, this will take precedence during the lookup process in `globalRegistry`. In order words we will be able to render our Manager object out of the box, but we can create a specialised widget at any time.
 
 This is super powerful when creating a CMS. There will be a ton of Employee widgets that you can and want to share with Manager objects. You only need to create special widgets in the few cases where you want Manager objects to be rendered differently.
@@ -234,21 +232,19 @@ Another example of how to use a utility could be if you want to provide internat
 
 ```JavaScript
 import { createObjectPrototype } from 'component-registry'
-const ObjectPrototype = createObjectPrototype({
+const MyObjectPrototype = createObjectPrototype({
     implements: [IObject],
     sayHi() {
         return "Hi!"
     }
 })
 ```
-Creates an object prototype that you can instantiate objects with
-
 The object implements the provided list of interfaces and the method sayHi will be added to the object.prototype and available to instantiated objects.
 
 The first interface in the list is significant. It should be a unique interface describing the object. The name of this interface is used for inheritance.
 
 ```JavaScript
-const obj = new ObjectPrototype();
+const obj = new MyObjectPrototype();
 ```
 Creates an instance of the object prototype you created above.
 
@@ -258,29 +254,29 @@ You can create an object prototype that inherits methods and interfaces from oth
 ```JavaScript
 import { createObjectPrototype } from 'component-registry'
 const AnotherObjectPrototype = createObjectPrototype({
-    extends: [ObjectPrototype],
+    extends: [MyObjectPrototype],
     implements: [IAnotherObject],
-    // Inherits IObject from ObjectPrototype
+    // Inherits IObject from MyObjectPrototype
     sayHo() {
         return "Ho!"
     }
-    // Inherits sayHi() from ObjectPrototype
+    // Inherits sayHi() from MyObjectPrototype
 })
 
 import { createObjectPrototype } from 'component-registry'
 const OverridingPrototype = createObjectPrototype({
     extends: [AnotherObjectPrototype],
     implements: [IOverriding],
-    // Inherits IObject from ObjectPrototype
+    // Inherits IObject from MyObjectPrototype
     // Inherits IAnotherObject from AnotherObjectPrototype
     sayHi() {
         return "Ho! " + this._IObject.sayHi.call(this);
     }
     // Inherits sayHo() from AnotherObjectPrototype
-    // Inherits sayHi() from ObjectPrototype but overrides it
+    // Inherits sayHi() from MyObjectPrototype but overrides it
 })
 ```
-`OverridingPrototype` inherits the method *sayHi()* but it is overridden by the local implementation of *sayHi()*. It is still possible to access the original sayHi() method but it will be available like thos `this._IObject.sayHi.call(this)`, where `_IObject` is derived from the name of the first implemented interface of *ObjectProtype*.
+`OverridingPrototype` inherits the method *sayHi()* but it is overridden by the local implementation of *sayHi()*. It is still possible to access the original sayHi() method but it will be available like thos `this._IObject.sayHi.call(this)`, where `_IObject` is derived from the name of the first implemented interface of *MyObjectProtype*.
 
 The method sayHi() returns "Ho! Hi!".
 
