@@ -1,6 +1,6 @@
 var expect = require('expect.js');
 
-const { createInterfaceClass, Adapter, createObjectPrototype, globalRegistry } = require('component-registry')
+const { createInterfaceClass, Adapter, createObjectPrototype, globalRegistry } = require('../lib')
 
 class consoleMock {
   log(inp) {
