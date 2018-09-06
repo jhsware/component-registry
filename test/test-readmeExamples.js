@@ -1,6 +1,6 @@
 var expect = require('expect.js');
 
-const { createInterfaceClass, Adapter, createObjectPrototype } = require('component-registry')
+const { createInterfaceClass, Adapter, createObjectPrototype, globalRegistry } = require('component-registry')
 
 class consoleMock {
   log(inp) {
@@ -9,6 +9,10 @@ class consoleMock {
 }
 
 describe('Readme Examples', function() {
+  beforeEach(function () {
+    globalRegistry.adapters = {}
+  })
+
   it('Sample Code', function() {
     let console = new consoleMock()
 
@@ -36,7 +40,7 @@ describe('Readme Examples', function() {
 
     const oneUser = new User()
 
-    const outp = new IDisplayWidget(oneUser).render()
+    new IDisplayWidget(oneUser).render()
     // [console]$ I am a User
     
     expect(console.logResult).to.be('I am a User');

@@ -39,8 +39,6 @@ const oneUser = new User()
 
 new IDisplay(oneUser).render()
 // [console]$ I am a User
-
-
 ```
 
 ### The Global Registry ##
