@@ -24,7 +24,7 @@ const adapter = new Adapter({
     implements: IDisplayWidget,
     adapts: IUser,
     render: function () {
-        console.log(`I am a ${this._type}`)
+        console.log(`I am a ${this.context._type}`)
     }
 })
 
