@@ -491,15 +491,15 @@ const IDummy = new Interface({ name: 'IDummy' })
 // Old syntax
 import { createAdapter } from 'component-registry'
 createAdapter({
-    implements: 'IWidget',
-    adapts: 'IMyObject'
+    implements: IWidget,
+    adapts: IMyObject
 }).registerWith(globalRegistry)
 
 // New syntax
 import { Adapter } from 'component-registry'
 new Adapter({
-    implements: 'IWidget',
-    adapts: 'IMyObject'
+    implements: IWidget,
+    adapts: IMyObject
 })
 ```
 
@@ -508,13 +508,13 @@ new Adapter({
 // Old syntax
 import { createUtility } from 'component-registry'
 createUtility({
-    implements: 'IService'
+    implements: IService
 }).registerWith(globalRegistry)
 
 // New syntax
 import { Utility } from 'component-registry'
 new Utility({
-    implements: 'IService'
+    implements: IService
 })
 ```
 
