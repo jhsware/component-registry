@@ -1,4 +1,3 @@
-var assert = require('assert');
 var expect = require('expect.js');
 
 var UtilityRegistry = require('../lib').UtilityRegistry;
