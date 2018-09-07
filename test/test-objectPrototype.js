@@ -1,4 +1,3 @@
-var assert = require('assert');
 var expect = require('expect.js');
 
 const Interface = require('../lib').createInterfaceClass('test');
