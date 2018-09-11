@@ -471,7 +471,7 @@ Good luck!
 
 ## Migrating to 1.0 ##
 
-Migration is mostly about search and replace, all params are the same. Note, if you do introspection there might be a slight change of naming of props on the created objects. We have had ".schema" which now should be "._schema". If you rely on .schema you need to change this.
+Migration is mostly about search and replace, all params are the same. Note, if you do introspection there might be a slight change of naming of props on the created objects.
 
 ### Interface ###
 ```javascript
