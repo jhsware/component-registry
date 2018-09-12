@@ -3,6 +3,8 @@ var expect = require('expect.js');
 const Interface = require('../lib').createInterfaceClass('test');
 var createObjectPrototype = require('../lib').createObjectPrototype;
 
+const { Schema } = require('./mocks')
+
 describe('Object Prototypes', function() {
     it('can be created', function() {
         var IUser = new Interface({name: 'IUser'});
@@ -264,12 +266,10 @@ describe('Object Prototypes', function() {
     it("can update value of properties", function() {
         var IUser = new Interface({
             name: 'IUser',
-            schema: {
-                _fields: {
-                    title: "",
-                    empty: ""                    
-                }
-            }
+            schema: new Schema({
+                title: "",
+                empty: ""                    
+            })
         });
         
         var User = createObjectPrototype({
@@ -291,12 +291,10 @@ describe('Object Prototypes', function() {
     it("can remove schema field property", function() {
         var IUser = new Interface({
             name: 'IUser',
-            schema: {
-                _fields: {
-                    title: "",
-                    empty: ""                    
-                }
-            }
+            schema: new Schema({
+                title: "",
+                empty: ""                    
+            })
         });
         
         var User = createObjectPrototype({
@@ -318,12 +316,10 @@ describe('Object Prototypes', function() {
     it("won't overwrite prototype properties", function() {
         var IUser = new Interface({
             name: 'IUser',
-            schema: {
-                _fields: {
-                    title: "",
-                    empty: ""                    
-                }
-            }
+            schema: new Schema({
+                title: "",
+                empty: ""                    
+            })
         });
         
         var User = createObjectPrototype({
@@ -344,8 +340,8 @@ describe('Object Prototypes', function() {
     });
 
     it("adds schema fields for all implemented interfaces", function() {
-        var IUser = new Interface({name: 'IUser', schema: { _fields: { name: '', age: '' }}});
-        var ILooks = new Interface({name: 'ILooks', schema: { _fields: { eyes: '', height: ''}}});
+        var IUser = new Interface({name: 'IUser', schema: new Schema({ name: '', age: '' })});
+        var ILooks = new Interface({name: 'ILooks', schema: new Schema({ eyes: '', height: ''})});
         
         var userProto = createObjectPrototype({
             implements: [IUser, ILooks]
