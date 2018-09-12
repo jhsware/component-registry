@@ -8,7 +8,7 @@ describe('Interfaces', function() {
     it('can be created', function() {
         var IUser = new Interface({name: 'IUser'});
                 
-        expect(IUser._name).to.be('IUser');
+        expect(IUser.name).to.be('IUser');
         expect(IUser.interfaceId).not.to.be(undefined);
     });
     
