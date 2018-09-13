@@ -22,11 +22,10 @@
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
-    "mocha": "^3.5.3",
-    "mocha-better-spec-reporter": "^3.0.2"
+    "mocha": "^3.5.3"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --reporter mocha-better-spec-reporter ./test/*.js ./test/**/*.js",
+    "test": "./node_modules/mocha/bin/mocha ./test/*.js ./test/**/*.js",
     "debugtest": "./node_modules/mocha/bin/mocha --debug-brk --no-timeouts"
   }
 }
