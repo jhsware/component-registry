@@ -3,7 +3,7 @@
 import AdapterRegistry from './adapterRegistry'
 import UtilityRegistry from './utilityRegistry'
 
-export default class Registry {
+export class Registry {
     constructor () {
         /*
 
@@ -36,3 +36,5 @@ export default class Registry {
         return global.registry;
     }
 }
+
+export const globalRegistry = new Registry()

@@ -1,7 +1,7 @@
 import expect from 'expect.js'
 
-var createInterface = require('../../lib').createInterface;
-var createAdapter = require('../../lib').createAdapter;
+var createInterface = require('../../dist/cjs').createInterface;
+var createAdapter = require('../../dist/cjs').createAdapter;
 
 describe('Compat', function () {
     describe('Adapter Factory', function() {

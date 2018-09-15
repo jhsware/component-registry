@@ -1,9 +1,9 @@
 import expect from 'expect.js'
 
-var AdapterRegistry = require('../../lib').AdapterRegistry;
-var createInterface = require('../../lib').createInterface;
-var createObjectPrototype = require('../../lib').createObjectPrototype;
-var createAdapter = require('../../lib').createAdapter;
+var AdapterRegistry = require('../../dist/cjs').AdapterRegistry;
+var createInterface = require('../../dist/cjs').createInterface;
+var createObjectPrototype = require('../../dist/cjs').createObjectPrototype;
+var createAdapter = require('../../dist/cjs').createAdapter;
 
 describe('Compat', function () {
     describe('Adapter Registry', function() {

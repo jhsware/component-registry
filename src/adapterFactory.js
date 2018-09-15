@@ -1,6 +1,11 @@
 'use strict';
-import { assert } from './common'
-import { globalRegistry } from './index'
+import {
+    assert,
+    extendPrototypeWithThese,
+    addMembers,
+    checkMembers,
+    isDevelopment } from './common'
+import { globalRegistry } from './globalRegistry'
 
 export class Adapter {
     constructor (params, compat) {
@@ -15,7 +20,7 @@ export class Adapter {
                 adapts: IListableItem
             })
         */
-       if (common.isDevelopment) {
+       if (isDevelopment) {
             assert(typeof params.implements === 'function' && params.implements.interfaceId, '[componeont-registry] When creating an Adapter, param implements must be an interface!')
             assert((typeof params.implements === 'function' && params.implements.interfaceId)
                 || (typeof params.implements === 'object' && params.implements._implements), '[componeont-registry] When creating an Adapter, param adapts must be an interface or an ObjectPrototype!')
@@ -39,13 +44,13 @@ export class Adapter {
         
         // If extends other do first so they get overridden by those passed as params
         // Inehrited prototypes with lower index have precedence
-        common.extendPrototypeWithThese(Adapter, extendThese)
+        extendPrototypeWithThese(Adapter, extendThese)
             
         // The rest of the params are added as methods, overriding previous
-        common.addMembers(Adapter, params);
+        addMembers(Adapter, params);
 
         // Check that we have added all the members that where defined as members
-        common.checkMembers(Adapter, [implementsInterface])
+        checkMembers(Adapter, [implementsInterface])
         
         // Add the interfaces so they can be checked
         // TODO: Filer so we remove duplicates from existing list (order makes difference)

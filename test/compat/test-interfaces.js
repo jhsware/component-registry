@@ -1,9 +1,9 @@
 import expect from 'expect.js'
 
-var createInterface = require('../../lib').createInterface;
-var createObjectPrototype = require('../../lib').createObjectPrototype;
-var createUtility = require('../../lib').createUtility;
-var createAdapter = require('../../lib').createAdapter;
+var createInterface = require('../../dist/cjs').createInterface;
+var createObjectPrototype = require('../../dist/cjs').createObjectPrototype;
+var createUtility = require('../../dist/cjs').createUtility;
+var createAdapter = require('../../dist/cjs').createAdapter;
 
 describe('Compat', function () {
     describe('Interfaces', function() {
