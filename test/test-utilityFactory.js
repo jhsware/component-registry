@@ -1,4 +1,4 @@
-var expect = require('expect.js');
+import expect from 'expect.js'
 
 const Interface = require('../lib').createInterfaceClass('test');
 const { Utility } = require('../lib');
