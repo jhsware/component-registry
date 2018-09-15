@@ -1,10 +1,12 @@
 import expect from 'expect.js'
 
-const AdapterRegistry = require('../lib').AdapterRegistry;
+import { AdapterRegistry } from '../lib'
 
-const Interface = require('../lib').createInterfaceClass('test');
-var createObjectPrototype = require('../lib').createObjectPrototype;
-const { Adapter } = require('../lib');
+import { createInterfaceClass } from '../lib'
+const Interface = createInterfaceClass('test')
+
+import { createObjectPrototype } from '../lib'
+import { Adapter } from '../lib'
 
 describe('Adapter Registry', function() {
 

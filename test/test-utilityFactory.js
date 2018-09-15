@@ -1,7 +1,8 @@
 import expect from 'expect.js'
 
-const Interface = require('../lib').createInterfaceClass('test');
-const { Utility } = require('../lib');
+import { createInterfaceClass } from '../lib'
+const Interface = createInterfaceClass('test')
+import { Utility } from '../lib'
 
 describe('Utility Factory', function() {
     beforeEach(function () {

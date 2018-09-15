@@ -1,9 +1,9 @@
 import expect from 'expect.js'
 
-const Interface = require('../lib').createInterfaceClass('test');
-var createObjectPrototype = require('../lib').createObjectPrototype;
-
-const { Schema } = require('./mocks')
+import { createInterfaceClass } from '../lib'
+const Interface = createInterfaceClass('test')
+import { createObjectPrototype } from '../lib'
+import { Schema } from './mocks'
 
 describe('Object Prototypes', function() {
     it('can be created', function() {
