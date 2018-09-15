@@ -1,6 +1,5 @@
 'use strict';
-
-import { isDevelopment } from './common';
+import { isDevelopment } from './common'
 
 /*
 
@@ -9,10 +8,10 @@ import { isDevelopment } from './common';
 */
 
 function AdapterRegistryException(message, context) {
-    this.message = message;
-    this.name = "AdapterRegistryException";
-    this.context = context;
-    this.stack = new Error().stack;
+   this.message = message;
+   this.name = "AdapterRegistryException";
+   this.context = context;
+   this.stack = (new Error()).stack;
 }
 
 /*
@@ -23,7 +22,7 @@ function AdapterRegistryException(message, context) {
 
 function AdapterRegistry() {
     this.adapters = {};
-}
+} 
 
 AdapterRegistry.prototype.registerAdapter = function (adapter) {
     /*
@@ -33,20 +32,23 @@ AdapterRegistry.prototype.registerAdapter = function (adapter) {
         implementsInterface -- the interface that the adapter implements
         adapter -- the prototype of the adapter to instantiate on get
     */
-    var adapts = adapter.prototype._adapts,
+    var adapts = adapter.prototype._adapts, 
         implementsInterfaces = adapter.prototype._implements;
-
+        
     // TODO: Check that the adapter implements the interface
     // TODO: else throw InterfaceNotImplementedError
-
-
+    
+    
     // INTEGRITY CHECK: Have we specified what the adapter implements?
     if (!implementsInterfaces || !implementsInterfaces[0].interfaceId) {
-        throw new AdapterRegistryException("Registration error: You haven't specified interface that this adapter implements", {
-            adapter: adapter
-        });
+        throw new AdapterRegistryException(
+            "Registration error: You haven't specified interface that this adapter implements", 
+            {
+                adapter: adapter
+            }
+        )
     }
-
+    
     // Register the adapter (interfaces are stored in a list)
     var tmpInterfaceId = implementsInterfaces[0].interfaceId;
     if (typeof this.adapters[tmpInterfaceId] === 'undefined') {
@@ -54,18 +56,21 @@ AdapterRegistry.prototype.registerAdapter = function (adapter) {
             implementsInterface: implementsInterfaces[0],
             interfaceAdapters: [],
             objectAdapters: []
-        };
+        }
     }
-
+    
     // INTEGRITY CHECK: Have we specified what the adapter has specified what it adapts?
     if (!adapts) {
-        throw new AdapterRegistryException("Registration error: You haven't specified interface or object that this adapter adapts", {
-            adapter: adapter
-        });
+        throw new AdapterRegistryException(
+            "Registration error: You haven't specified interface or object that this adapter adapts", 
+            {
+                adapter: adapter
+            }
+        )
     }
-
+    
     var adapters = this.adapters[tmpInterfaceId];
-
+    
     if (adapts.interfaceId) {
         // This should be registered as an interface
         adapters.interfaceAdapters.push({
@@ -78,8 +83,9 @@ AdapterRegistry.prototype.registerAdapter = function (adapter) {
             adapts: adapts,
             adapter: adapter
         });
-    }
-};
+        
+    }    
+}
 
 // TODO: implement hasAdapter (returns true or false), look at getAdapter
 
@@ -92,13 +98,13 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
         adapters that implement the interface and match the object.
     */
     var adapters = this.adapters[implementsInterface.interfaceId];
-
+    
     // if we didn't find an adapter for this we throw an error
     if (typeof adapters === 'undefined') {
         var message = "No registered adapter(s) found for: " + implementsInterface._name;
-        throw new AdapterRegistryException(message, isDevelopment ? obj : undefined);
+        throw new AdapterRegistryException(message, (isDevelopment ? obj : undefined));
     }
-
+    
     // Ok so we found adapters that implement this interface, let's see if they
     // adapt the provided object.
     if (adapters) {
@@ -111,25 +117,29 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
                 var Adapter = new tmp.adapter(obj);
                 return Adapter;
             }
-        }
+            
+        } 
         // Then check if an interface adapter matches, iterate over each interface implemented by the
         // passed object to find the first match.
 
         // INTEGRITY CHECK: Throw a useful error if the passed object doesn't have _implements
-        if (!(obj.interfaceId || obj._implements && obj._implements.length > 0)) {
-            var errorContext = isDevelopment ? {
-                context: obj,
+        if (!(obj.interfaceId || (obj._implements && obj._implements.length > 0))) {
+            var errorContext = (isDevelopment ? {
+                context: obj, 
                 implements: implementsInterface,
                 registry: this
-            } : undefined;
-            throw new AdapterRegistryException("Context (first param) doesn't have any _implements property, and thus no interfaces to use for look up", errorContext);
+            } : undefined)
+            throw new AdapterRegistryException(
+                "Context (first param) doesn't have any _implements property, and thus no interfaces to use for look up", 
+                errorContext
+            )
         };
-
+        
         // TODO: Should investigate inheritance and overriding here, the use case is that you want to override
         // adapters registered on a general interface in a component with that registered in an application. I
         // need to think about how this works and write the docs first, then tests and then implement it so it
         // is easy to understand and reason about.
-
+        
         // Now support finding adapter by supplying an interface. Useful if no object exists yet such as
         // in a schema with ObjectField or for create views.
         var tmpImplements = obj._implements || [obj];
@@ -141,33 +151,33 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
                     // If we got the adaptsInterface parameter we need to check that it matches otherwise
                     // keep on looking
                     if (adaptsInterface && adaptsInterface.interfaceId !== tmp.adapts.interfaceId) {
-                        continue;
+                        continue
                     }
                     // Found the adapter, instantiate and return (adapter should set obj as context on creation)
                     var Adapter = new tmp.adapter(obj);
                     return Adapter;
                 }
+                
             }
         }
     };
-
+    
     // If we get this far, throws error if no adapter is found
     var message = ["No registered adapter implementing [" + implementsInterface._name + "] found that adapts: " + (obj._iname || obj)];
 
     if (isDevelopment) {
-        message.push("Registered adapters adapt the follwing interfaces:");
+        message.push("Registered adapters adapt the follwing interfaces:")
         adapters.interfaceAdapters.forEach(function (adapter) {
             message.push("[" + adapter.adapts._name + "] " + adapter.adapts.interfaceId);
         });
-        message.push("But we needed to adapt one of the following interfaces:");
+        message.push("But we needed to adapt one of the following interfaces:")
         obj._implements.forEach(function (intrfc) {
             message.push("[" + intrfc._name + "] " + intrfc.interfaceId);
-        });
-        message.push("If the interface name matches but the ID of that interface doesn't, you might have imported a module containing the mismatched interface from two different places. They need to be exactly the same module to get the same ID. The ID is used for lookups.");
+        })
+        message.push("If the interface name matches but the ID of that interface doesn't, you might have imported a module containing the mismatched interface from two different places. They need to be exactly the same module to get the same ID. The ID is used for lookups.")
     }
 
-    throw new AdapterRegistryException(message.join("\n"), isDevelopment ? obj : undefined);
-};
+    throw new AdapterRegistryException(message.join("\n"), (isDevelopment ? obj : undefined));
+}
 
-export default AdapterRegistry;
-//# sourceMappingURL=adapterRegistry.js.map
+export default AdapterRegistry

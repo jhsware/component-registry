@@ -1,7 +1,8 @@
 import expect from 'expect.js'
+import { createInterfaceClass } from '../lib'
+const Interface = createInterfaceClass('test')
+import { Adapter, globalRegistry, createObjectPrototype } from '../lib'
 
-const Interface = require('../lib').createInterfaceClass('test');
-const { Adapter, globalRegistry, createObjectPrototype } = require('../lib');
 
 describe('Adapter Factory', function() {
     beforeEach(function () {

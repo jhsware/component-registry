@@ -1,8 +1,9 @@
 import expect from 'expect.js'
 
-var UtilityRegistry = require('../lib').UtilityRegistry;
-const Interface = require('../lib').createInterfaceClass('test');
-const { Utility } = require('../lib');
+import { UtilityRegistry } from '../lib'
+import { createInterfaceClass } from '../lib'
+const Interface = createInterfaceClass('test')
+import { Utility } from '../lib'
 
 describe('Utility Registry', function() {
     beforeEach(function () {

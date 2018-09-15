@@ -1,8 +1,10 @@
 import expect from 'expect.js'
 
-const Interface = require('../lib').createInterfaceClass('test');
-var createObjectPrototype = require('../lib').createObjectPrototype;
-const { Adapter, Utility } = require('../lib');
+import { createInterfaceClass } from '../lib'
+const Interface = createInterfaceClass('test')
+
+import { createObjectPrototype } from '../lib'
+import { Adapter, Utility } from '../lib'
 
 describe('Interfaces', function() {
     it('can be created', function() {
