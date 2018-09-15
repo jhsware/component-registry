@@ -1,10 +1,13 @@
 import expect from 'expect.js'
 
-import { globalRegistry as registry } from '../lib'
-import { createInterfaceClass } from '../lib'
+import {
+    globalRegistry as registry,
+    createInterfaceClass,
+    Adapter,
+    Utility,
+    createObjectPrototype } from '../lib'
+
 const Interface = createInterfaceClass('test')
-import { Adapter, Utility } from '../lib'
-import createObjectPrototype from '../lib'
 
 describe('Global Registry', function() {
     beforeEach(function () {

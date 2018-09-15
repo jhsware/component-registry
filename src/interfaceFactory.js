@@ -2,7 +2,7 @@
 // Import didn't work and I couldn't figure out how to get the settings right
 const uuid = require('uuid/v5')
 const NAMESPACE = 'bc901568-0169-42a8-aac8-52fa2ffd0670';
-import { globalRegistry } from './index'
+import { globalRegistry } from './globalRegistry'
 
 
 export function createInterfaceClass(namespace) {

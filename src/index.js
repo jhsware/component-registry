@@ -1,7 +1,7 @@
 'use strict';
-import Registry from './globalRegistry'
-export const globalRegistry = new Registry()
-
+import {
+  Registry,
+  globalRegistry } from './globalRegistry'
 
 import AdapterRegistry from  './adapterRegistry'
 import UtilityRegistry from  './utilityRegistry'
@@ -21,6 +21,8 @@ import {
   createUtility } from  './compat'
 
 export default {
+  globalRegistry,
+  
   Registry,
   AdapterRegistry,
   UtilityRegistry,

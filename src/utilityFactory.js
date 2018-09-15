@@ -3,8 +3,9 @@ import {
     assert,
     extendPrototypeWithThese,
     addMembers,
-    checkMembers } from './common'
-import { globalRegistry } from './index'
+    checkMembers,
+    isDevelopment } from './common'
+import { globalRegistry } from './globalRegistry'
 
 export class Utility {
     constructor (params, compat) {
@@ -19,7 +20,7 @@ export class Utility {
                 name: 'normal'
             })
         */
-        if (common.isDevelopment) {
+        if (isDevelopment) {
             assert(typeof params.implements === 'function' && params.implements.interfaceId, '[componeont-registry] When creating a Utility, param implements must be an interface!')
         }
         var extendThese = params.extends,

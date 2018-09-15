@@ -1,8 +1,8 @@
 import expect from 'expect.js'
 
-var UtilityRegistry = require('../../lib').UtilityRegistry;
-var createInterface = require('../../lib').createInterface;
-var createUtility = require('../../lib').createUtility;
+var UtilityRegistry = require('../../dist/cjs').UtilityRegistry;
+var createInterface = require('../../dist/cjs').createInterface;
+var createUtility = require('../../dist/cjs').createUtility;
 
 describe('Compat', function () {
     describe('Utility Registry', function() {
