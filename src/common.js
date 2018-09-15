@@ -76,7 +76,7 @@ export function checkMembers(ObjectPrototype, intrfcs) {
             if (key === 'providedBy') return
             
             var memberTypeDesc = intrfc.prototype[key];
-            module.exports.assert(ObjectPrototype.prototype[key] !== undefined, 'ObjectPrototype "' + ObjectPrototype.name + '" is missing member "' + key + ': ' + memberTypeDesc + '" specified in "' + intrfc._name + '"')
+            assert(ObjectPrototype.prototype[key] !== undefined, 'ObjectPrototype "' + ObjectPrototype.name + '" is missing member "' + key + ': ' + memberTypeDesc + '" specified in "' + intrfc._name + '"')
         })
     }
 }
