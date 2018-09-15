@@ -1,4 +1,4 @@
-var expect = require('expect.js');
+import expect from 'expect.js'
 
 var AdapterRegistry = require('../../lib').AdapterRegistry;
 var createInterface = require('../../lib').createInterface;

@@ -1,4 +1,4 @@
-var expect = require('expect.js');
+import expect from 'expect.js'
 
 var createInterface = require('../../lib').createInterface;
 var createAdapter = require('../../lib').createAdapter;

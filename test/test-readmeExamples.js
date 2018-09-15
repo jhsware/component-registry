@@ -1,4 +1,4 @@
-var expect = require('expect.js');
+import expect from 'expect.js'
 
 const { createInterfaceClass, Adapter, createObjectPrototype, globalRegistry } = require('../lib')
 
