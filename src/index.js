@@ -1,4 +1,4 @@
-'use strict';
+
 import {
   Registry,
   globalRegistry } from './globalRegistry'
