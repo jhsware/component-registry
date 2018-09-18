@@ -1,4 +1,4 @@
-'use strict';
+
 import { isDevelopment } from './common'
 
 /*

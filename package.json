@@ -50,10 +50,9 @@
     "preversion": "npm run test",
     "postversion": "git push && git push --tags",
     "build-dev": "rm -rf ./dist && NODE_ENV=development babel src --out-dir lib --watch --source-maps",
-    "build": "npm run build:clean && cross-env NODE_ENV=development npm run build:es && cross-env NODE_ENV=development npm run build:dist && cross-env NODE_ENV=production npm run build:dist:prod && cross-env NODE_ENV=production npm run build:legacy",
+    "build": "npm run build:clean && cross-env NODE_ENV=development npm run build:es && cross-env NODE_ENV=development npm run build:dist && cross-env NODE_ENV=production npm run build:dist:prod",
     "build:clean": "rm -rf dist/ && rm -rf lib/",
     "build:es": "babel src --out-dir lib --source-maps",
-    "build:legacy": "babel src --out-dir dist",
     "build:dist": "rollup -c",
     "build:dist:prod": "rollup -c"
   }
