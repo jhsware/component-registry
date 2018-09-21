@@ -48,6 +48,34 @@ describe('Object Prototypes', function() {
         expect(user.sayHi()).to.be("Hi!");
         expect(user.sayHo()).to.be("Ho!");
     });
+
+    it("can inherit from other object prototypes and maintain this", function() {
+        var IUser = new Interface({name: 'IUser'});
+        
+        var userProto = createObjectPrototype({
+            implements: [IUser],
+            sayHi: function () {
+                return this.sayHo()
+            },
+            sayHo: function () {
+                return "Wrong ho!"
+            }
+        })
+        
+        var ISpecialUser = new Interface({name: 'ISpecialUser'});
+        
+        var specialUserProto = createObjectPrototype({
+            extends: [userProto],
+            implements: [ISpecialUser],
+            sayHo: function () {
+                return "Ho!"
+            }
+        })
+        
+        var user = new specialUserProto();
+        
+        expect(user.sayHi()).to.be("Ho!");
+    });
     
     it("can inherit from other object prototypes two levels deep", function() {
         var IUser = new Interface({name: 'IUser'});
@@ -87,6 +115,46 @@ describe('Object Prototypes', function() {
         expect(user.sayHi()).to.be("Hi!");
         expect(user.sayHo()).to.be("Ho!");
         expect(user.sayYay()).to.be("Yay!");
+    });
+
+    it("can inherit from other object prototypes two levels deep and maintain this", function() {
+        var IUser = new Interface({name: 'IUser'});
+        
+        var userProto = createObjectPrototype({
+            implements: [IUser],
+            sayHi: function () {
+                return this.sayHo()
+            },
+            sayHo: function () {
+                return "Wrong ho!"
+            }
+        })
+        
+        var ISpecialUser = new Interface({name: 'ISpecialUser'});
+        
+        var specialUserProto = createObjectPrototype({
+            extends: [userProto],
+            implements: [ISpecialUser],
+            sayHo: function () {
+                return "Wrong ho!"
+            }
+        })
+        
+        var user = new specialUserProto();
+        
+        var ISuperSpecialUser = new Interface({name: 'ISuperSpecialUser'});
+        
+        var superSpecialUserProto = createObjectPrototype({
+            extends: [specialUserProto],
+            implements: [ISuperSpecialUser],
+            sayHo: function () {
+                return "Ho!"
+            }
+        })
+        
+        var user = new superSpecialUserProto();
+        
+        expect(user.sayHi()).to.be("Ho!");
     });
     
     it("can inherit from other object prototypes two levels deep and call all constructors", function() {

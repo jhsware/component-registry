@@ -21,8 +21,7 @@ export function createObjectPrototype(params) {
     // in implements list and add a prefix?
     
     var extendThese = params.extends,
-        implementsInterfaces = params.implements || [],
-        constructor = params.constructor;
+        implementsInterfaces = params.implements || [];
         
     if (params.extends) {
         delete params.extends;
