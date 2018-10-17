@@ -20,7 +20,7 @@ import {
   createAdapter,
   createUtility } from  './compat'
 
-export default {
+export {
   globalRegistry,
   
   Registry,
