@@ -54,7 +54,7 @@ UtilityRegistry.prototype.registerUtility = function (utility) {
         // Register as a named utility
         if (utilities.namedUtility[name]) {
             // Utility already registered, just skip it
-            // "There is a utility already registered for: (" + implementsInterface._name + ", '" + name + "'). Check that you have registered it!")
+            // "There is a utility already registered for: (" + implementsInterface.name + ", '" + name + "'). Check that you have registered it!")
             // Since this is literally the same component, it should be okay. This can happen when running code on server with several variations of
             // the same app
             return 
@@ -67,7 +67,7 @@ UtilityRegistry.prototype.registerUtility = function (utility) {
         // Register as an unnamed utility
         if (utilities.unnamedUtility) {
             // Utility already registered, just skip it
-            // "There is a utility already registered for: (" + implementsInterface._name + ", '" + name + "'). Check that you have registered it!")
+            // "There is a utility already registered for: (" + implementsInterface.name + ", '" + name + "'). Check that you have registered it!")
             // Since this is literally the same component, it should be okay. This can happen when running code on server with several variations of
             // the same app
             return
@@ -96,7 +96,7 @@ UtilityRegistry.prototype.getUtility = function (implementsInterface, name, fall
             if (arguments.length === 3) {
                 return fallbackReturnValue;
             } else {
-                var message = ["Lookup Error: There is no utility registered for: (" + implementsInterface._name + ", '" + name + "'). Check that you have registered it!"];
+                var message = ["Lookup Error: There is no utility registered for: (" + implementsInterface.name + ", '" + name + "'). Check that you have registered it!"];
 
                 if (isDevelopment) {
                     message.push("Available named utilities that match the provided interface:")
@@ -116,7 +116,7 @@ UtilityRegistry.prototype.getUtility = function (implementsInterface, name, fall
         if (arguments.length === 3) {
             return fallbackReturnValue;
         } else {
-            var message = ["Lookup Error: There is no utility registered for: " + implementsInterface._name + ". Check that you have registered it! :)"];
+            var message = ["Lookup Error: There is no utility registered for: " + implementsInterface.name + ". Check that you have registered it! :)"];
 
             if (isDevelopment) {
                 message.push("Registered utilities implement the follwing interfaces:")
