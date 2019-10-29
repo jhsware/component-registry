@@ -101,8 +101,8 @@ UtilityRegistry.prototype.getUtility = function (implementsInterface, name, fall
                 if (isDevelopment) {
                     message.push("Available named utilities that match the provided interface:")
                     Object.keys(utilities.namedUtility).forEach((key) => {
-                        var util = this.utilities[key]
-                        message.push("[" + util.implements._name + "." + key + "] " + util.implements.interfaceId);
+                        var intrfc = utilities.implementsInterface
+                        message.push("[" + intrfc.name + "." + key + "] " + intrfc.interfaceId);
                     });
                 }
 
@@ -122,7 +122,7 @@ UtilityRegistry.prototype.getUtility = function (implementsInterface, name, fall
                 message.push("Registered utilities implement the follwing interfaces:")
                 Object.keys(this.utilities).forEach((key) => {
                     var util = this.utilities[key]
-                    message.push("[" + util.implements._name + "] " + util.implements.interfaceId);
+                    message.push("[" + util.implementsInterface.name + "] " + util.implements.interfaceId);
                 });
             }
 
