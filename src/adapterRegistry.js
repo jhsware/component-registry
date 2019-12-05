@@ -168,11 +168,11 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
     if (isDevelopment) {
         message.push("Registered adapters adapt the follwing interfaces:")
         adapters.interfaceAdapters.forEach(function (adapter) {
-            message.push("[" + adapter.adapts._name + "] " + adapter.adapts.interfaceId);
+            message.push("[" + adapter.adapts.name + "] " + adapter.adapts.interfaceId);
         });
         message.push("But we needed to adapt one of the following interfaces:")
         obj._implements.forEach(function (intrfc) {
-            message.push("[" + intrfc._name + "] " + intrfc.interfaceId);
+            message.push("[" + intrfc.name + "] " + intrfc.interfaceId);
         })
         message.push("If the interface name matches but the ID of that interface doesn't, you might have imported a module containing the mismatched interface from two different places. They need to be exactly the same module to get the same ID. The ID is used for lookups.")
     }

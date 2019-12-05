@@ -60,7 +60,7 @@ export class Adapter {
         // Set a more debug friendly name for Utility (by convention we strip leading "I" if it
         // exists)
         if (implementsInterface[0]) {
-            var name = implementsInterface[0]._name
+            var name = implementsInterface[0].name
             var tmpName = name.startsWith('I') ? name.slice(1) : name
             Object.defineProperty(Adapter, 'name', {value: tmpName, configurable: true})
         }
