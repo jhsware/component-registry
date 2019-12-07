@@ -149,6 +149,41 @@ describe('Utility Registry', function() {
         expect(utils[0].name).to.be(undefined);
         expect(utils.length).to.be(4);
     });
+
+    it('can get a list of named utilities and an unnamed utility using "*"', function() {
+      var registry = new UtilityRegistry();
+      
+      var IDummyUtility = new Interface({name: "IDummyUtility"});
+
+      var DummyUtility = new Utility({
+          registry: registry,
+          implements: IDummyUtility
+      });
+      
+      var DummyUtility_1 = new Utility({
+          registry: registry,
+          implements: IDummyUtility,
+          name: 'one'
+      });
+
+      var DummyUtility_2 = new Utility({
+          registry: registry,
+          implements: IDummyUtility,
+          name: 'two'
+      });
+      
+      var DummyUtility_3 = new Utility({
+          registry: registry,
+          implements: IDummyUtility,
+          name: 'three'
+      });
+      
+      var utils = new IDummyUtility('*', { registry });
+      
+      expect(utils[0]).not.to.be(undefined);
+      expect(utils[0].name).to.be(undefined);
+      expect(utils.length).to.be(4);
+  });
     
     it('returns an empty list if no utilities are registered', function() {
         var registry = new UtilityRegistry();

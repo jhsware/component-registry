@@ -261,7 +261,7 @@ This is a nice way to decouple and organise your code.
 
 ### About Named Utilities ###
 
-Another example of how to use a utility could be if you want to provide internationalisation features. In which case you could give each utility a name that corresponds to the region it implements. So basically you would ask for `new ILocalization('us')` for the United States and `new ILocalization('se')` for Sweden. You can also query for all named utilities that implement ILocalization and get them as a list `globalRegistry.getUtilities(ILocalization)`.
+Another example of how to use a utility could be if you want to provide internationalisation features. In which case you could give each utility a name that corresponds to the region it implements. So basically you would ask for `new ILocalization('us')` for the United States and `new ILocalization('se')` for Sweden. You can also query for all named utilities that implement ILocalization and get them as a list `new ILocalization('*')`.
 
 # API Docs #
 
@@ -412,7 +412,7 @@ const MyAdapter = new Adapter({
 })
 ```
 
-If you want to register the created adapter with a custom registry instead of `globalRegistry` you pass it as a parameter.
+If you want to register the created adapter with a scoped registry instead of `globalRegistry` you pass it as a parameter.
 
 ```javascript
 const MyAdapter = new Adapter({
@@ -423,12 +423,16 @@ const MyAdapter = new Adapter({
 ```
 
 ### Utilities ###
+
+Create an unamed utility that implements a given interface. It is automatically registered with the `globalRegistry` available in component-registry.
+
 ```javascript
 const utility = new Utility({
     implements: IInterface
 });
 ```
-Create an unamed utility that implements a given interface. It is automatically registered with the `globalRegistry` available in component-registry.
+
+Create a named utility that implements a given interface and has a variation name. It is automatically registered with the `globalRegistry` available in component-registry.
 
 ```javascript
 const utility = new Utility({
@@ -436,7 +440,8 @@ const utility = new Utility({
     name: 'name'
 });
 ```
-Create a named utility that implements a given interface and has a variation name. It is automatically registered with the `globalRegistry` available in component-registry.
+
+Just like an adapter you can pass a scoped registry to register the utility there.
 
 ```javascript
 const utility = new Utility({
@@ -444,28 +449,32 @@ const utility = new Utility({
     implements: IInterface
 });
 ```
-Just like an adapter you can pass a custom registry to register the utility there.
 
-```javascript
-const utils = registry.getUtilities(IInterface);
-```
 Find all registered utilities (named and unnamed) that implement the given interface.
 
-## Registry ##
+```javascript
+const utils = new IInterface('*');
+const utilsAltSyntax = registry.getUtilities(IInterface);
+const utilsFromScopedRegistry = new IInterface('*', { registry: myRegistry });
+```
+
+## Creating a scoped registry ##
+
+You can create a scoped registry if you want to have an alternative set of utilities or adapters available for a task. This feature is useful for tests.
+
 ```javascript
 import { AdapterRegistry, UtilityRegistry, Registry } from 'comonent-registry'
 const myRegistry = new Registry();
-const myAdapteregistry = new AdapterRegistry();
+const myAdapterRegistry = new AdapterRegistry();
 const myUtilityRegistry = new UtilityRegistry();
 ```
 
-When you have created a scoped registry you might want to register some of your existing adapters. In this case you would use the registration API:
+If you have created a scoped registry in application code you might want to register some of your existing adapters. In this case you would use the registration API:
 
 ```javascript
-    registry.registerAdapter(MyAdapter);
-    registry.registerUtility(utility);
+    myRegistry.registerAdapter(MyAdapter);
+    myRegistry.registerUtility(utility);
 ```
-Get a list of utilities that implement a given interface (returns list of objects that contain the utility and name (if it is a named utility))
 
 Good luck!
 

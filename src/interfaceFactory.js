@@ -16,8 +16,14 @@ export function createInterfaceClass(namespace) {
                     // Adapter lookup
                     return registry.getAdapter(paramOne, this.constructor)
                 } else if (typeof paramOne === 'string') {
-                    // Named utility lookup
-                    return registry.getUtility(this.constructor, paramOne)
+                    if (paramOne === '*') {
+                      // Lookup all utilities
+                      return registry.getUtilities(this.constructor)
+                    }
+                    else {
+                      // Named utility lookup
+                      return registry.getUtility(this.constructor, paramOne)  
+                    }
                 } else {
                     // Unnamed utility lookup
                     return registry.getUtility(this.constructor)
