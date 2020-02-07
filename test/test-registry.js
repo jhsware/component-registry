@@ -2,6 +2,7 @@ import expect from 'expect.js'
 
 import {
     globalRegistry as registry,
+    LocalRegistry,
     createInterfaceClass,
     Adapter,
     Utility,
@@ -208,4 +209,60 @@ describe('Global Registry', function() {
         expect(listWidget).to.be.a(UserListWidget);
         expect(listWidget).not.to.be.a(BaseListWidget);
     });
+});
+
+describe('Local Registry', function() {
+
+  it('can be created', function() {
+      const registry = new LocalRegistry()
+      expect(registry).to.not.be(undefined);
+  });
+
+  it('can get an unnamed utility', function() {
+    const registry = new LocalRegistry()
+    var IDummyUtility = new Interface({name: "IDummyUtility"});
+    
+    var DummyUtility = new Utility({
+        registry,
+        implements: IDummyUtility
+    });
+    
+    var util = new IDummyUtility({ registry });
+    
+    expect(util).to.be.a(DummyUtility);
+  });
+
+  it('no leaking to second registry', function() {
+    const localRegistry = new LocalRegistry()
+    const IDummyUtility = new Interface({name: "IDummyUtility"});
+    
+    const DummyUtility = new Utility({
+        registry: localRegistry,
+        implements: IDummyUtility
+    });
+
+    const localRegistry2 = new LocalRegistry()
+    
+    const util = new IDummyUtility({ registry: localRegistry });
+    const util2 = localRegistry2.getUtilities(IDummyUtility);
+    
+    expect(util).to.be.a(DummyUtility);
+    expect(util2.length).to.equal(0);
+  });
+
+  it('no leaking to global registry', function() {
+    const localRegistry = new LocalRegistry()
+    const IDummyUtility = new Interface({name: "IDummyUtility"});
+    
+    const DummyUtility = new Utility({
+        registry: localRegistry,
+        implements: IDummyUtility
+    });
+    
+    const util = new IDummyUtility({ registry: localRegistry });
+    const util2 = registry.getUtilities(IDummyUtility);
+    
+    expect(util).to.be.a(DummyUtility);
+    expect(util2.length).to.equal(0);
+  });
 });

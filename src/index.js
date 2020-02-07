@@ -3,6 +3,8 @@ import {
   Registry,
   globalRegistry } from './globalRegistry'
 
+import { LocalRegistry } from './localRegistry'
+
 import AdapterRegistry from  './adapterRegistry'
 import UtilityRegistry from  './utilityRegistry'
 
@@ -24,6 +26,7 @@ export {
   globalRegistry,
   
   Registry,
+  LocalRegistry,
   AdapterRegistry,
   UtilityRegistry,
 

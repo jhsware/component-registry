@@ -44,7 +44,7 @@
     "rollup-plugin-replace": "^2.0.0"
   },
   "scripts": {
-    "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha --require babel-register ./test/**/test-*.js ./test/test-*.js",
+    "test": "NODE_ENV=test npm run build && NODE_ENV=test ./node_modules/mocha/bin/mocha --require babel-register ./test/**/test-*.js ./test/test-*.js",
     "debug-test": "NODE_ENV=test ./node_modules/mocha/bin/mocha --require babel-register --debug-brk --no-timeouts ./test/**/test-*.js ./test/test-*.js",
     "prepublish": "npm run build",
     "preversion": "npm run test",
