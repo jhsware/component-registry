@@ -21,6 +21,37 @@ describe('Object Prototypes', function() {
         expect(user).to.be.a(userPrototype);
         expect(user.sayHi()).to.be("Hi!");
     });
+
+    it('can clone other Object Prototype', function() {
+        var IUser = new Interface({name: 'IUser'});
+        
+        var userPrototype = createObjectPrototype({
+            implements: [IUser],
+            sayHi: function () {
+                return "Hi!"
+            }
+        })
+        
+        var user = new userPrototype({ test: 'dummy' });
+        var clone = new userPrototype(user);
+        
+        expect(clone).to.be.a(userPrototype);
+        expect(clone.sayHi()).to.be("Hi!");
+
+        var jsonUser = JSON.stringify(user.toJSON());
+        var jsonClone = JSON.stringify(clone.toJSON());
+        expect(jsonClone).to.equal(jsonUser);
+        
+        console.log(
+          jsonUser,
+          jsonClone,
+          Object.keys(user),
+          Object.keys(clone),
+        )
+        var propsUser = Object.keys(user).toString();
+        var propsClone = Object.keys(clone).toString();
+        expect(propsClone).to.equal(propsUser);
+    });
     
     it("can inherit from other object prototypes", function() {
         var IUser = new Interface({name: 'IUser'});

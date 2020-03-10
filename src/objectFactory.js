@@ -5,6 +5,24 @@ import {
     addMembers,
     checkMembers  } from './common'
 
+const _reservedProps = {
+  _implements: true,
+  _iname: true,
+  _constructor: true
+}
+
+function _isSpecialOrReservedProp (key, data) {
+  const prop = data[key]
+  if (typeof prop === 'function') return true
+
+  if (data._implements !== undefined) {
+    if (_reservedProps[key]) return true
+    if (typeof prop === 'object' && prop !== null && prop._implements !== undefined) return true
+  }
+
+  return false
+}
+
 export function createObjectPrototype(params) {
     /*
         extends -- (optional) list of object prototypes to inherit from
@@ -64,7 +82,10 @@ export function createObjectPrototype(params) {
         
         var inData = {};
         for (var key in data) {
-            inData[key] = data[key];
+            // To allow cloning we need to skip reserved props, special props and functions
+            if (!_isSpecialOrReservedProp(key, data)) {
+              inData[key] = data[key];
+            }
         }
         
         // Run the constructor
