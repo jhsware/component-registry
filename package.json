@@ -45,7 +45,7 @@
   },
   "scripts": {
     "test": "NODE_ENV=test npm run build && NODE_ENV=test ./node_modules/mocha/bin/mocha --require babel-register ./test/**/test-*.js ./test/test-*.js",
-    "debug-test": "NODE_ENV=test ./node_modules/mocha/bin/mocha --require babel-register --debug-brk --no-timeouts ./test/**/test-*.js ./test/test-*.js",
+    "debug-test": "NODE_ENV=test ./node_modules/mocha/bin/mocha --require babel-register --inspect-brk --no-timeouts ./test/**/test-*.js ./test/test-*.js",
     "prepublish": "npm run build",
     "preversion": "npm run test",
     "postversion": "git push && git push --tags",
