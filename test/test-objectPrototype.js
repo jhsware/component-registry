@@ -305,7 +305,7 @@ describe('Object Prototypes', function() {
                 
         var user = new User();
         
-        var data = user.toJSON(data);
+        var data = user.toJSON();
         
         expect(data).to.not.be(undefined);
         expect(data._userVal).to.equal(1);
@@ -331,7 +331,7 @@ describe('Object Prototypes', function() {
         
         user.child = child;
         
-        var data = user.toJSON(data);
+        var data = user.toJSON();
         
         expect(data).to.not.be(undefined);
         expect(data._userVal).to.equal(1);
@@ -353,7 +353,7 @@ describe('Object Prototypes', function() {
             empty: null
         });
                 
-        var data = user.toJSON(data);
+        var data = user.toJSON();
         
         expect(data).to.not.be(undefined);
         expect(data._userVal).to.equal(1);
@@ -374,9 +374,9 @@ describe('Object Prototypes', function() {
         })
                 
         var user = new User({
-            _userVal: 1,
-            title: "parent",
-            empty: null
+          _userVal: 1,
+          title: "parent",
+          empty: null
         });
         user.title = "updated";
         user.empty = "nope";
@@ -384,6 +384,49 @@ describe('Object Prototypes', function() {
         expect(user.title).to.equal("updated");
         expect(user.empty).to.equal("nope");
     });
+
+    it("can be created with an interface as property", function() {
+      var IUser = new Interface({
+          name: 'IUser',
+          schema: new Schema({
+              title: "",
+              empty: ""                    
+          })
+      });
+
+      var IAsProp = new Interface({})
+      
+      var User = createObjectPrototype({
+          implements: [IUser],
+      })
+           
+      var user = new User({
+          myIProp: IAsProp
+      });
+      
+      expect(user.myIProp.interfaceId).to.equal(IAsProp.interfaceId);
+    });
+
+    it("can convert object with function JSON", function() {
+      var IUser = new Interface({
+        name: 'IUser',
+      });
+
+      var IAsProp = new Interface({})
+      
+      var User = createObjectPrototype({
+          implements: [IUser],
+      })
+              
+      var user = new User({
+          myIProp: IAsProp
+      });
+      
+      var data = user.toJSON();
+      
+      expect(data.myIProp).to.be(undefined);
+    });
+  
     
     it("can remove schema field property", function() {
         var IUser = new Interface({

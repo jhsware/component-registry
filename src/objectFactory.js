@@ -83,7 +83,7 @@ export function createObjectPrototype(params) {
         var inData = {};
         for (var key in data) {
             // To allow cloning we need to skip reserved props, special props and functions
-            if (!_isSpecialOrReservedProp(key, data)) {
+            if (!_isSpecialOrReservedProp(key, data) || (typeof data[key] === 'function' && data[key].interfaceId !== undefined)) {
               inData[key] = data[key];
             }
         }
@@ -114,7 +114,7 @@ export function createObjectPrototype(params) {
               if (prop && typeof prop.toJSON === 'function') {
                   // Recursively prepare objects for stringify, skipping member objects that don't have a toJSON method
                   data[key] = prop.toJSON();
-              } else {
+              } else if (typeof prop !== 'function') {
                   data[key] = prop;
               }
             }
