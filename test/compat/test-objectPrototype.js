@@ -210,7 +210,6 @@ describe('Compat', function () {
             expect(data).to.not.be(undefined);
             expect(data._userVal).to.equal(1);
             expect(data.title).to.equal("title");
-            expect(data._implements).to.be(undefined);
             expect(JSON.stringify(user)).to.not.be(undefined);
         });
         
@@ -237,7 +236,6 @@ describe('Compat', function () {
             expect(data).to.not.be(undefined);
             expect(data._userVal).to.equal(1);
             expect(data.title).to.equal("parent");
-            expect(data.child._implements).to.not.be(undefined);
             expect(data.child.title).to.be("child");
             expect(JSON.stringify(user)).to.not.be(undefined);
         });

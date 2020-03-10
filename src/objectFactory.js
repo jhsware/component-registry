@@ -87,17 +87,15 @@ export function createObjectPrototype(params) {
     ObjectPrototype.prototype.toJSON = function () {
         var data = {};
         for (var key in this) {
+            // Only own properties are used
             if (this.hasOwnProperty(key)) {
-                // Only pass own properties
-                var tmp = this[key];
-                if (tmp && typeof tmp === "object" && tmp.hasOwnProperty("_iname")) {
-                    // Recursively prepare objects for stringify, skipping member objects that don't have a toJSON method
-                    if (tmp.toJSON) {
-                        data[key] = tmp.toJSON();
-                    }
-                } else if (typeof tmp !== "function") {
-                    data[key] = tmp;
-                }
+              var prop = this[key];
+              if (prop && typeof prop.toJSON === 'function') {
+                  // Recursively prepare objects for stringify, skipping member objects that don't have a toJSON method
+                  data[key] = prop.toJSON();
+              } else {
+                  data[key] = prop;
+              }
             }
         }
         return data;
