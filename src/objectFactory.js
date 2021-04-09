@@ -100,14 +100,16 @@ export function createObjectPrototype(params) {
     // The object prototype gets the iname of the first implement
     // interface. It is used when functions are inherited using
     // extends
-    if (params.implements && params.implements.length > 0) {
+    if (Array.isArray(implementsInterfaces) && implementsInterfaces.length > 0) {
         // Check that the interfaces that are passed as implemented aren't undefined. This helps
-        // to catch import errors etc on creation instead of only swallowing it silently. 
-        params.implements.forEach(function (intrfc, index) {
-            if (!intrfc) {
-                throw new Error('The interface at index [' + index + '] appears to be undefined, check that you have created it and that it is imported properly');
-            }
-        })
+        // to catch import errors etc on creation instead of only swallowing it silently.
+        // TODO: Perhaps not check for this in production?
+        for (let i = 0; i < implementsInterfaces.length; i++) {
+          const intrfc = implementsInterfaces[i]
+          if (!intrfc) {
+              throw new Error('The interface at index [' + i + '] appears to be undefined, check that you have created it and that it is imported properly');
+          }
+        }
         // Set the most significant interface as _iname of this object
         params._iname = params.implements[0].name;
     };
@@ -146,11 +148,15 @@ export function createObjectPrototype(params) {
     addMembers(ObjectPrototype, params);
 
     // Check that we have added all the members that where defined as members
-    checkMembers(ObjectPrototype, implementsInterfaces)
+    // TODO: Should we only do this check in development mode? Would improve performance
+    if (notNullOrUndef(implementsInterfaces)) {
+      checkMembers(ObjectPrototype, implementsInterfaces || [])
+
+      // Add the interfaces so they can be checked
+      // TODO: Filer so we remove duplicates from existing list (order makes difference)
+      ObjectPrototype.prototype._implements = implementsInterfaces.concat(ObjectPrototype.prototype._implements);
+    }
     
-    // Add the interfaces so they can be checked
-    // TODO: Filer so we remove duplicates from existing list (order makes difference)
-    ObjectPrototype.prototype._implements = implementsInterfaces.concat(ObjectPrototype.prototype._implements);
         
     return ObjectPrototype;
 }
