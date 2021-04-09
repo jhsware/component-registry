@@ -90,13 +90,20 @@ export function createObjectPrototype(params) {
     // an object specific interfaceId (although it isn't a good name), perhaps use the first interface
     // in implements list and add a prefix?
     
-    var extendThese = params.extends,
-        implementsInterfaces = params.implements || [];
-        
-    if (params.extends) {
-        delete params.extends;
+    const {
+      extends: extendThese,
+      implements: implementsInterfaces = [],
+      constructor,
+      ...paramsToAdd
+    } = params;
+
+    // Only add the constructor if it was an ownProperty of params. We can get
+    // an object from from proto that is unpacked as constructor above.
+    if (params.hasOwnProperty('constructor')) {
+        // Rename the constructor param so it can be added with the other params
+        paramsToAdd._constructor = constructor;
     };
-    
+
     // The object prototype gets the iname of the first implement
     // interface. It is used when functions are inherited using
     // extends
@@ -111,18 +118,8 @@ export function createObjectPrototype(params) {
           }
         }
         // Set the most significant interface as _iname of this object
-        params._iname = params.implements[0].name;
-    };
-    
-    if (params.implements) {
-        delete params.implements
-    };
-    
-    if (params.hasOwnProperty('constructor')) {
-        // Rename the constructor param so it can be added with the
-        // other params
-        params._constructor = params.constructor;
-        delete params.constructor;
+        // TODO: This is actually confusing, should we remove this? What use is it in real life?
+        paramsToAdd._iname = implementsInterfaces[0].name;
     };
     
     var ObjectPrototype = function (data) {
@@ -131,8 +128,9 @@ export function createObjectPrototype(params) {
 
     // Set a more debug friendly name for ObjectPrototype (by convention we strip leading "I" if it
     // exists)
-    if (params._iname) {
-        var tmpName = params._iname.startsWith('I') ? params._iname.slice(1) : params._iname
+    if (paramsToAdd._iname) {
+        // var tmpName = params._iname.startsWith('I') ? params._iname.slice(1) : params._iname
+        var tmpName = paramsToAdd._iname.startsWith('I') ? paramsToAdd._iname.slice(1) : paramsToAdd._iname
         Object.defineProperty(ObjectPrototype, 'name', {value: tmpName, configurable: true})
     }
         
@@ -145,7 +143,7 @@ export function createObjectPrototype(params) {
     extendPrototypeWithThese(ObjectPrototype, extendThese);
         
     // The rest of the params are added as methods, overriding previous
-    addMembers(ObjectPrototype, params);
+    addMembers(ObjectPrototype, paramsToAdd);
 
     // Check that we have added all the members that where defined as members
     // TODO: Should we only do this check in development mode? Would improve performance
