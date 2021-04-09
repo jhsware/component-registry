@@ -21,10 +21,10 @@
   "module": "lib/index.js",
   "esnext": "src",
   "sideEffects": false,
+  "browserslist": "> 0.25%, not dead",
   "dependencies": {
     "uuid": "^8.3.2"
   },
-  "browserslist": "> 0.25%, not dead",
   "devDependencies": {
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
