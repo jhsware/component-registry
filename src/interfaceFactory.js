@@ -3,30 +3,14 @@
 const uuid = require('uuid/v5')
 const NAMESPACE = 'bc901568-0169-42a8-aac8-52fa2ffd0670';
 import { globalRegistry } from './globalRegistry'
-
-function hasPropRegistry (inp) {
-  return typeof inp === 'object' && typeof inp.registry === 'object'
-}
-
-function notNullOrUndef (inp) {
-  return inp !== undefined && inp !== null
-}
-
-function hasPropImplements (inp) {
-  return notNullOrUndef(inp) && notNullOrUndef(inp._implements)
-}
-
-function hasArrayPropImplements (inp) {
-  return notNullOrUndef(inp) && Array.isArray(inp._implements)
-}
-
-function isString (inp) {
-  return typeof inp === 'string'
-}
-
-function isWildcard (inp) {
-  return inp === '*'
-}
+import {
+  hasPropRegistry,
+  notNullOrUndef,
+  hasPropImplements,
+  hasArrayPropImplements,
+  isString,
+  isWildcard
+} from './utils'
 
 function _providedBy (obj) {
     // Does the specified object implement this interface
