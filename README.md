@@ -530,3 +530,6 @@ new Utility({
 
 ### ObjectPrototype ###
 No changes!
+
+## TODO for major version 2
+TODO: Remove _addPropsCompat in V2

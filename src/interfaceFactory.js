@@ -1,33 +1,97 @@
 
-// Import didn't work and I couldn't figure out how to get the settings right
+// Import of uuid didn't work and I couldn't figure out how to get the settings right
 const uuid = require('uuid/v5')
 const NAMESPACE = 'bc901568-0169-42a8-aac8-52fa2ffd0670';
 import { globalRegistry } from './globalRegistry'
 
+function hasPropRegistry (inp) {
+  return typeof inp === 'object' && typeof inp.registry === 'object'
+}
+
+function notNullOrUndef (inp) {
+  return inp !== undefined && inp !== null
+}
+
+function hasPropImplements (inp) {
+  return notNullOrUndef(inp) && notNullOrUndef(inp._implements)
+}
+
+function hasArrayPropImplements (inp) {
+  return notNullOrUndef(inp) && Array.isArray(inp._implements)
+}
+
+function isString (inp) {
+  return typeof inp === 'string'
+}
+
+function isWildcard (inp) {
+  return inp === '*'
+}
+
+function _providedBy (obj) {
+    // Does the specified object implement this interface
+    if (hasArrayPropImplements(obj)) {
+        // Object has a list of interfaces it implements
+        for (var i=0, imax = obj._implements.length; i<imax; i++) {
+            if (obj._implements[i].interfaceId === this.interfaceId) {
+                return true;
+            };
+        }
+    } else if (hasPropImplements(obj) && obj._implements.interfaceId === this.interfaceId) {
+        // Object implements a single interface (probably a utility)
+        return true;
+    }
+    // If we came this far, the object doesn't implement this interface
+    return false;
+}
+
+function _lookup (_this, intrfc, registry) {
+  if (hasPropImplements(intrfc)) {
+      // Adapter lookup
+      return registry.getAdapter(intrfc, _this.constructor)
+  } else if (isString(intrfc)) {
+      if (isWildcard(intrfc)) {
+        // Lookup all utilities
+        return registry.getUtilities(_this.constructor)
+      }
+      else {
+        // Named utility lookup
+        return registry.getUtility(_this.constructor, intrfc)  
+      }
+  } else {
+      // Unnamed utility lookup
+      return registry.getUtility(_this.constructor)
+  }
+}
+
+function _NOOP () {}
+
+function _addPropsCompat (obj) {
+  const schema = this
+  var fields = (schema && schema._fields) || [];
+  for (var key in fields) {
+      var field = fields[key];
+      Object.defineProperty(obj, key, {
+          configurable: true, // We might want to remove properties when passing data through API
+          enumerable: true,
+          writable: !field.readOnly
+      });
+  };
+}
 
 export function createInterfaceClass(namespace) {
     class Interface {
         constructor (params, compat) {
-            const outp = function Interface () {
-                const paramOne = arguments[0],
-                      paramTwo = arguments[1];
-                const registry = (paramTwo ? paramTwo.registry : paramOne && paramOne.registry) || globalRegistry;
-                if (typeof paramOne === 'object' && paramOne._implements) {
-                    // Adapter lookup
-                    return registry.getAdapter(paramOne, this.constructor)
-                } else if (typeof paramOne === 'string') {
-                    if (paramOne === '*') {
-                      // Lookup all utilities
-                      return registry.getUtilities(this.constructor)
-                    }
-                    else {
-                      // Named utility lookup
-                      return registry.getUtility(this.constructor, paramOne)  
-                    }
-                } else {
-                    // Unnamed utility lookup
-                    return registry.getUtility(this.constructor)
-                }
+            const outp = function Interface (paramOne, paramTwo) {
+                // First figure out what registry to use so we can pass
+                // the same props to _lookup allowing JS engine to optimize
+                let registry
+                if (hasPropRegistry(paramTwo)) registry = paramTwo.registry
+                else if (hasPropRegistry(paramOne)) registry = paramOne.registry
+                else registry = globalRegistry
+
+                const intrfc = paramOne
+                return _lookup(this, intrfc, registry)
             }
 
             Object.defineProperty(outp, `interfaceId`, {value: uuid(`${namespace}.${params.name}`, NAMESPACE), configurable: false, writable: false})
@@ -37,48 +101,22 @@ export function createInterfaceClass(namespace) {
                 Object.defineProperty(outp, key, {value: params[key], configurable: false, writable: false})
             }
 
-            outp.providedBy = function (obj) {
-                // Does the specified object implement this interface
-                if (obj && Array.isArray(obj._implements)) {
-                    // Object has a list of interfaces it implements
-                    for (var i=0, imax = obj._implements.length; i<imax; i++) {
-                        if (obj._implements[i].interfaceId === this.interfaceId) {
-                            return true;
-                        };
-                    }
-                } else if (obj && obj._implements && obj._implements.interfaceId === this.interfaceId) {
-                    // Object implements a single interface (probably a utility)
-                    return true;
-                }
-                // If we came this far, the object doesn't implement this interface
-                return false;
-            }
+            // Use broken out func so JS engine can optimize
+            outp.providedBy = _providedBy
 
             const schema = params.schema
 
+            // TODO: Remove _addPropsCompat in V2
             if (compat) {
                 // Compatibility
-                outp.addProperties = function (obj) {
-                    // TODO: Implement this in isomorphic-schema
-
-                    
-                    var fields = (schema && schema._fields) || [];
-                    for (var key in fields) {
-                        var field = fields[key];
-                        Object.defineProperty(obj, key, {
-                            configurable: true, // We might want to remove properties when passing data through API
-                            enumerable: true,
-                            writable: !field.readOnly
-                        });
-                    };
-                }
+                outp.addProperties = _addPropsCompat.bind(schema)
             }
 
             if (!compat) {
                 if (schema && typeof schema.addProperties === 'function') {
                     outp.addProperties = schema.addProperties.bind(schema) // addProperties(obj)
                 } else {
-                    outp.addProperties = function () {}
+                    outp.addProperties = _NOOP // Do nothing
                 }
             }
 
