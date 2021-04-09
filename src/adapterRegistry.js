@@ -1,6 +1,15 @@
 
 import { isDevelopment } from './common'
 
+import {
+  hasPropRegistry,
+  notNullOrUndef,
+  hasPropImplements,
+  hasArrayPropImplements,
+  isString,
+  isWildcard
+} from './utils'
+
 /*
 
     Exceptions
@@ -142,7 +151,7 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
         
         // Now support finding adapter by supplying an interface. Useful if no object exists yet such as
         // in a schema with ObjectField or for create views.
-        var tmpImplements = obj._implements || [obj];
+        var tmpImplements = notNullOrUndef(obj._implements) ? obj._implements : [obj];
         for (var j = 0, jmax = tmpImplements.length; j < jmax; j++) {
             var tmpInterface = tmpImplements[j];
             for (var i = 0, imax = adapters.interfaceAdapters.length; i < imax; i++) {
@@ -150,7 +159,7 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
                 if (tmpInterface.interfaceId === tmp.adapts.interfaceId) {
                     // If we got the adaptsInterface parameter we need to check that it matches otherwise
                     // keep on looking
-                    if (adaptsInterface && adaptsInterface.interfaceId !== tmp.adapts.interfaceId) {
+                    if (notNullOrUndef(adaptsInterface) && adaptsInterface.interfaceId !== tmp.adapts.interfaceId) {
                         continue
                     }
                     // Found the adapter, instantiate and return (adapter should set obj as context on creation)
