@@ -15,13 +15,13 @@ export function extendPrototypeWithThese(prototype, extendThese) {
     if (extendThese) {
     
         // Applying inherited methods right to left so first (most left) overrides last (most right) in list
-        extendThese.map(function (tmp){
-            var tmpObj = tmp.prototype;
+        for (const item of extendThese) {
+            var tmpObj = item.prototype;
             var _iname = "_" + tmpObj._iname;
             for (var key in tmpObj) {
-                if (key == '_implements') {
+                if (key === '_implements') {
                     // Implements should be extended with later coming before earlier
-                    // TODO: Filer so we remove duplicates from existing list (order makes difference)
+                    // TODO: Filter so we remove duplicates from existing list (order makes difference)
                     outp.prototype._implements = tmpObj._implements.concat(outp.prototype._implements); 
                 } else {
                     // All others added and lower indexes override higher
@@ -41,6 +41,7 @@ export function extendPrototypeWithThese(prototype, extendThese) {
                     }
                     
                     /*
+                    // TODO: Investigate why this is here
                     outp.prototype._extends[_iname][key] = function () {
                         tmpObj._constructor.call(this, tmpObj._super, arguments);
                     }
@@ -48,7 +49,7 @@ export function extendPrototypeWithThese(prototype, extendThese) {
                     outp.prototype[key] = outp.prototype[_iname][extendsKey];
                 }
             }
-        });
+        };
         
     }
     
@@ -59,11 +60,10 @@ export function addMembers(outp, params) {
     /*
         Helper method to add each item in params dictionary to the prototype of outp.
     */
-    
-    for (var key in params) {
-        if (params.hasOwnProperty(key)) {
-            outp.prototype[key] = params[key];
-        }
+    // Not using for..in because it returns inherited properties and I am
+    // exchanging a hasOwnProperties check for Object.keys
+    for (const key of Object.keys(params)) {
+        outp.prototype[key] = params[key];
     }
     
     return outp;
@@ -72,11 +72,11 @@ export function addMembers(outp, params) {
 export function checkMembers(ObjectPrototype, intrfcs) {
     for (var i = 0; i < intrfcs.length; i++) {
         var intrfc = intrfcs[i]
-        Object.keys(intrfc.prototype).forEach((key) => {
-            if (key === 'providedBy') return
-            
-            var memberTypeDesc = intrfc.prototype[key];
-            assert(ObjectPrototype.prototype[key] !== undefined, 'ObjectPrototype "' + ObjectPrototype.name + '" is missing member "' + key + ': ' + memberTypeDesc + '" specified in "' + intrfc.name + '"')
-        })
+        for (const key in intrfc.prototype) {
+          if (key === 'providedBy') return
+          
+          var memberTypeDesc = intrfc.prototype[key];
+          assert(ObjectPrototype.prototype[key] !== undefined, 'ObjectPrototype "' + ObjectPrototype.name + '" is missing member "' + key + ': ' + memberTypeDesc + '" specified in "' + intrfc.name + '"')
+        }
     }
 }
