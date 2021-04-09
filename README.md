@@ -478,6 +478,9 @@ If you have created a scoped registry in application code you might want to regi
 
 Good luck!
 
+## Migrating to 2.0 ##
+Version 2.0 is compatible with 1.0, but we have dropped support for createInterface, createUtility and createAdapter. If you are usnig these, follow the 1.0 migration instructions below.
+
 ## Migrating to 1.0 ##
 
 Migration is mostly about search and replace, all params are the same. Note, if you do introspection there might be a slight change of naming of props on the created objects.
