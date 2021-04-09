@@ -4,11 +4,13 @@ import {
     extendPrototypeWithThese,
     addMembers,
     checkMembers,
-    isDevelopment } from './common'
+    isDevelopment,
+    throwDeprecatedCompat
+} from './common'
 import { globalRegistry } from './globalRegistry'
 
 export class Utility {
-    constructor (params, compat) {
+    constructor (params) {
         /*
             extends -- (optional) list of object prototypes to inherit from
             implements -- interface this prototype implements (besides those that are inherited)
@@ -21,6 +23,7 @@ export class Utility {
             })
         */
         if (isDevelopment) {
+            if (arguments[1]) throwDeprecatedCompat()
             assert(typeof params.implements === 'function' && params.implements.interfaceId, '[componeont-registry] When creating a Utility, param implements must be an interface!')
         }
         var extendThese = params.extends,
@@ -55,8 +58,6 @@ export class Utility {
             var tmpName = name.startsWith('I') ? name.slice(1) : name
             Object.defineProperty(Utility, 'name', {value: tmpName, configurable: false, writable: false})
         }
-        
-        if (compat) return Utility
 
         // Automatically register utility, either with provided registry or with
         // the global registry

@@ -1,7 +1,6 @@
 {
   "presets": [
-    ["env", { "modules": false }],
-    "stage-2"
+    ["@babel/env", { "modules": false }],
   ],
   "plugins": [
     "add-module-exports"
@@ -9,7 +8,7 @@
   "env": {
     "test": {
       "presets": [
-        "env"
+        "@babel/env"
       ]
     }
   }

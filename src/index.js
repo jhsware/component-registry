@@ -16,7 +16,7 @@ import { Utility } from  './utilityFactory'
 
 import { createObjectPrototype } from  './objectFactory'
 
-// Compat, deprecate for 2.0
+// Compat, deprecated as of 2.0 (throws error)
 import {
   createInterface,
   createAdapter,
@@ -36,7 +36,7 @@ export {
   Adapter,
   Utility,
 
-  // Compat, deprecate for 2.0
+  // Compat, deprecated as of 2.0 (throws error)
   createInterface,
   createAdapter,
   createUtility

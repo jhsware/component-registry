@@ -1,6 +1,16 @@
 
 export const isDevelopment = typeof process !== 'undefined' && process.env.NODE_ENV !== 'production';
 
+export function DeprecatedException(message) {
+  this.message = message;
+  this.name = "DeprecatedException";
+  this.stack = (new Error()).stack;
+}
+
+export function throwDeprecatedCompat() {
+  throw new DeprecatedException('Since version 2.0 we no longer support compatibility mode which supported pre 1.0 implementations. Check how to upgrade to 1.0, it\'s worth it.')
+}
+
 export function assert(isValid, msg) {
     if (!isValid) throw new Error(msg)
 }

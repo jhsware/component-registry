@@ -1,16 +1,19 @@
 
 // Import of uuid didn't work and I couldn't figure out how to get the settings right
-const uuid = require('uuid/v5')
-const NAMESPACE = 'bc901568-0169-42a8-aac8-52fa2ffd0670';
+import { v5 as uuid } from 'uuid'
 import { globalRegistry } from './globalRegistry'
 import {
   hasPropRegistry,
-  notNullOrUndef,
   hasPropImplements,
   hasArrayPropImplements,
   isString,
   isWildcard
 } from './utils'
+import {
+  isDevelopment,
+  throwDeprecatedCompat
+} from './common'
+const NAMESPACE = 'bc901568-0169-42a8-aac8-52fa2ffd0670';
 
 function _providedBy (obj) {
     // Does the specified object implement this interface
@@ -50,22 +53,13 @@ function _lookup (_this, intrfc, registry) {
 
 function _NOOP () {}
 
-function _addPropsCompat (obj) {
-  const schema = this
-  var fields = (schema && schema._fields) || [];
-  for (var key in fields) {
-      var field = fields[key];
-      Object.defineProperty(obj, key, {
-          configurable: true, // We might want to remove properties when passing data through API
-          enumerable: true,
-          writable: !field.readOnly
-      });
-  };
-}
-
 export function createInterfaceClass(namespace) {
     class Interface {
-        constructor (params, compat) {
+        constructor (params) {
+            if (isDevelopment) {
+              if (arguments[1]) throwDeprecatedCompat()
+            }
+
             const outp = function Interface (paramOne, paramTwo) {
                 // First figure out what registry to use so we can pass
                 // the same props to _lookup allowing JS engine to optimize
@@ -90,18 +84,10 @@ export function createInterfaceClass(namespace) {
 
             const schema = params.schema
 
-            // TODO: Remove _addPropsCompat in V2
-            if (compat) {
-                // Compatibility
-                outp.addProperties = _addPropsCompat.bind(schema)
-            }
-
-            if (!compat) {
-                if (schema && typeof schema.addProperties === 'function') {
-                    outp.addProperties = schema.addProperties.bind(schema) // addProperties(obj)
-                } else {
-                    outp.addProperties = _NOOP // Do nothing
-                }
+            if (schema && typeof schema.addProperties === 'function') {
+                outp.addProperties = schema.addProperties.bind(schema) // addProperties(obj)
+            } else {
+                outp.addProperties = _NOOP // Do nothing
             }
 
             return outp

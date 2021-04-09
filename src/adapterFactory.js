@@ -4,11 +4,13 @@ import {
     extendPrototypeWithThese,
     addMembers,
     checkMembers,
-    isDevelopment } from './common'
+    isDevelopment,
+    throwDeprecatedCompat
+} from './common'
 import { globalRegistry } from './globalRegistry'
 
 export class Adapter {
-    constructor (params, compat) {
+    constructor (params) {
         /*
             extends -- (optional) list of object prototypes to inherit from
             implements -- interface this prototype implements (besides those that are inherited)
@@ -21,6 +23,7 @@ export class Adapter {
             })
         */
        if (isDevelopment) {
+            if (arguments[1]) throwDeprecatedCompat()
             assert(typeof params.implements === 'function' && params.implements.interfaceId, '[componeont-registry] When creating an Adapter, param implements must be an interface!')
             assert((typeof params.implements === 'function' && params.implements.interfaceId)
                 || (typeof params.implements === 'object' && params.implements._implements), '[componeont-registry] When creating an Adapter, param adapts must be an interface or an ObjectPrototype!')
@@ -65,8 +68,6 @@ export class Adapter {
             Object.defineProperty(Adapter, 'name', {value: tmpName, configurable: true})
         }
         
-        if (compat) return Adapter
-
         // Automatically register adapter, either with provided registry or with
         // the global registry
         if (registry) {

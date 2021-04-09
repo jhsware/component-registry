@@ -22,11 +22,7 @@ const baseConfig = (outputFormat) => {
     plugins: [
       nodeResolve(),
       babel({
-        plugins: [
-          // Ensure "external-helpers" is only included in rollup builds
-          // Issue: https://github.com/rollup/rollup/issues/1595
-          'external-helpers',
-        ],
+        plugins: [],
       }),
       replace({
         'process.env.NODE_ENV': JSON.stringify('production')
