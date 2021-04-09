@@ -3,7 +3,13 @@
 import { 
     extendPrototypeWithThese,
     addMembers,
-    checkMembers  } from './common'
+    checkMembers
+} from './common'
+
+import {
+  notNullOrUndef,
+  isFunc
+} from './utils'
 
 const _reservedProps = {
   _implements: true,
@@ -21,6 +27,52 @@ function _isSpecialOrReservedProp (key, data) {
   }
 
   return false
+}
+
+function _toJSON () {
+  var data = {};
+  for (var key in this) {
+      // Only own properties are used
+      if (this.hasOwnProperty(key)) {
+        var prop = this[key];
+        if (prop && typeof prop.toJSON === 'function') {
+            // Recursively prepare objects for stringify, skipping member objects that don't have a toJSON method
+            data[key] = prop.toJSON();
+        } else if (typeof prop !== 'function') {
+            data[key] = prop;
+        }
+      }
+  }
+  return data;
+}
+
+function _init (_this, data) {
+    // Add all schema props from implemented interfaces to allow composition
+    for (var i = _this._implements.length - 1; i >= 0; i--) {
+        _this._implements[i].addProperties(_this)
+    }
+    
+    // Make a shallow copy of input data so we can remove root props in constructors
+    // without messing up the oringial data
+    
+    var inData = {};
+    for (var key in data) {
+        // To allow cloning we need to skip reserved props, special props and functions
+        if (!_isSpecialOrReservedProp(key, data) || (isFunc(data[key]) && data[key].interfaceId !== undefined)) {
+          inData[key] = data[key];
+        }
+    }
+    
+    // Run the constructor
+    if (isFunc(_this._constructor)) {
+      _this._constructor(inData);
+    }
+    
+    // Add the remaining data. The constructors might mutate this and we only
+    // want to add what is left
+    for (var key in inData) {
+        _this[key] = inData[key];
+    };
 }
 
 export function createObjectPrototype(params) {
@@ -72,30 +124,7 @@ export function createObjectPrototype(params) {
     };
     
     var ObjectPrototype = function (data) {
-        // Add all schema props from implemented interfaces to allow composition
-        for (var i = this._implements.length - 1; i >= 0; i--) {
-            this._implements[i].addProperties(this)
-        }
-        
-        // Make a shallow copy of input data so we can remove root props in constructors
-        // without messing up the oringial data
-        
-        var inData = {};
-        for (var key in data) {
-            // To allow cloning we need to skip reserved props, special props and functions
-            if (!_isSpecialOrReservedProp(key, data) || (typeof data[key] === 'function' && data[key].interfaceId !== undefined)) {
-              inData[key] = data[key];
-            }
-        }
-        
-        // Run the constructor
-        this._constructor && this._constructor(inData);
-        
-        // Add the remaining data. The constructors might mutate this and we only
-        // want to add what is left
-        for (var key in inData) {
-            this[key] = inData[key];
-        };
+      _init(this, data);
     };
 
     // Set a more debug friendly name for ObjectPrototype (by convention we strip leading "I" if it
@@ -105,22 +134,7 @@ export function createObjectPrototype(params) {
         Object.defineProperty(ObjectPrototype, 'name', {value: tmpName, configurable: true})
     }
         
-    ObjectPrototype.prototype.toJSON = function () {
-        var data = {};
-        for (var key in this) {
-            // Only own properties are used
-            if (this.hasOwnProperty(key)) {
-              var prop = this[key];
-              if (prop && typeof prop.toJSON === 'function') {
-                  // Recursively prepare objects for stringify, skipping member objects that don't have a toJSON method
-                  data[key] = prop.toJSON();
-              } else if (typeof prop !== 'function') {
-                  data[key] = prop;
-              }
-            }
-        }
-        return data;
-    }
+    ObjectPrototype.prototype.toJSON = _toJSON
         
     ObjectPrototype.prototype._implements = []
     
