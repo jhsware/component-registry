@@ -1,10 +1,12 @@
-'use strict'
-
-import AdapterRegistry from './adapterRegistry'
-import UtilityRegistry from './utilityRegistry'
+import { AdapterRegistry } from './adapterRegistry'
+import { UtilityRegistry } from './utilityRegistry'
+import { isTest } from './common';
 
 export class Registry {
-    constructor () {
+    registerAdapter;
+    registerUtility;
+
+    constructor() {
         /*
 
             Creates both utility and adapter registry, both mounted on global.registry
@@ -17,12 +19,12 @@ export class Registry {
         */
 
         if (typeof global.registry === 'undefined') {
-            console.log('[component-registry] Creating component utility registry');
+            isTest || console.log('[component-registry] Creating component utility registry');
             global.registry = new UtilityRegistry();
 
-            console.log('[component-registry] Creating component adapter registry');
-            var tmp = new AdapterRegistry();
-            
+            isTest || console.log('[component-registry] Creating component adapter registry');
+            const tmp = new AdapterRegistry();
+
             Object.keys(tmp).forEach(function (key) {
                 if (tmp.hasOwnProperty(key)) {
                     global.registry[key] = tmp[key];

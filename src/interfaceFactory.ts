@@ -11,7 +11,6 @@ import {
 } from './utils'
 import {
   isDevelopment,
-  throwDeprecatedCompat
 } from './common'
 const NAMESPACE = 'bc901568-0169-42a8-aac8-52fa2ffd0670';
 
@@ -19,7 +18,7 @@ function _providedBy (obj) {
     // Does the specified object implement this interface
     if (hasArrayPropImplements(obj)) {
         // Object has a list of interfaces it implements
-        for (var i=0, imax = obj._implements.length; i<imax; i++) {
+        for (let i=0, imax = obj._implements.length; i<imax; i++) {
             if (obj._implements[i].interfaceId === this.interfaceId) {
                 return true;
             };
@@ -56,10 +55,6 @@ function _NOOP () {}
 export function createInterfaceClass(namespace) {
     class Interface {
         constructor (params) {
-            if (isDevelopment) {
-              if (arguments[1]) throwDeprecatedCompat()
-            }
-
             const outp = function Interface (paramOne, paramTwo) {
                 // First figure out what registry to use so we can pass
                 // the same props to _lookup allowing JS engine to optimize

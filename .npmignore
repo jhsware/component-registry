@@ -1,6 +1,8 @@
 .DS_Store
 
 .git/
+.parcel-cache
+package-lock.json
 
 # VS Code specific
 .vscode

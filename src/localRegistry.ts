@@ -1,7 +1,5 @@
-'use strict'
-
-import AdapterRegistry from './adapterRegistry'
-import UtilityRegistry from './utilityRegistry'
+import { AdapterRegistry } from './adapterRegistry'
+import { UtilityRegistry } from './utilityRegistry'
 
 export class LocalRegistry {
     constructor () {

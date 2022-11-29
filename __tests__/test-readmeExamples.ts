@@ -1,8 +1,10 @@
-import expect from 'expect.js'
+import { describe, expect, it, beforeEach } from "@jest/globals";
 
-const { createInterfaceClass, Adapter, createObjectPrototype, globalRegistry } = require('../lib')
+const { createInterfaceClass, Adapter, createObjectPrototype, globalRegistry } = require('../dist/index.cjs.js')
 
 class consoleMock {
+  logResult;
+
   log(inp) {
     this.logResult = inp
   }
@@ -43,7 +45,7 @@ describe('Readme Examples', function() {
     new IDisplayWidget(oneUser).render()
     // [console]$ I am a User
     
-    expect(console.logResult).to.be('I am a User');
+    expect(console.logResult).toBe('I am a User');
   });
 })
 

@@ -30,11 +30,11 @@ function _isSpecialOrReservedProp (key, data) {
 }
 
 function _toJSON () {
-  var data = {};
-  for (var key in this) {
+  const data = {};
+  for (const key in this) {
       // Only own properties are used
       if (this.hasOwnProperty(key)) {
-        var prop = this[key];
+        const prop = this[key];
         if (prop && typeof prop.toJSON === 'function') {
             // Recursively prepare objects for stringify, skipping member objects that don't have a toJSON method
             data[key] = prop.toJSON();
@@ -48,15 +48,15 @@ function _toJSON () {
 
 function _init (_this, data) {
     // Add all schema props from implemented interfaces to allow composition
-    for (var i = _this._implements.length - 1; i >= 0; i--) {
+    for (let i = _this._implements.length - 1; i >= 0; i--) {
         _this._implements[i].addProperties(_this)
     }
     
     // Make a shallow copy of input data so we can remove root props in constructors
     // without messing up the oringial data
     
-    var inData = {};
-    for (var key in data) {
+    const inData = {};
+    for (const key in data) {
         // To allow cloning we need to skip reserved props, special props and functions
         if (!_isSpecialOrReservedProp(key, data) || (isFunc(data[key]) && data[key].interfaceId !== undefined)) {
           inData[key] = data[key];
@@ -70,7 +70,7 @@ function _init (_this, data) {
     
     // Add the remaining data. The constructors might mutate this and we only
     // want to add what is left
-    for (var key in inData) {
+    for (const key in inData) {
         _this[key] = inData[key];
     };
 }
@@ -122,15 +122,15 @@ export function createObjectPrototype(params) {
         paramsToAdd._iname = implementsInterfaces[0].name;
     };
     
-    var ObjectPrototype = function (data) {
+    const ObjectPrototype = function (data) {
       _init(this, data);
     };
 
     // Set a more debug friendly name for ObjectPrototype (by convention we strip leading "I" if it
     // exists)
     if (paramsToAdd._iname) {
-        // var tmpName = params._iname.startsWith('I') ? params._iname.slice(1) : params._iname
-        var tmpName = paramsToAdd._iname.startsWith('I') ? paramsToAdd._iname.slice(1) : paramsToAdd._iname
+        // const tmpName = params._iname.startsWith('I') ? params._iname.slice(1) : params._iname
+        const tmpName = paramsToAdd._iname.startsWith('I') ? paramsToAdd._iname.slice(1) : paramsToAdd._iname
         Object.defineProperty(ObjectPrototype, 'name', {value: tmpName, configurable: true})
     }
         

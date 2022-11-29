@@ -1,46 +1,45 @@
-import expect from 'expect.js'
+import { describe, expect, it } from "@jest/globals";
+import { createObjectPrototype, createInterfaceClass } from '../dist/index.cjs.js'
+import { Schema } from '../__mocks__/mock-schema'
 
-import { createInterfaceClass } from '../lib'
 const Interface = createInterfaceClass('test')
-import { createObjectPrototype } from '../lib'
-import { Schema } from './mocks'
 
 describe('Object Prototypes', function() {
     it('can be created', function() {
-        var IUser = new Interface({name: 'IUser'});
+        const IUser = new Interface({name: 'IUser'});
         
-        var userPrototype = createObjectPrototype({
+        const userPrototype = createObjectPrototype({
             implements: [IUser],
             sayHi: function () {
                 return "Hi!"
             }
         })
         
-        var user = new userPrototype();
+        const user = new userPrototype();
         
-        expect(user).to.be.a(userPrototype);
-        expect(user.sayHi()).to.be("Hi!");
+        expect(user).toBeInstanceOf(userPrototype);
+        expect(user.sayHi()).toBe("Hi!");
     });
 
     it('can clone other Object Prototype', function() {
-        var IUser = new Interface({name: 'IUser'});
+        const IUser = new Interface({name: 'IUser'});
         
-        var userPrototype = createObjectPrototype({
+        const userPrototype = createObjectPrototype({
             implements: [IUser],
             sayHi: function () {
                 return "Hi!"
             }
         })
         
-        var user = new userPrototype({ test: 'dummy' });
-        var clone = new userPrototype(user);
+        const user = new userPrototype({ test: 'dummy' });
+        const clone = new userPrototype(user);
         
-        expect(clone).to.be.a(userPrototype);
-        expect(clone.sayHi()).to.be("Hi!");
+        expect(clone).toBeInstanceOf(userPrototype);
+        expect(clone.sayHi()).toBe("Hi!");
 
-        var jsonUser = JSON.stringify(user.toJSON());
-        var jsonClone = JSON.stringify(clone.toJSON());
-        expect(jsonClone).to.equal(jsonUser);
+        const jsonUser = JSON.stringify(user.toJSON());
+        const jsonClone = JSON.stringify(clone.toJSON());
+        expect(jsonClone).toEqual(jsonUser);
         
         console.log(
           jsonUser,
@@ -48,24 +47,24 @@ describe('Object Prototypes', function() {
           Object.keys(user),
           Object.keys(clone),
         )
-        var propsUser = Object.keys(user).toString();
-        var propsClone = Object.keys(clone).toString();
-        expect(propsClone).to.equal(propsUser);
+        const propsUser = Object.keys(user).toString();
+        const propsClone = Object.keys(clone).toString();
+        expect(propsClone).toEqual(propsUser);
     });
     
     it("can inherit from other object prototypes", function() {
-        var IUser = new Interface({name: 'IUser'});
+        const IUser = new Interface({name: 'IUser'});
         
-        var userProto = createObjectPrototype({
+        const userProto = createObjectPrototype({
             implements: [IUser],
             sayHi: function () {
                 return "Hi!"
             }
         })
         
-        var ISpecialUser = new Interface({name: 'ISpecialUser'});
+        const ISpecialUser = new Interface({name: 'ISpecialUser'});
         
-        var specialUserProto = createObjectPrototype({
+        const specialUserProto = createObjectPrototype({
             extends: [userProto],
             implements: [ISpecialUser],
             sayHo: function () {
@@ -73,17 +72,17 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var user = new specialUserProto();
+        const user = new specialUserProto();
         
-        expect(user).to.be.a(specialUserProto);
-        expect(user.sayHi()).to.be("Hi!");
-        expect(user.sayHo()).to.be("Ho!");
+        expect(user).toBeInstanceOf(specialUserProto);
+        expect(user.sayHi()).toBe("Hi!");
+        expect(user.sayHo()).toBe("Ho!");
     });
 
     it("can inherit from other object prototypes and maintain this", function() {
-        var IUser = new Interface({name: 'IUser'});
+        const IUser = new Interface({name: 'IUser'});
         
-        var userProto = createObjectPrototype({
+        const userProto = createObjectPrototype({
             implements: [IUser],
             sayHi: function () {
                 return this.sayHo()
@@ -93,9 +92,9 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var ISpecialUser = new Interface({name: 'ISpecialUser'});
+        const ISpecialUser = new Interface({name: 'ISpecialUser'});
         
-        var specialUserProto = createObjectPrototype({
+        const specialUserProto = createObjectPrototype({
             extends: [userProto],
             implements: [ISpecialUser],
             sayHo: function () {
@@ -103,24 +102,24 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var user = new specialUserProto();
+        const user = new specialUserProto();
         
-        expect(user.sayHi()).to.be("Ho!");
+        expect(user.sayHi()).toBe("Ho!");
     });
     
     it("can inherit from other object prototypes two levels deep", function() {
-        var IUser = new Interface({name: 'IUser'});
+        const IUser = new Interface({name: 'IUser'});
         
-        var userProto = createObjectPrototype({
+        const userProto = createObjectPrototype({
             implements: [IUser],
             sayHi: function () {
                 return "Hi!"
             }
         })
         
-        var ISpecialUser = new Interface({name: 'ISpecialUser'});
+        const ISpecialUser = new Interface({name: 'ISpecialUser'});
         
-        var specialUserProto = createObjectPrototype({
+        const specialUserProto = createObjectPrototype({
             extends: [userProto],
             implements: [ISpecialUser],
             sayHo: function () {
@@ -128,11 +127,9 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var user = new specialUserProto();
+        const ISuperSpecialUser = new Interface({name: 'ISuperSpecialUser'});
         
-        var ISuperSpecialUser = new Interface({name: 'ISuperSpecialUser'});
-        
-        var superSpecialUserProto = createObjectPrototype({
+        const superSpecialUserProto = createObjectPrototype({
             extends: [specialUserProto],
             implements: [ISuperSpecialUser],
             sayYay: function () {
@@ -140,18 +137,18 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var user = new superSpecialUserProto();
+        const user = new superSpecialUserProto();
         
-        expect(user).to.be.a(superSpecialUserProto);
-        expect(user.sayHi()).to.be("Hi!");
-        expect(user.sayHo()).to.be("Ho!");
-        expect(user.sayYay()).to.be("Yay!");
+        expect(user).toBeInstanceOf(superSpecialUserProto);
+        expect(user.sayHi()).toBe("Hi!");
+        expect(user.sayHo()).toBe("Ho!");
+        expect(user.sayYay()).toBe("Yay!");
     });
 
     it("can inherit from other object prototypes two levels deep and maintain this", function() {
-        var IUser = new Interface({name: 'IUser'});
+        const IUser = new Interface({name: 'IUser'});
         
-        var userProto = createObjectPrototype({
+        const userProto = createObjectPrototype({
             implements: [IUser],
             sayHi: function () {
                 return this.sayHo()
@@ -161,9 +158,9 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var ISpecialUser = new Interface({name: 'ISpecialUser'});
+        const ISpecialUser = new Interface({name: 'ISpecialUser'});
         
-        var specialUserProto = createObjectPrototype({
+        const specialUserProto = createObjectPrototype({
             extends: [userProto],
             implements: [ISpecialUser],
             sayHo: function () {
@@ -171,11 +168,9 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var user = new specialUserProto();
+        const ISuperSpecialUser = new Interface({name: 'ISuperSpecialUser'});
         
-        var ISuperSpecialUser = new Interface({name: 'ISuperSpecialUser'});
-        
-        var superSpecialUserProto = createObjectPrototype({
+        const superSpecialUserProto = createObjectPrototype({
             extends: [specialUserProto],
             implements: [ISuperSpecialUser],
             sayHo: function () {
@@ -183,15 +178,15 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var user = new superSpecialUserProto();
+        const user = new superSpecialUserProto();
         
-        expect(user.sayHi()).to.be("Ho!");
+        expect(user.sayHi()).toBe("Ho!");
     });
     
     it("can inherit from other object prototypes two levels deep and call all constructors", function() {
-        var IUser = new Interface({name: 'IUser'});
+        const IUser = new Interface({name: 'IUser'});
         
-        var User = createObjectPrototype({
+        const User = createObjectPrototype({
             implements: [IUser],
             constructor: function () {
                 this.storedVal = (this.storedVal || '') + '1';
@@ -201,9 +196,9 @@ describe('Object Prototypes', function() {
             }
         })
         
-        var ISpecialUser = new Interface({name: 'ISpecialUser'});
+        const ISpecialUser = new Interface({name: 'ISpecialUser'});
         
-        var SpecialUser = createObjectPrototype({
+        const SpecialUser = createObjectPrototype({
             extends: [User],
             implements: [ISpecialUser],
             constructor: function (data) {
@@ -212,9 +207,9 @@ describe('Object Prototypes', function() {
             },
         })
                 
-        var ISuperSpecialUser = new Interface({name: 'ISuperSpecialUser'});
+        const ISuperSpecialUser = new Interface({name: 'ISuperSpecialUser'});
         
-        var SuperSpecialUser = createObjectPrototype({
+        const SuperSpecialUser = createObjectPrototype({
             extends: [SpecialUser],
             implements: [ISuperSpecialUser],
             constructor: function (data) {
@@ -223,35 +218,35 @@ describe('Object Prototypes', function() {
             },
         })
         
-        var user = new SuperSpecialUser();
+        const user = new SuperSpecialUser();
         
-        expect(user).to.be.a(SuperSpecialUser);
-        expect(user.getStoredVal()).to.equal("123");
-        expect(user._IUser.getStoredVal.call(user)).to.equal("123");
+        expect(user).toBeInstanceOf(SuperSpecialUser);
+        expect(user.getStoredVal()).toEqual("123");
+        expect(user._IUser.getStoredVal.call(user)).toEqual("123");
     });
     
     it("can inherit from several other object prototypes call all constructors", function() {
-        var IUser = new Interface({name: 'IUser'});
+        const IUser = new Interface({name: 'IUser'});
         
-        var User = createObjectPrototype({
+        const User = createObjectPrototype({
             implements: [IUser],
             constructor: function () {
                 this.userVal = 1;
             }
         })
         
-        var ISpecial = new Interface({name: 'ISpecial'});
+        const ISpecial = new Interface({name: 'ISpecial'});
         
-        var Special = createObjectPrototype({
+        const Special = createObjectPrototype({
             implements: [ISpecial],
             constructor: function (data) {
                 this.specialVal = 2;
             },
         })
                 
-        var ISuperSpecialUser = new Interface({name: 'ISuperSpecialUser'});
+        const ISuperSpecialUser = new Interface({name: 'ISuperSpecialUser'});
         
-        var SuperSpecialUser = createObjectPrototype({
+        const SuperSpecialUser = createObjectPrototype({
             extends: [Special, User],
             implements: [ISuperSpecialUser],
             constructor: function (data) {
@@ -261,41 +256,41 @@ describe('Object Prototypes', function() {
             },
         })
         
-        var user = new SuperSpecialUser();
+        const user = new SuperSpecialUser();
         
-        expect(user).to.be.a(SuperSpecialUser);
-        expect(user.userVal).to.equal(1);
-        expect(user.specialVal).to.equal(2);
-        expect(user.superSpecialVal).to.equal(3);
+        expect(user).toBeInstanceOf(SuperSpecialUser);
+        expect(user.userVal).toEqual(1);
+        expect(user.specialVal).toEqual(2);
+        expect(user.superSpecialVal).toEqual(3);
     });
 
     it("can inherit from other object prototype and calls inherited constructor if none is specified", function() {
-        var IUser = new Interface({name: 'IUser'});
+        const IUser = new Interface({name: 'IUser'});
         
-        var userProto = createObjectPrototype({
+        const userProto = createObjectPrototype({
             implements: [IUser],
             constructor: function () {
                 this.constructorCalled = true
             }
         })
         
-        var ISpecialUser = new Interface({name: 'ISpecialUser'});
+        const ISpecialUser = new Interface({name: 'ISpecialUser'});
         
-        var specialUserProto = createObjectPrototype({
+        const specialUserProto = createObjectPrototype({
             extends: [userProto],
             implements: [ISpecialUser]
         })
         
-        var user = new specialUserProto();
+        const user = new specialUserProto();
         
-        expect(user).to.be.a(specialUserProto);
-        expect(user.constructorCalled).to.be(true);
+        expect(user).toBeInstanceOf(specialUserProto);
+        expect(user.constructorCalled).toBe(true);
     });
 
     it("can convert simple object to JSON", function() {
-        var IUser = new Interface({name: 'IUser'});
+        const IUser = new Interface({name: 'IUser'});
         
-        var User = createObjectPrototype({
+        const User = createObjectPrototype({
             implements: [IUser],
             constructor: function () {
                 this._userVal = 1;
@@ -303,65 +298,65 @@ describe('Object Prototypes', function() {
             }
         })
                 
-        var user = new User();
+        const user = new User();
         
-        var data = user.toJSON();
+        const data = user.toJSON();
         
-        expect(data).to.not.be(undefined);
-        expect(data._userVal).to.equal(1);
-        expect(data.title).to.equal("title");
-        expect(JSON.stringify(user)).to.not.be(undefined);
+        expect(data).not.toBe(undefined);
+        expect(data._userVal).toEqual(1);
+        expect(data.title).toEqual("title");
+        expect(JSON.stringify(user)).not.toBe(undefined);
     });
     
     it("can convert nested objects to JSON", function() {
-        var IUser = new Interface({name: 'IUser'});
+        const IUser = new Interface({name: 'IUser'});
         
-        var User = createObjectPrototype({
+        const User = createObjectPrototype({
             implements: [IUser],
         })
                 
-        var user = new User({
+        const user = new User({
             _userVal: 1,
             title: "parent"
         });
         
-        var child = new User({
+        const child = new User({
             title: "child"
         });
         
         user.child = child;
         
-        var data = user.toJSON();
+        const data = user.toJSON();
         
-        expect(data).to.not.be(undefined);
-        expect(data._userVal).to.equal(1);
-        expect(data.title).to.equal("parent");
-        expect(data.child.title).to.be("child");
-        expect(JSON.stringify(user)).to.not.be(undefined);
+        expect(data).not.toBe(undefined);
+        expect(data._userVal).toEqual(1);
+        expect(data.title).toEqual("parent");
+        expect(data.child.title).toBe("child");
+        expect(JSON.stringify(user)).not.toBe(undefined);
     });
     
     it("can convert object with null values to JSON", function() {
-        var IUser = new Interface({name: 'IUser'});
+        const IUser = new Interface({name: 'IUser'});
         
-        var User = createObjectPrototype({
+        const User = createObjectPrototype({
             implements: [IUser],
         })
                 
-        var user = new User({
+        const user = new User({
             _userVal: 1,
             title: "parent",
             empty: null
         });
                 
-        var data = user.toJSON();
+        const data = user.toJSON();
         
-        expect(data).to.not.be(undefined);
-        expect(data._userVal).to.equal(1);
-        expect(JSON.stringify(user)).to.not.be(undefined);
+        expect(data).not.toBe(undefined);
+        expect(data._userVal).toEqual(1);
+        expect(JSON.stringify(user)).not.toBe(undefined);
     });
     
     it("can update value of properties", function() {
-        var IUser = new Interface({
+        const IUser = new Interface({
             name: 'IUser',
             schema: new Schema({
                 title: "",
@@ -369,11 +364,11 @@ describe('Object Prototypes', function() {
             })
         });
         
-        var User = createObjectPrototype({
+        const User = createObjectPrototype({
             implements: [IUser],
         })
                 
-        var user = new User({
+        const user = new User({
           _userVal: 1,
           title: "parent",
           empty: null
@@ -381,12 +376,12 @@ describe('Object Prototypes', function() {
         user.title = "updated";
         user.empty = "nope";
         
-        expect(user.title).to.equal("updated");
-        expect(user.empty).to.equal("nope");
+        expect(user.title).toEqual("updated");
+        expect(user.empty).toEqual("nope");
     });
 
     it("can be created with an interface as property", function() {
-      var IUser = new Interface({
+      const IUser = new Interface({
           name: 'IUser',
           schema: new Schema({
               title: "",
@@ -394,42 +389,42 @@ describe('Object Prototypes', function() {
           })
       });
 
-      var IAsProp = new Interface({})
+      const IAsProp = new Interface({})
       
-      var User = createObjectPrototype({
+      const User = createObjectPrototype({
           implements: [IUser],
       })
            
-      var user = new User({
+      const user = new User({
           myIProp: IAsProp
       });
       
-      expect(user.myIProp.interfaceId).to.equal(IAsProp.interfaceId);
+      expect(user.myIProp.interfaceId).toEqual(IAsProp.interfaceId);
     });
 
     it("can convert object with function JSON", function() {
-      var IUser = new Interface({
+      const IUser = new Interface({
         name: 'IUser',
       });
 
-      var IAsProp = new Interface({})
+      const IAsProp = new Interface({})
       
-      var User = createObjectPrototype({
+      const User = createObjectPrototype({
           implements: [IUser],
       })
               
-      var user = new User({
+      const user = new User({
           myIProp: IAsProp
       });
       
-      var data = user.toJSON();
+      const data = user.toJSON();
       
-      expect(data.myIProp).to.be(undefined);
+      expect(data.myIProp).toBe(undefined);
     });
   
     
     it("can remove schema field property", function() {
-        var IUser = new Interface({
+        const IUser = new Interface({
             name: 'IUser',
             schema: new Schema({
                 title: "",
@@ -437,11 +432,11 @@ describe('Object Prototypes', function() {
             })
         });
         
-        var User = createObjectPrototype({
+        const User = createObjectPrototype({
             implements: [IUser],
         })
                 
-        var user = new User({
+        const user = new User({
             _userVal: 1,
             title: "parent",
             empty: null
@@ -449,12 +444,12 @@ describe('Object Prototypes', function() {
         
         delete user.title;
         
-        expect(user.title).to.be(undefined);
+        expect(user.title).toBe(undefined);
     });
     
     
     it("won't overwrite prototype properties", function() {
-        var IUser = new Interface({
+        const IUser = new Interface({
             name: 'IUser',
             schema: new Schema({
                 title: "",
@@ -462,61 +457,61 @@ describe('Object Prototypes', function() {
             })
         });
         
-        var User = createObjectPrototype({
+        const User = createObjectPrototype({
             implements: [IUser],
         })
                 
-        var user = new User({
+        const user = new User({
             _userVal: 1,
             title: "parent",
             empty: null
         });
         
-        var data = user.toJSON();
+        const data = user.toJSON();
         
-        var newUser = new User(data);
+        const newUser = new User(data);
         
-        expect(newUser.hasOwnProperty('_implements')).to.equal(false);
+        expect(newUser.hasOwnProperty('_implements')).toEqual(false);
     });
 
     it("adds schema fields for all implemented interfaces", function() {
-        var IUser = new Interface({name: 'IUser', schema: new Schema({ name: '', age: '' })});
-        var ILooks = new Interface({name: 'ILooks', schema: new Schema({ eyes: '', height: ''})});
+        const IUser = new Interface({name: 'IUser', schema: new Schema({ name: '', age: '' })});
+        const ILooks = new Interface({name: 'ILooks', schema: new Schema({ eyes: '', height: ''})});
         
-        var userProto = createObjectPrototype({
+        const userProto = createObjectPrototype({
             implements: [IUser, ILooks]
         })
-        var user = new userProto();
+        const user = new userProto();
 
-        expect(user).to.have.property('name');
-        expect(user).to.have.property('age');
-        expect(user).to.have.property('eyes');
-        expect(user).to.have.property('height');
+        expect(user).toHaveProperty('name');
+        expect(user).toHaveProperty('age');
+        expect(user).toHaveProperty('eyes');
+        expect(user).toHaveProperty('height');
     });
 
     it("checks for existence of all members in all interfaces", function() {
-        var ITalker = new Interface({name: 'ITalker'});
+        const ITalker = new Interface({name: 'ITalker'});
         ITalker.prototype.talk = function () {};
         
-        var IFlexer = new Interface({name: 'IFlexer'});
+        const IFlexer = new Interface({name: 'IFlexer'});
         IFlexer.prototype.flex = function () {};
         
-        var userProto = createObjectPrototype({
+        const userProto = createObjectPrototype({
             implements: [ITalker, IFlexer],
             talk: function () {},
             flex: function () {}
         })
-        expect(userProto).to.not.be(undefined);
+        expect(userProto).not.toBe(undefined);
 
-        var failed
+        let failed
         try {
-            var userProto = createObjectPrototype({
+            const userProto = createObjectPrototype({
                 implements: [ITalker, IFlexer],
                 flex: function () {}
             })
         } catch (e) {
             failed = true
         }
-        expect(failed).to.equal(true);
+        expect(failed).toEqual(true);
     });
 });

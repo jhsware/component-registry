@@ -21,7 +21,7 @@ function UtilityRegistryException(message) {
 
 
 
-var UtilityRegistry = function () {
+export const UtilityRegistry = function () {
     this.utilities = {};
 } 
 
@@ -33,7 +33,7 @@ UtilityRegistry.prototype.registerUtility = function (utility) {
         utility -- the prototype of the utility to instantiate on get
         name -- OPTIONAL add as named utility
     */
-    var implementsInterface = utility.prototype._implements,  
+    const implementsInterface = utility.prototype._implements,  
         name = utility.prototype._name;
     
     // TODO: Check that the utility implements the interface
@@ -48,7 +48,7 @@ UtilityRegistry.prototype.registerUtility = function (utility) {
         }
     }
     
-    var utilities = this.utilities[implementsInterface.interfaceId];
+    const utilities = this.utilities[implementsInterface.interfaceId];
     
     if (name) {
         // Register as a named utility
@@ -86,22 +86,22 @@ UtilityRegistry.prototype.getUtility = function (implementsInterface, name, fall
         Return an instance of a utility that implements the given interface
         and optionally has provided name.
     */
-    var utilities = this.utilities[implementsInterface.interfaceId];
+    const utilities = this.utilities[implementsInterface.interfaceId];
     
     if (utilities && name) {
         if (utilities.namedUtility[name]) {
-            var Utility = new utilities.namedUtility[name].utility();
+            const Utility = new utilities.namedUtility[name].utility();
             return Utility;
         } else {
             if (arguments.length === 3) {
                 return fallbackReturnValue;
             } else {
-                var message = ["Lookup Error: There is no utility registered for: (" + implementsInterface.name + ", '" + name + "'). Check that you have registered it!"];
+                const message = ["Lookup Error: There is no utility registered for: (" + implementsInterface.name + ", '" + name + "'). Check that you have registered it!"];
 
                 if (isDevelopment) {
                     message.push("Available named utilities that match the provided interface:")
                     Object.keys(utilities.namedUtility).forEach((key) => {
-                        var intrfc = utilities.implementsInterface
+                        const intrfc = utilities.implementsInterface
                         message.push("[" + intrfc.name + "." + key + "] " + intrfc.interfaceId);
                     });
                 }
@@ -110,18 +110,18 @@ UtilityRegistry.prototype.getUtility = function (implementsInterface, name, fall
             }
         }
     } else if (utilities && utilities.unnamedUtility) {
-        var Utility = new utilities.unnamedUtility.utility();
+        const Utility = new utilities.unnamedUtility.utility();
         return Utility;
     } else {
         if (arguments.length === 3) {
             return fallbackReturnValue;
         } else {
-            var message = ["Lookup Error: There is no utility registered for: " + implementsInterface.name + ". Check that you have registered it! :)"];
+            const message = ["Lookup Error: There is no utility registered for: " + implementsInterface.name + ". Check that you have registered it! :)"];
 
             if (isDevelopment) {
                 message.push("Registered utilities implement the follwing interfaces:")
                 Object.keys(this.utilities).forEach((key) => {
-                    var util = this.utilities[key]
+                    const util = this.utilities[key]
                     message.push("[" + util.implementsInterface.name + "] " + util.implementsInterface.interfaceId);
                 });
             }
@@ -137,14 +137,14 @@ UtilityRegistry.prototype.getUtilities = function (implementsInterface) {
         of named utilities is included.
             { name: 'whatever', utility: obj }
     */
-    var utilities = this.utilities[implementsInterface.interfaceId];
+    const utilities = this.utilities[implementsInterface.interfaceId];
     
     // We can find any utilities so we return an empty list
     if (!utilities) {
         return []
     }
     
-    var outp = [];
+    const outp = [];
 
     // Add the unnamed utility
     if (utilities.unnamedUtility) {
@@ -152,10 +152,8 @@ UtilityRegistry.prototype.getUtilities = function (implementsInterface) {
     }
     
     // Add named utilities
-    for (var key in utilities.namedUtility) {
+    for (const key in utilities.namedUtility) {
         outp.push(new utilities.namedUtility[key].utility());
     }
     return outp;
 }
-
-export default UtilityRegistry

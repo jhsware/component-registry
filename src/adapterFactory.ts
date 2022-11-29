@@ -1,11 +1,9 @@
-
 import {
     assert,
     extendPrototypeWithThese,
     addMembers,
     checkMembers,
-    isDevelopment,
-    throwDeprecatedCompat
+    isDevelopment
 } from './common'
 import { globalRegistry } from './globalRegistry'
 
@@ -23,13 +21,12 @@ export class Adapter {
             })
         */
        if (isDevelopment) {
-            if (arguments[1]) throwDeprecatedCompat()
             assert(typeof params.implements === 'function' && params.implements.interfaceId, '[componeont-registry] When creating an Adapter, param implements must be an interface!')
             assert((typeof params.implements === 'function' && params.implements.interfaceId)
                 || (typeof params.implements === 'object' && params.implements._implements), '[componeont-registry] When creating an Adapter, param adapts must be an interface or an ObjectPrototype!')
        }
         
-        var extendThese = params.extends,
+        const extendThese = params.extends,
             implementsInterface = params.implements,
             adapts = params.adapts,
             registry = params.registry;
@@ -39,7 +36,7 @@ export class Adapter {
         if (params.adapts) delete params.adapts
         if (params.registry) delete params.registry
         
-        var Adapter = function Adapter (obj) {
+        const Adapter = function Adapter (obj) {
             this.context = obj
         };
         
@@ -63,8 +60,8 @@ export class Adapter {
         // Set a more debug friendly name for Utility (by convention we strip leading "I" if it
         // exists)
         if (implementsInterface[0]) {
-            var name = implementsInterface[0].name
-            var tmpName = name.startsWith('I') ? name.slice(1) : name
+            const name = implementsInterface[0].name
+            const tmpName = name.startsWith('I') ? name.slice(1) : name
             Object.defineProperty(Adapter, 'name', {value: tmpName, configurable: true})
         }
         

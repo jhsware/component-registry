@@ -4,8 +4,7 @@ import {
     extendPrototypeWithThese,
     addMembers,
     checkMembers,
-    isDevelopment,
-    throwDeprecatedCompat
+    isDevelopment
 } from './common'
 import { globalRegistry } from './globalRegistry'
 
@@ -23,10 +22,9 @@ export class Utility {
             })
         */
         if (isDevelopment) {
-            if (arguments[1]) throwDeprecatedCompat()
             assert(typeof params.implements === 'function' && params.implements.interfaceId, '[componeont-registry] When creating a Utility, param implements must be an interface!')
         }
-        var extendThese = params.extends,
+        const extendThese = params.extends,
             implementsInterface = params.implements,
             name = params.name,
             registry = params.registry;
@@ -36,7 +34,7 @@ export class Utility {
         if (params.name) delete params.name
         if (params.registry) delete params.registry
         
-        var Utility = function Utility () {};
+        const Utility = function Utility () {};
         
         // If extends other do first so they get overridden by those passed as params
         // Inehrited prototypes with lower index have precedence
@@ -55,7 +53,7 @@ export class Utility {
         // Set a more debug friendly name for Utility (by convention we strip leading "I" if it
         // exists)
         if (name) {
-            var tmpName = name.startsWith('I') ? name.slice(1) : name
+            const tmpName = name.startsWith('I') ? name.slice(1) : name
             Object.defineProperty(Utility, 'name', {value: tmpName, configurable: false, writable: false})
         }
 

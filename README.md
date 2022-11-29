@@ -97,7 +97,7 @@ So when you want to render the list you would write something like this:
 ```javascript
 import { IDirectoryListEntryWidget } from './myAppInterfaces'
 function renderList (entries) {
-    var outp = entries.map((entry) => new IDirectoryListEntryWidget(entry).render())
+    const outp = entries.map((entry) => new IDirectoryListEntryWidget(entry).render())
     return outp.join('\n')
 }
 ```
@@ -179,7 +179,7 @@ Object Prototypes can implement interfaces. This declares what capabilities they
 
 NOTE: A prototype object that extends other prototype objects won't pass an instaceof check on the inherited prototype. Provided the above inheritance graph we get:
 
-    var obj = new NewsProto();
+    const obj = new NewsProto();
     obj instanceof NewsProto == true;
     obj instanceof BaseProto == false;
 

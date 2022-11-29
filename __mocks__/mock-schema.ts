@@ -1,4 +1,6 @@
 export class Schema {
+  _fields
+  
   constructor(fields) {
     this._fields = Object.assign({}, fields)
   }
