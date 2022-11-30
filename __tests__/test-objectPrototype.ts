@@ -41,12 +41,12 @@ describe('Object Prototypes', function() {
         const jsonClone = JSON.stringify(clone.toJSON());
         expect(jsonClone).toEqual(jsonUser);
         
-        console.log(
-          jsonUser,
-          jsonClone,
-          Object.keys(user),
-          Object.keys(clone),
-        )
+        // console.log(
+        //   jsonUser,
+        //   jsonClone,
+        //   Object.keys(user),
+        //   Object.keys(clone),
+        // )
         const propsUser = Object.keys(user).toString();
         const propsClone = Object.keys(clone).toString();
         expect(propsClone).toEqual(propsUser);

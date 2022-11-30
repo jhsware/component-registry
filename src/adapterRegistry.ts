@@ -1,5 +1,8 @@
 
+import { TAdapter } from './adapterFactory';
 import { isDevelopment } from './common'
+import { TInterface } from './interfaceFactory';
+import { TObjectPrototype } from './objectFactory';
 
 import {
   hasPropRegistry,
@@ -29,8 +32,26 @@ function AdapterRegistryException(message, context) {
 
 */
 
-export function AdapterRegistry() {
-    this.adapters = {};
+type TAdapterEntry = {
+    implementsInterface: TInterface,
+    interfaceAdapters: TAdapter[],
+    objectAdapters: TAdapter[]
+}
+
+export type TAdapterRegistry = {
+    adapters: Record<string, TAdapterEntry>;
+    registerAdapter(adapter: TAdapter): void;
+    getAdapter(obj: TObjectPrototype, implementsInterface: TInterface, adaptsInterface: TInterface): TAdapter;
+}
+
+export class AdapterRegistry implements TAdapterRegistry {
+    adapters;
+    registerAdapter;
+    getAdapter;
+
+    constructor() {
+        this.adapters = {};
+    }
 } 
 
 AdapterRegistry.prototype.registerAdapter = function (adapter) {

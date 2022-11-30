@@ -47,7 +47,7 @@
     "build": "npm run build:clean && NODE_ENV=production parcel build",
     "test": "NODE_ENV=production npm run build && NODE_ENV=test jest",
     "test-debug": "NODE_ENV=test jest --inspect-brk --no-timeouts",
-    "_prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "preversion": "npm run test",
     "postversion": "git push && git push --tags",
     "build-dev": "rm -rf ./dist && NODE_ENV=development parcel build --no-optimize",

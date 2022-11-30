@@ -5,6 +5,7 @@ import {
     addMembers,
     checkMembers
 } from './common'
+import { TInterface } from './interfaceFactory'
 
 import {
   notNullOrUndef,
@@ -29,7 +30,7 @@ function _isSpecialOrReservedProp (key, data) {
   return false
 }
 
-function _toJSON () {
+function _toJSON<TSType> (): TSType {
   const data = {};
   for (const key in this) {
       // Only own properties are used
@@ -43,13 +44,13 @@ function _toJSON () {
         }
       }
   }
-  return data;
+  return data as TSType;
 }
 
 function _init (_this, data) {
     // Add all schema props from implemented interfaces to allow composition
     for (let i = _this._implements.length - 1; i >= 0; i--) {
-        _this._implements[i].addProperties(_this)
+        _this._implements[i].addProperties?.(_this)
     }
     
     // Make a shallow copy of input data so we can remove root props in constructors
@@ -75,7 +76,13 @@ function _init (_this, data) {
     };
 }
 
-export function createObjectPrototype(params) {
+export type TObjectPrototype<TSType = any> = {
+  toJSON(): TSType;
+  _implements: TInterface[];
+  
+}
+
+export function createObjectPrototype<TSType>(params) {
     /*
         extends -- (optional) list of object prototypes to inherit from
         implements -- (optional) list of interfaces this prototype implements (besides those that are inherited)
@@ -122,8 +129,13 @@ export function createObjectPrototype(params) {
         paramsToAdd._iname = implementsInterfaces[0].name;
     };
     
-    const ObjectPrototype = function (data) {
-      _init(this, data);
+    class ObjectPrototype {
+      _implements;
+      toJSON;
+
+      constructor (data?) {
+        _init(this, data);
+      }
     };
 
     // Set a more debug friendly name for ObjectPrototype (by convention we strip leading "I" if it
@@ -134,7 +146,7 @@ export function createObjectPrototype(params) {
         Object.defineProperty(ObjectPrototype, 'name', {value: tmpName, configurable: true})
     }
         
-    ObjectPrototype.prototype.toJSON = _toJSON
+    ObjectPrototype.prototype.toJSON = _toJSON<TSType>;
         
     ObjectPrototype.prototype._implements = []
     
@@ -156,5 +168,5 @@ export function createObjectPrototype(params) {
     }
     
         
-    return ObjectPrototype;
+    return ObjectPrototype as typeof ObjectPrototype & TSType;
 }

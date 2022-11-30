@@ -7,8 +7,18 @@ import {
     isDevelopment
 } from './common'
 import { globalRegistry } from './globalRegistry'
+import { TInterface } from './interfaceFactory';
 
-export class Utility {
+type TUtilityBase = {
+    _implements: TInterface[];
+    _name?: string;
+}
+
+export type TUtility<TSType = any> = {
+    [Property in keyof TSType]: TSType[Property]
+}
+
+export class Utility<TSType> {
     constructor (params) {
         /*
             extends -- (optional) list of object prototypes to inherit from
@@ -65,6 +75,6 @@ export class Utility {
             globalRegistry.registerUtility(Utility)
         }
             
-        return Utility;
+        return Utility as unknown as TUtility<TSType & TUtilityBase>;
     }
 }

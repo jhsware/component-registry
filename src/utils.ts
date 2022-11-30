@@ -1,27 +1,27 @@
-export function hasPropRegistry (inp) {
+export function hasPropRegistry (inp: any): boolean {
   return typeof inp === 'object' && typeof inp.registry === 'object'
 }
 
-export function notNullOrUndef (inp) {
+export function notNullOrUndef (inp: any): boolean {
   return inp !== undefined && inp !== null
 }
 
-export function hasPropImplements (inp) {
+export function hasPropImplements (inp: any): boolean {
   return notNullOrUndef(inp) && notNullOrUndef(inp._implements)
 }
 
-export function hasArrayPropImplements (inp) {
+export function hasArrayPropImplements (inp: any): boolean {
   return notNullOrUndef(inp) && Array.isArray(inp._implements)
 }
 
-export function isString (inp) {
+export function isString (inp: any): boolean {
   return typeof inp === 'string'
 }
 
-export function isWildcard (inp) {
+export function isWildcard (inp: any): boolean {
   return inp === '*'
 }
 
-export function isFunc (inp) {
+export function isFunc (inp: any): boolean {
   return typeof inp === 'function'
 }

@@ -1,7 +1,16 @@
 import { AdapterRegistry } from './adapterRegistry'
+import { TRegistry } from './globalRegistry';
 import { UtilityRegistry } from './utilityRegistry'
 
-export class LocalRegistry {
+export class LocalRegistry implements TRegistry {
+    utilities;
+    adapters;
+    registerAdapter;
+    registerUtility;
+    getAdapter;
+    getUtility;
+    getUtilities;
+
     constructor () {
         /*
 
@@ -25,6 +34,6 @@ export class LocalRegistry {
         registry['registerAdapter'] = tmp.registerAdapter;
         registry['getAdapter'] = tmp.getAdapter;
 
-        return registry;
+        return registry as TRegistry;
     }
 }

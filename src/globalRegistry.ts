@@ -1,10 +1,17 @@
-import { AdapterRegistry } from './adapterRegistry'
-import { UtilityRegistry } from './utilityRegistry'
+import { AdapterRegistry, TAdapterRegistry } from './adapterRegistry'
+import { TUtilityRegistry, UtilityRegistry } from './utilityRegistry'
 import { isTest } from './common';
 
-export class Registry {
+export type TRegistry = TUtilityRegistry & TAdapterRegistry;
+
+export class Registry implements TRegistry {
+    utilities;
+    adapters;
     registerAdapter;
     registerUtility;
+    getAdapter;
+    getUtility;
+    getUtilities;
 
     constructor() {
         /*
@@ -35,7 +42,7 @@ export class Registry {
             global.registry['getAdapter'] = tmp.getAdapter;
         }
 
-        return global.registry;
+        return global.registry as TRegistry;
     }
 }
 

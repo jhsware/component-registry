@@ -1,11 +1,11 @@
 import { describe, expect, it } from "@jest/globals";
 import { createInterfaceClass, createObjectPrototype, Adapter, AdapterRegistry } from '../dist/index.cjs.js'
+import { TAdapterRegistry } from "../dist/types.js";
 const Interface = createInterfaceClass('test')
-
 
 describe('Adapter Factory', function() {
     it('can create an adapter', function() {
-        const registry = new AdapterRegistry();
+        const registry = new AdapterRegistry() as TAdapterRegistry;
         const IUser = new Interface({name: 'IUser'});
         const IDisplayWidget = new Interface({name: 'IDisplayWidget'});
 

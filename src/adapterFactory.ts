@@ -7,6 +7,10 @@ import {
 } from './common'
 import { globalRegistry } from './globalRegistry'
 
+export type TAdapter = {
+    
+}
+
 export class Adapter {
     constructor (params) {
         /*

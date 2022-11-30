@@ -1,11 +1,11 @@
 export const isDevelopment = process?.env.NODE_ENV !== 'production';
-export const isTest = process?.env.NODE_ENV !== 'test';
+export const isTest = process?.env.NODE_ENV === 'test';
 
-export function assert(isValid, msg) {
+export function assert(isValid, msg): void {
     if (!isValid) throw new Error(msg)
 }
 
-export function extendPrototypeWithThese(prototype, extendThese) {
+export function extendPrototypeWithThese(prototype, extendThese): void {
     /*
         Helper method to implement a simple inheritance model for object prototypes.
     */
