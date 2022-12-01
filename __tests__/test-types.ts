@@ -29,9 +29,10 @@ describe('Lookup gets correct type', function() {
         constructor(data?) {};
         name: string;
       }
+
       
       const User = createObjectPrototype<TUser>({
-          implements: [IUser]
+          implements: [IUser],
       });
       
       // How do I get the type TUser instead of ObjectPrototype
@@ -43,6 +44,74 @@ describe('Lookup gets correct type', function() {
       expect(ua).toBeInstanceOf(UserAdapter);
   });
 });
+
+
+
+describe('ObjectPrototype gets type safety', function() {
+  it('for adapter', function() {
+      const IUser = new Interface({
+        name: "IUser"
+      });
+
+      abstract class TUser {
+        constructor(data?) {};
+        height: number;
+        weight?: number;
+      }
+      
+      const INameable = new Interface({
+        name: "INameable"
+      });
+
+      type TNameable = {
+        firstName: string;
+        lastName: string;
+      }
+
+      // class User extends ObjectPrototype implements TUser, TNameable {
+      //   implements = [IUser, INameable];
+      //   extends = [];
+      //   name: string;
+      // }
+
+      // TODO: Use same method of class returning a class as we do in interfaceFactory.
+      const User = createObjectPrototype<TUser & TNameable>({
+        extends: [],
+        implements: [IUser, INameable],
+        constructor(data?: TUser & TNameable) {
+
+        }
+      })
+
+      // How do I get the type TUser instead of ObjectPrototype
+
+      const theUser = new User({
+        height: 200,
+        weight: 100,
+        firstName: "heidi",
+        lastName: "plum"
+      })
+
+      function test(t: TUser) {
+        return
+      }
+
+      // Should work
+      test(theUser);
+      
+      // Should fail
+      // test(IUser);
+
+      const isTrue = IUser.providedBy(theUser);
+
+      expect(theUser).toBeInstanceOf(User);
+  });
+});
+
+
+
+
+
 
 (function test() {
   class ObjectPrototype {
