@@ -65,13 +65,14 @@ export type TInterface = {
   name: string;
   interfaceId: string;
   schema?: any;
+  init?(obj: ObjectPrototype<any>, data: any): void;
   providedBy(obj: ObjectPrototype<any>): boolean;
   addProperties?(obj: ObjectPrototype<any>): void;
 }
 
 type TAnyRegistry = TRegistry | TAdapterRegistry | TUtilityRegistry;
 type TInterfaceType = undefined | 'adapter' | 'utility';
-type TInterfaceConstructor = { name: string, type?: TInterfaceType, schema?: any };
+type TInterfaceConstructor = { name: string, type?: TInterfaceType, schema?: any, init?(data: any): void };
 // Any type of registry
 export function createInterfaceClass(namespace: string) {
   class Interface implements TInterface {
@@ -79,29 +80,31 @@ export function createInterfaceClass(namespace: string) {
     name: string;
     interfaceId: string;
     schema?: any;
+    init?(obj: ObjectPrototype<any>, data?: any) {};
     providedBy(obj: ObjectPrototype<any>): boolean { return false };
     addProperties(): void { };
 
-    constructor({ name, type = undefined, schema = undefined }: TInterfaceConstructor) {
+    constructor({ name, type = undefined, schema = undefined, init }: TInterfaceConstructor) {
       switch (type) {
         case "adapter":
           return createAdapterInterface({ namespace, name, schema }) as any;
         case "utility":
           return createUtilityInterface({ namespace, name, schema }) as any;
         default:
-          return createInterface({ namespace, name, schema }) as any;
+          return createInterface({ namespace, name, schema, init }) as any;
       }
     }
   }
-  return Interface as { new(props: { name: string, type?: TInterfaceType, schema?: any }): Interface };
+  return Interface as { new(props: { name: string, type?: TInterfaceType, schema?: any, init?(data?: any): void }): Interface };
 }
 
 // Object and marker interface for object prototypes
-function createInterface({ namespace, name, schema }: TInterfaceConstructor & { namespace: string }) {
+function createInterface({ namespace, name, schema, init }: TInterfaceConstructor & { namespace: string }) {
   class Interface implements TInterface {
     name: string;
     interfaceId: string;
     schema?: any;
+    init?(obj: ObjectPrototype<any>, data?: any) {};
 
     providedBy = _providedBy;
     addProperties(obj: ObjectPrototype<any>) {
@@ -113,6 +116,9 @@ function createInterface({ namespace, name, schema }: TInterfaceConstructor & { 
     name: {value: name, configurable: false, writable: false},
     interfaceId: {value: uuid(`${namespace}.${name}`, NAMESPACE), configurable: false, writable: false},
   });
+  if (init) {
+    Object.defineProperty(Interface, 'init', {value: init, configurable: false, writable: false})
+  }
   if (schema) {
     Object.defineProperty(Interface, 'schema', {value: schema, configurable: false, writable: false})
   }
@@ -138,7 +144,7 @@ export abstract class AdapterInterface implements TInterface {
     opts?: any) { }
 }
 
-function createAdapterInterface({ namespace, name, schema }: TInterfaceConstructor & { namespace: string }) {
+function createAdapterInterface({ namespace, name, schema }: Omit<TInterfaceConstructor, 'init'> & { namespace: string }) {
   class AdapterInterface implements TInterface {
     name: string;
     interfaceId: string;
@@ -180,7 +186,7 @@ export abstract class UtilityInterface implements TInterface {
     opts?: any) { }
 }
 
-function createUtilityInterface({ namespace, name, schema }: TInterfaceConstructor & { namespace: string }) {
+function createUtilityInterface({ namespace, name, schema }: Omit<TInterfaceConstructor, 'init'> & { namespace: string }) {
   class UtilityInterface implements TInterface {
     name: string;
     interfaceId: string;

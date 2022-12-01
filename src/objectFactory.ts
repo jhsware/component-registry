@@ -1,19 +1,19 @@
-
-
 import { TInterface } from './interfaceFactory'
 
 import {
-  isObject
+  isObject,
+  isUndefined
 } from './utils'
 
 export class ObjectPrototype<T> {
   readonly __implements__: TInterface[] = [];
-  readonly __extends__: typeof ObjectPrototype<any>[] = [];
 
   constructor(data?: T) {
     if (isObject(data)) {
       for (const key of Object.keys(data)) {
-        this[key] = data[key];
+        if (isUndefined(this[key])) {
+          this[key] = data[key];
+        }
       }
     }
   }

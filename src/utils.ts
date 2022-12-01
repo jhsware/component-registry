@@ -2,6 +2,10 @@ export function hasPropRegistry (inp: any): boolean {
   return typeof inp === 'object' && typeof inp.registry === 'object'
 }
 
+export function isUndefined (inp: any): boolean {
+  return inp === undefined && inp !== null;
+}
+
 export function notNullOrUndef (inp: any): boolean {
   return inp !== undefined && inp !== null
 }

@@ -37,7 +37,7 @@ describe('Lookup gets correct type', function() {
 
 
       interface TPermissions {
-        permissions: string[];
+        permissions?: string[];
       }
 
       class Permissions extends ObjectPrototype<TPermissions> implements TPermissions {
@@ -45,22 +45,39 @@ describe('Lookup gets correct type', function() {
       }
       
 
+      const IPermissions = new Interface({
+        name: "IPermissions",
+        init(obj, data?: any) {
+          obj.permissions = data?.permissions ?? ["all"];
+        }
+      });
+
+
+      
       interface TUser {
         name: string;
       }
 
-      // TODO: Add constructor to Interface which is run if available
       class User extends ObjectPrototype<TUser & TPermissions> implements TUser, TPermissions {
-        readonly __implements__ = [IUser];
-        readonly __extends__    = [Permissions];
+        readonly __implements__ = [IUser, IPermissions];
         name: string;
         permissions = [];
 
+        constructor(data: TUser & TPermissions) {
+          super(data);
+          IPermissions.init(this, data);
+        }
       }
 
       // How do I get the type TUser instead of ObjectPrototype
 
-      const theUser = new User();
+      const theUser = new User({
+        name: "Jenson"
+      });
+
+      const clara = new User({
+        name: "Clara"
+      });
       
       const ua = new IUserAdapter(theUser, { registry: registry });
 
