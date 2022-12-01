@@ -15,4 +15,4 @@ export { Adapter } from './adapterFactory'
 
 export { Utility } from './utilityFactory'
 
-export { createObjectPrototype } from './objectFactory'
+export { ObjectPrototype } from './objectFactory'

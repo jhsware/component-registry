@@ -2,7 +2,7 @@
 import { TAdapter } from './adapterFactory';
 import { isDevelopment } from './common'
 import { TInterface } from './interfaceFactory';
-import { TObjectPrototype } from './objectFactory';
+import { ObjectPrototype } from './objectFactory';
 
 import {
   hasPropRegistry,
@@ -41,7 +41,7 @@ type TAdapterEntry = {
 export type TAdapterRegistry = {
     adapters: Record<string, TAdapterEntry>;
     registerAdapter(adapter: TAdapter): void;
-    getAdapter(obj: TObjectPrototype, implementsInterface: TInterface, adaptsInterface: TInterface): TAdapter;
+    getAdapter(obj: ObjectPrototype<any>, implementsInterface: TInterface, adaptsInterface: TInterface): TAdapter;
 }
 
 export class AdapterRegistry implements TAdapterRegistry {

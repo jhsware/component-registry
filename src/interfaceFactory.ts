@@ -12,7 +12,7 @@ import {
 import {
   isDevelopment,
 } from './common'
-import { TObjectPrototype } from './objectFactory';
+import { ObjectPrototype } from './objectFactory';
 import { TAdapterRegistry } from './adapterRegistry';
 import { TUtilityRegistry } from './utilityRegistry';
 const NAMESPACE = 'bc901568-0169-42a8-aac8-52fa2ffd0670';
@@ -65,8 +65,8 @@ export type TInterface = {
   name: string;
   interfaceId: string;
   schema?: any;
-  providedBy(obj: TObjectPrototype<any>): boolean;
-  addProperties?(obj: TObjectPrototype<any>): void;
+  providedBy(obj: ObjectPrototype<any>): boolean;
+  addProperties?(obj: ObjectPrototype<any>): void;
 }
 
 type TAnyRegistry = TRegistry | TAdapterRegistry | TUtilityRegistry;
@@ -79,7 +79,7 @@ export function createInterfaceClass(namespace: string) {
     name: string;
     interfaceId: string;
     schema?: any;
-    providedBy(obj: TObjectPrototype<any>): boolean { return false };
+    providedBy(obj: ObjectPrototype<any>): boolean { return false };
     addProperties(): void { };
 
     constructor({ name, type = undefined, schema = undefined }: TInterfaceConstructor) {
@@ -104,7 +104,7 @@ function createInterface({ namespace, name, schema }: TInterfaceConstructor & { 
     schema?: any;
 
     providedBy = _providedBy;
-    addProperties(obj: TObjectPrototype<any>) {
+    addProperties(obj: ObjectPrototype<any>) {
       typeof this.schema?.addProperties === 'function' ? this.schema.addProperties(obj) : _NOOP
     };
   }
@@ -123,7 +123,7 @@ function createInterface({ namespace, name, schema }: TInterfaceConstructor & { 
 // Adpater class interface for registry
 export type TAdapterInterface = TInterface & {
   new(
-    context: TObjectPrototype<any> | { adapts: TObjectPrototype<any>, registry?: TAnyRegistry } | { implements: TInterface, registry?: TAnyRegistry },
+    context: ObjectPrototype<any> | { adapts: ObjectPrototype<any>, registry?: TAnyRegistry } | { implements: TInterface, registry?: TAnyRegistry },
     opts?: { registry: TAnyRegistry }
   ): AdapterInterface
 };
@@ -131,7 +131,7 @@ export abstract class AdapterInterface implements TInterface {
   name: string;
   interfaceId: string;
   schema?: any;
-  providedBy(obj: TObjectPrototype<any>): boolean { return };
+  providedBy(obj: ObjectPrototype<any>): boolean { return };
     
   constructor(
     context: any,
@@ -146,7 +146,7 @@ function createAdapterInterface({ namespace, name, schema }: TInterfaceConstruct
     providedBy = _providedBy;
 
     constructor(
-      context: TObjectPrototype<any> | { adapts: TObjectPrototype<any>, implements?: TInterface, registry?: TAnyRegistry },
+      context: ObjectPrototype<any> | { adapts: ObjectPrototype<any>, implements?: TInterface, registry?: TAnyRegistry },
       opts?: { registry: TAnyRegistry }) {
 
       let registry = _getRegistry(context, opts);
@@ -173,7 +173,7 @@ export abstract class UtilityInterface implements TInterface {
   name: string;
   interfaceId: string;
   schema?: any;
-  providedBy(obj: TObjectPrototype<any>): boolean { return };
+  providedBy(obj: ObjectPrototype<any>): boolean { return };
 
   constructor(
     context: any,

@@ -25,3 +25,7 @@ export function isWildcard (inp: any): boolean {
 export function isFunc (inp: any): boolean {
   return typeof inp === 'function'
 }
+
+export function isObject (inp: any): boolean {
+  return typeof inp === 'object' && inp !== null && !Array.isArray(inp);
+}

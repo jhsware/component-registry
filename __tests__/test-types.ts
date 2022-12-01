@@ -1,7 +1,8 @@
 import { describe, expect, it } from "@jest/globals";
 // import { TUtilityRegistry } from "../dist/types";
-import { AdapterRegistry, createInterfaceClass, createObjectPrototype, Adapter } from '../src/index'
+import { AdapterRegistry, createInterfaceClass, Adapter } from '../src/index'
 import { TAdapterInterface } from "../src/interfaceFactory";
+import { ObjectPrototype } from "../src/objectFactory";
 const Interface = createInterfaceClass('test')
 
 
@@ -25,16 +26,38 @@ describe('Lookup gets correct type', function() {
           adapts: IUser
       })
 
-      abstract class TUser {
-        constructor(data?) {};
+
+
+      // export var Blog = createObjectPrototype({
+      //   implements: [IBlog, IObject],
+      //   extends: [RoleManager, Permissions, PublishWorkflow],
+      //     this._IRoleManager.constructor.call(this, params)
+      //   }
+      // })
+
+
+      interface TPermissions {
+        permissions: string[];
+      }
+
+      class Permissions extends ObjectPrototype<TPermissions> implements TPermissions {
+        permissions: [];
+      }
+      
+
+      interface TUser {
         name: string;
       }
 
-      
-      const User = createObjectPrototype<TUser>({
-          implements: [IUser],
-      });
-      
+      // TODO: Add constructor to Interface which is run if available
+      class User extends ObjectPrototype<TUser & TPermissions> implements TUser, TPermissions {
+        readonly __implements__ = [IUser];
+        readonly __extends__    = [Permissions];
+        name: string;
+        permissions = [];
+
+      }
+
       // How do I get the type TUser instead of ObjectPrototype
 
       const theUser = new User();
@@ -75,13 +98,13 @@ describe('ObjectPrototype gets type safety', function() {
       // }
 
       // TODO: Use same method of class returning a class as we do in interfaceFactory.
-      const User = createObjectPrototype<TUser & TNameable>({
-        extends: [],
-        implements: [IUser, INameable],
-        constructor(data?: TUser & TNameable) {
-
-        }
-      })
+      class User extends ObjectPrototype<TUser & TNameable> implements TUser, TNameable {
+        static implements = [IUser, INameable];
+        height;
+        firstName;
+        lastName;
+        
+      }
 
       // How do I get the type TUser instead of ObjectPrototype
 
@@ -139,9 +162,6 @@ describe('ObjectPrototype gets type safety', function() {
     extends = []
   }
 
-  const UserPrototype = createObjectPrototype({
-
-  })
 
   IUserCls.name
 
