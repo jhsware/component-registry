@@ -15,7 +15,7 @@ const id = createIdFactory('namespace');
 describe('Lookup gets correct type', function() {
   it('for adapter', function() {
     class IUser extends ObjectInterface {
-      readonly interfaceId = id('IUser');
+      get interfaceId() { return id('IUser') };
       name: string;
     }
 
@@ -34,12 +34,12 @@ describe('Lookup gets correct type', function() {
 
     // Adapter
     class INameAdapter extends AdapterInterface {
-      readonly interfaceId = id('INameAdapter');
+      get interfaceId() { return id('INameAdapter') };
       Component(): string {return};
     }
     // We don't need implements because adapter is looked up using the interface
     class NameAdapter extends Adapter {
-      readonly __implements__ = INameAdapter;
+      get __implements__() { return INameAdapter };
       constructor({ adapts, Component, registry}: Omit<INameAdapter, 'interfaceId'> & TAdapter) {
         super({adapts, Component, registry});
       }
@@ -59,11 +59,11 @@ describe('Lookup gets correct type', function() {
   it('for utility', function () {
     // Define the utility
     class ITranslateUtil extends UtilityInterface {
-      readonly interfaceId = id('ITranslateUtil');
+      get interfaceId() { return id('ITranslateUtil') };
       translate(inp: string): string {return};
     }
     class TranslateUtil extends Utility {
-      readonly __implements__ = ITranslateUtil;
+      get __implements__() { return ITranslateUtil };
       constructor({ name, translate, registry}: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
         super({name, translate, registry});
       }
@@ -89,7 +89,7 @@ describe('ObjectPrototype gets type safety', function() {
   it('basic', function() {
     // Define an object
     class IUser extends ObjectInterface {
-      readonly interfaceId = id('IUser');
+      get interfaceId() { return id('IUser') };
       name: string;
     }
 
