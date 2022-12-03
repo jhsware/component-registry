@@ -50,7 +50,7 @@ export class AdapterInterface implements Interface {
   get interfaceId(): string { return };
   constructor(context: object, registry?: TAdapterRegistry) {
     const r = registry ?? globalRegistry;
-    return r.getAdapter(context);
+    return r.getAdapter(context, this);
   }
 }
 

@@ -101,7 +101,7 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
         Optionally add a specific param adaptsInterface in case there are several 
         adapters that implement the interface and match the object.
     */
-    const adapters = this.adapters[implementsInterface.prototype.interfaceId];
+    const adapters = this.adapters[implementsInterface.interfaceId];
     
     // if we didn't find an adapter for this we throw an error
     if (typeof adapters === 'undefined') {
@@ -116,9 +116,12 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
         for (let i = 0, imax = adapters.objectAdapters.length; i < imax; i++) {
             const tmp = adapters.objectAdapters[i];
             if (obj instanceof tmp.adapts) {
-                // Found the adapter, instantiate and return (adapter should set obj as context on creation)
-                const Adapter = new tmp.adapter(obj);
-                return Adapter;
+                // Clone adapter and return with context set
+                // TODO: Is there a better way of returning the instance?
+                return {
+                    context: obj,
+                    ...tmp.adapter
+                };
             }
             
         } 
@@ -126,7 +129,7 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
         // passed object to find the first match.
 
         // INTEGRITY CHECK: Throw a useful error if the passed object doesn't have __implements__
-        if (!(obj.prototype.interfaceId || (obj.__implements__ && obj.__implements__.length > 0))) {
+        if (isUndefined(obj.prototype?.interfaceId) && isUndefined(obj.__implements__?.[0])) {
             const errorContext = (isDevelopment ? {
                 context: obj, 
                 implements: implementsInterface,
@@ -156,9 +159,12 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
                     if (notNullOrUndef(adaptsInterface) && adaptsInterface.prototype.interfaceId !== tmp.adapts.prototype.interfaceId) {
                         continue
                     }
-                    // Found the adapter, instantiate and return (adapter should set obj as context on creation)
-                    const Adapter = new tmp.adapter(obj);
-                    return Adapter;
+                    // Clone adapter and return with context set
+                    // TODO: Is there a better way of returning the instance?
+                    return {
+                        context: obj,
+                        ...tmp.adapter
+                    };
                 }
                 
             }
