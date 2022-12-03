@@ -12,6 +12,7 @@ import {
 import { ObjectPrototype } from './objectFactory';
 import { TAdapterRegistry } from './adapterRegistry';
 import { TUtilityRegistry } from './utilityRegistry';
+import { Utility } from './utilityFactory';
 const NAMESPACE = 'bc901568-0169-42a8-aac8-52fa2ffd0670';
 
 const _idLookup: Record<string, string> = {};
@@ -33,7 +34,22 @@ export class Interface {
 
 export class MarkerInterface implements Interface {
   get interfaceId(): string { return };
-  providedBy = _providedBy;
+  providedBy(obj: ObjectPrototype<any>) {
+    // Does the specified object implement this interface
+    if (hasArrayPropImplements(obj)) {
+      // Object has a list of interfaces it implements
+      for (let i = 0, imax = obj.__implements__.length; i < imax; i++) {
+        if (obj.__implements__[i].prototype.interfaceId === this.interfaceId) {
+          return true;
+        };
+      }
+    // } else if (hasPropImplements(obj) && obj.__implements__.prototype.interfaceId === this.interfaceId) {
+    //   // Object implements a single interface (probably a utility)
+    //   return true;
+    }
+    // If we came this far, the object doesn't implement this interface
+    return false;
+  }
 }
 
 export class ObjectInterface implements Interface {
@@ -43,7 +59,22 @@ export class ObjectInterface implements Interface {
     // - Check that it implements this interface
     // - Only expose subset of props using proxy
   }
-  providedBy = _providedBy;
+  providedBy(obj: ObjectPrototype<any>) {
+    // Does the specified object implement this interface
+    if (hasArrayPropImplements(obj)) {
+      // Object has a list of interfaces it implements
+      for (let i = 0, imax = obj.__implements__.length; i < imax; i++) {
+        if (obj.__implements__[i].prototype.interfaceId === this.interfaceId) {
+          return true;
+        };
+      }
+    // } else if (hasPropImplements(obj) && obj.__implements__.prototype.interfaceId === this.interfaceId) {
+    //   // Object implements a single interface (probably a utility)
+    //   return true;
+    }
+    // If we came this far, the object doesn't implement this interface
+    return false;
+  }
 }
 
 export class AdapterInterface implements Interface {
@@ -71,19 +102,3 @@ export class UtilityInterface implements Interface {
   }
 }
 
-function _providedBy(obj) {
-  // Does the specified object implement this interface
-  if (hasArrayPropImplements(obj)) {
-    // Object has a list of interfaces it implements
-    for (let i = 0, imax = obj.__implements__.length; i < imax; i++) {
-      if (obj.__implements__[i].interfaceId === this.interfaceId) {
-        return true;
-      };
-    }
-  } else if (hasPropImplements(obj) && obj.__implements__.interfaceId === this.interfaceId) {
-    // Object implements a single interface (probably a utility)
-    return true;
-  }
-  // If we came this far, the object doesn't implement this interface
-  return false;
-}
