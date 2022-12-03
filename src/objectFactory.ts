@@ -6,7 +6,7 @@ import {
 } from './utils'
 
 export class ObjectPrototype<T> {
-  readonly __implements__: (typeof MarkerInterface | typeof ObjectInterface)[] = [];
+  __implements__: (typeof MarkerInterface | typeof ObjectInterface)[] = [];
 
   constructor(data?: T) {
     if (isObject(data)) {

@@ -1,10 +1,10 @@
-
 import { TAdapter } from './adapterFactory';
 import { isDevelopment } from './common'
 import { AdapterInterface } from './interfaceFactory';
 import { ObjectPrototype } from './objectFactory';
 
 import {
+    isUndefined,
   notNullOrUndef,
 } from './utils'
 
@@ -57,25 +57,14 @@ AdapterRegistry.prototype.registerAdapter = function (adapter) {
         implementsInterface -- the interface that the adapter implements
         adapter -- the prototype of the adapter to instantiate on get
     */
-    const adapts = adapter.prototype.__adapts__, 
-        implementsInterfaces = adapter.prototype.__implements__;
+    const adapts = adapter.__adapts__, 
+        implementsInterfaces = adapter.__implements__;
         
     // TODO: Check that the adapter implements the interface
     // TODO: else throw InterfaceNotImplementedError
     
-    
-    // INTEGRITY CHECK: Have we specified what the adapter implements?
-    if (!implementsInterfaces || !implementsInterfaces[0].interfaceId) {
-        throw new AdapterRegistryException(
-            "Registration error: You haven't specified interface that this adapter implements", 
-            {
-                adapter: adapter
-            }
-        )
-    }
-    
     // Register the adapter (interfaces are stored in a list)
-    const tmpInterfaceId = implementsInterfaces[0].interfaceId;
+    const tmpInterfaceId = implementsInterfaces.prototype.interfaceId;
     if (typeof this.adapters[tmpInterfaceId] === 'undefined') {
         this.adapters[tmpInterfaceId] = {
             implementsInterface: implementsInterfaces[0],
@@ -84,19 +73,9 @@ AdapterRegistry.prototype.registerAdapter = function (adapter) {
         }
     }
     
-    // INTEGRITY CHECK: Have we specified what the adapter has specified what it adapts?
-    if (!adapts) {
-        throw new AdapterRegistryException(
-            "Registration error: You haven't specified interface or object that this adapter adapts", 
-            {
-                adapter: adapter
-            }
-        )
-    }
-    
     const adapters = this.adapters[tmpInterfaceId];
     
-    if (adapts.interfaceId) {
+    if (adapts.prototype.interfaceId) {
         // This should be registered as an interface
         adapters.interfaceAdapters.push({
             adapts: adapts,
@@ -122,7 +101,7 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
         Optionally add a specific param adaptsInterface in case there are several 
         adapters that implement the interface and match the object.
     */
-    const adapters = this.adapters[implementsInterface.interfaceId];
+    const adapters = this.adapters[implementsInterface.prototype.interfaceId];
     
     // if we didn't find an adapter for this we throw an error
     if (typeof adapters === 'undefined') {
@@ -136,8 +115,7 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
         // First check if an object adapter matches
         for (let i = 0, imax = adapters.objectAdapters.length; i < imax; i++) {
             const tmp = adapters.objectAdapters[i];
-            // TODO: THIS IS A NOOP right now, there is no interfaceId-property on objects unless they are interfaces
-            if (obj.interfaceId === tmp.adapts.interfaceId) {
+            if (obj instanceof tmp.adapts) {
                 // Found the adapter, instantiate and return (adapter should set obj as context on creation)
                 const Adapter = new tmp.adapter(obj);
                 return Adapter;
@@ -148,7 +126,7 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
         // passed object to find the first match.
 
         // INTEGRITY CHECK: Throw a useful error if the passed object doesn't have __implements__
-        if (!(obj.interfaceId || (obj.__implements__ && obj.__implements__.length > 0))) {
+        if (!(obj.prototype.interfaceId || (obj.__implements__ && obj.__implements__.length > 0))) {
             const errorContext = (isDevelopment ? {
                 context: obj, 
                 implements: implementsInterface,
@@ -172,10 +150,10 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
             const tmpInterface = tmpImplements[j];
             for (let i = 0, imax = adapters.interfaceAdapters.length; i < imax; i++) {
                 const tmp = adapters.interfaceAdapters[i];
-                if (tmpInterface.interfaceId === tmp.adapts.interfaceId) {
+                if (tmpInterface.prototype.interfaceId === tmp.adapts.prototype.interfaceId) {
                     // If we got the adaptsInterface parameter we need to check that it matches otherwise
                     // keep on looking
-                    if (notNullOrUndef(adaptsInterface) && adaptsInterface.interfaceId !== tmp.adapts.interfaceId) {
+                    if (notNullOrUndef(adaptsInterface) && adaptsInterface.prototype.interfaceId !== tmp.adapts.prototype.interfaceId) {
                         continue
                     }
                     // Found the adapter, instantiate and return (adapter should set obj as context on creation)
@@ -193,13 +171,13 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
     if (isDevelopment) {
         message.push("Registered adapters adapt the follwing interfaces:")
         adapters.interfaceAdapters.forEach(function (adapter) {
-            message.push("[" + adapter.adapts.name + "] " + adapter.adapts.interfaceId);
+            message.push("[" + adapter.__adapts__.name + "] " + adapter.__adapts__.prototype.interfaceId);
         });
         message.push("But we needed to adapt one of the following interfaces:")
         obj.__implements__.forEach(function (intrfc) {
-            message.push("[" + intrfc.name + "] " + intrfc.interfaceId);
+            message.push("[" + intrfc.prototype.name + "] " + intrfc.prototype.interfaceId);
         })
-        message.push("If the interface name matches but the ID of that interface doesn't, you might have imported a module containing the mismatched interface from two different places. They need to be exactly the same module to get the same ID. The ID is used for lookups.")
+        message.push("If the interface name matches, check the namespace.")
     }
 
     throw new AdapterRegistryException(message.join("\n"), (isDevelopment ? obj : undefined));

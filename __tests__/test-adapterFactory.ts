@@ -1,75 +1,108 @@
 import { describe, expect, it } from "@jest/globals";
-import { createInterfaceClass, createObjectPrototype, Adapter, AdapterRegistry } from '../dist/index.cjs.js'
-import { TAdapterRegistry } from "../dist/types.js";
-const Interface = createInterfaceClass('test')
+import {
+  AdapterInterface,
+  createIdFactory,
+  Adapter,
+  AdapterRegistry,
+  Interface,
+  ObjectInterface,
+  ObjectPrototype
+} from '../src/index'
+import type { TAdapter, TAdapterRegistry } from "../src/index";
+const id = createIdFactory('test');
 
-describe('Adapter Factory', function() {
-    it('can create an adapter', function() {
-        const registry = new AdapterRegistry() as TAdapterRegistry;
-        const IUser = new Interface({name: 'IUser'});
-        const IDisplayWidget = new Interface({name: 'IDisplayWidget'});
+describe('Adapter Factory', function () {
+  it('can create an adapter interface', function () {
+    class INameAdapter extends AdapterInterface {
+      get interfaceId() { return id('INameAdapter') };
+      Component(): string { return };
+    }
 
-        const adapter = new Adapter({
-            registry,
-            implements: IDisplayWidget,
-            adapts: IUser
-        })
-        
-        expect(adapter).not.toBe(undefined);
-    });
+    expect(INameAdapter.prototype.interfaceId).not.toBe(undefined);
+  });
 
-    it("checks for existence of methods in implemnented interface", function() {
-        const registry = new AdapterRegistry();
-        const IUser = new Interface({name: 'IUser'});
-        const IDisplayWidget = new Interface({name: 'IDisplayWidget'});
-        
-        IDisplayWidget.prototype.render = function () {}
-        
-        const adapter = new Adapter({
-          implements: IDisplayWidget,
-          adapts: IUser,
-          render: function () {}
-        })
-    
-        expect(adapter).not.toBe(undefined);
+  it('can create an adapter class', function () {
+    class INameAdapter extends AdapterInterface {
+      get interfaceId() { return id('INameAdapter') };
+      Component(): string { return };
+    }
 
-        let failed;
-        try {
-            const adapter = new Adapter({
-              registry,
-              implements: IDisplayWidget,
-              adapts: IUser
-            })
-        } catch (e) {
-            failed = true
-        }
-        expect(failed).toEqual(true);
-    });
+    // We don't need implements because adapter is looked up using the interface
+    class NameAdapter extends Adapter {
+      get __implements__() { return INameAdapter };
+      constructor({ adapts, Component, registry }: Omit<INameAdapter, 'interfaceId'> & TAdapter) {
+        super({ adapts, Component, registry });
+      }
+    }
 
-    it("make sure we actually can call the methods on the adapter", function() {
-        const registry = new AdapterRegistry();
-        const IUser = new Interface({name: 'IUser'});
-        const IDisplayWidget = new Interface({name: 'IDisplayWidget'});
-        
-        IDisplayWidget.prototype.render = function () {}
-        
-        const adapter = new Adapter({
-          registry,
-          implements: IDisplayWidget,
-          adapts: IUser,
-          render(inp) {
-              return inp
-          }
-        })
+    expect(NameAdapter.prototype.__implements__.prototype.interfaceId).toBe(INameAdapter.prototype.interfaceId);
+  });
 
-        const User = createObjectPrototype({
-            implements: [IUser]
-        })
-    
-        const theUser = new User()
+  it('we can create an adapter that adapts interface', function () {
+    const registry = new AdapterRegistry() as TAdapterRegistry;
+    class IUser extends ObjectInterface {
+      get interfaceId() { return id('IUser') };
+      name: string;
+    }
 
-        const outp = new IDisplayWidget(theUser, { registry }).render('test')
+    class INameAdapter extends AdapterInterface {
+      get interfaceId() { return id('INameAdapter') };
+      Component(): string { return };
+    }
+    // We don't need implements because adapter is looked up using the interface
+    class NameAdapter extends Adapter {
+      get __implements__() { return INameAdapter };
+      constructor({ adapts, Component, registry }: Omit<INameAdapter, 'interfaceId'> & TAdapter) {
+        super({ adapts, Component, registry });
+      }
+    }
 
-        expect(outp).toBe('test');
-    });
+    const adapter = new NameAdapter({
+      adapts: IUser,
+      Component() {
+        return this.context.name;
+      },
+      registry,
+    })
+
+    expect(adapter).toBeInstanceOf(NameAdapter);
+  });
+
+  it('we can create an adapter that adapts object prototype', function () {
+    const registry = new AdapterRegistry() as TAdapterRegistry;
+    class IUser extends ObjectInterface {
+      get interfaceId() { return id('IUser') };
+      name: string;
+    }
+    type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+    class User extends ObjectPrototype<TUser> implements TUser {
+      __implements__ = [IUser];
+      name: string;
+      constructor({ name }: TUser) {
+        super({ name });
+      }
+    }
+
+    class INameAdapter extends AdapterInterface {
+      get interfaceId() { return id('INameAdapter') };
+      Component(): string { return };
+    }
+    // We don't need implements because adapter is looked up using the interface
+    class NameAdapter extends Adapter {
+      get __implements__() { return INameAdapter };
+      constructor({ adapts, Component, registry }: Omit<INameAdapter, 'interfaceId'> & TAdapter) {
+        super({ adapts, Component, registry });
+      }
+    }
+
+    const adapter = new NameAdapter({
+      adapts: User,
+      Component() {
+        return this.context.name;
+      },
+      registry,
+    })
+
+    expect(adapter).toBeInstanceOf(NameAdapter);
+  });
 });

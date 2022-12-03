@@ -3,16 +3,11 @@ export {
   Registry,
   globalRegistry
 } from './globalRegistry'
+export * from './localRegistry'
 
-export { LocalRegistry } from './localRegistry'
-
-export { AdapterRegistry } from './adapterRegistry'
-export { UtilityRegistry } from './utilityRegistry'
-
+export * from './adapterRegistry'
+export * from './utilityRegistry'
 export * from './interfaceFactory'
-
-export { Adapter } from './adapterFactory'
-
-export { Utility } from './utilityFactory'
-
-export { ObjectPrototype } from './objectFactory'
+export * from './adapterFactory'
+export * from './utilityFactory'
+export * from './objectFactory'

@@ -5,12 +5,12 @@ import {
   ObjectInterface,
   UtilityInterface,
   AdapterInterface,
-  createNamespace,
+  createIdFactory,
  } from "../src/interfaceFactory";
 import { ObjectPrototype } from "../src/objectFactory";
 import { TUtility } from "../src/utilityFactory";
 
-const id = createNamespace('namespace');
+const id = createIdFactory('namespace');
 
 describe('Lookup gets correct type', function() {
   it('for adapter', function() {
