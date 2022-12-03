@@ -2,18 +2,21 @@
 import { globalRegistry } from './globalRegistry'
 import { UtilityInterface } from './interfaceFactory';
 import { TUtilityRegistry } from './utilityRegistry';
+import { isUndefined } from './utils';
 
 export type TUtility = {
-    name: string,
+    name?: string,
     registry?: TUtilityRegistry,
     [index: string]: any;
   }
   
   export class Utility {
-    __implements__: typeof UtilityInterface;
+    get __implements__(): typeof UtilityInterface { return };
     __name__: string;
     constructor({name, registry, ...props}: TUtility) {
-      this.__name__ = name;
+      if (!isUndefined(name)) {
+        this.__name__ = name;
+      }
       (registry ?? globalRegistry).registerUtility(this);
       
       for (const k of Object.keys(props)) {

@@ -1,6 +1,8 @@
+import { isFunction } from 'util';
 import { Interface, MarkerInterface, ObjectInterface } from './interfaceFactory'
 
 import {
+  isFunc,
   isObject,
   isUndefined
 } from './utils'
@@ -22,10 +24,10 @@ export class ObjectPrototype<T> {
     const data = {} as T;
     for (const key of Object.keys(this)) {
       const prop = this[key];
-      if (prop && typeof prop.toJSON === 'function') {
+      if (isFunc(prop?.toJSON)) {
         // Recursively prepare objects for stringify, skipping member objects that don't have a toJSON method
         data[key] = prop.toJSON();
-      } else if (typeof prop !== 'function') {
+      } else if (!isFunc(prop)) {
         data[key] = prop;
       }
     }

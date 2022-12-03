@@ -2,6 +2,7 @@
 import { isDevelopment } from './common'
 import { UtilityInterface } from './interfaceFactory';
 import { TUtility } from './utilityFactory';
+import { getInterfaceId, isUndefined } from './utils';
 
 /*
 
@@ -49,22 +50,22 @@ export class UtilityRegistry implements TUtilityRegistry {
             utility -- the prototype of the utility to instantiate on get
             name -- OPTIONAL add as named utility
         */
-        const implementsInterface = utility.prototype.__implements__,
-            name = utility.prototype._name;
+        const implementsInterface = utility.__implements__,
+            name = utility.__name__;
 
         // TODO: Check that the utility implements the interface
         // TODO: else throw InterfaceNotImplementedError
 
         // Register the utility
-        if (typeof this.utilities[implementsInterface.interfaceId] === 'undefined') {
-            this.utilities[implementsInterface.interfaceId] = {
+        if (isUndefined(this.utilities[getInterfaceId(implementsInterface)])) {
+            this.utilities[getInterfaceId(implementsInterface)] = {
                 implementsInterface: implementsInterface,
                 unnamedUtility: undefined,
                 namedUtility: {}
             }
         }
 
-        const utilities = this.utilities[implementsInterface.interfaceId];
+        const utilities = this.utilities[getInterfaceId(implementsInterface)];
 
         if (name) {
             // Register as a named utility
@@ -97,28 +98,28 @@ export class UtilityRegistry implements TUtilityRegistry {
 
     // TODO: Implement hasUtility (return true/false), look at getUtility
 
-    getUtility(implementsInterface, name, fallbackReturnValue): TUtility {
+    getUtility(implementsInterface, name = undefined, fallbackReturnValue = undefined): TUtility {
         /*
             Return an instance of a utility that implements the given interface
             and optionally has provided name.
         */
-        const utilities = this.utilities[implementsInterface.interfaceId];
+        const utilities = this.utilities[getInterfaceId(implementsInterface)];
 
         if (utilities && name) {
             if (utilities.namedUtility[name]) {
-                const Utility = new utilities.namedUtility[name].utility();
+                const Utility = utilities.namedUtility[name].utility;
                 return Utility;
             } else {
                 if (arguments.length === 3) {
                     return fallbackReturnValue;
                 } else {
-                    const message = ["Lookup Error: There is no utility registered for: (" + implementsInterface.name + ", '" + name + "'). Check that you have registered it!"];
+                    const message = ["Lookup Error: No utility registered for: (" + implementsInterface.name + ", '" + name + "')"];
 
                     if (isDevelopment) {
-                        message.push("Available named utilities that match the provided interface:")
+                        message.push("Available named utilities matching interface:")
                         Object.keys(utilities.namedUtility).forEach((key) => {
                             const intrfc = utilities.implementsInterface
-                            message.push("[" + intrfc.name + "." + key + "] " + intrfc.interfaceId);
+                            message.push("[" + intrfc.__name__ + "." + key + "] " + getInterfaceId(intrfc));
                         });
                     }
 
@@ -126,19 +127,19 @@ export class UtilityRegistry implements TUtilityRegistry {
                 }
             }
         } else if (utilities && utilities.unnamedUtility) {
-            const Utility = new utilities.unnamedUtility.utility();
+            const Utility = utilities.unnamedUtility.utility;
             return Utility;
         } else {
             if (arguments.length === 3) {
                 return fallbackReturnValue;
             } else {
-                const message = ["Lookup Error: There is no utility registered for: " + implementsInterface.name + ". Check that you have registered it! :)"];
+                const message = ["Lookup Error: No utility registered for: " + implementsInterface.name];
 
                 if (isDevelopment) {
-                    message.push("Registered utilities implement the follwing interfaces:")
+                    message.push("Registered utilities implement:")
                     Object.keys(this.utilities).forEach((key) => {
                         const util = this.utilities[key]
-                        message.push("[" + util.implementsInterface.name + "] " + util.implementsInterface.interfaceId);
+                        message.push("[" + util.implementsInterface.__name__ + "] " + getInterfaceId(util.implementsInterface));
                     });
                 }
 
@@ -153,7 +154,7 @@ export class UtilityRegistry implements TUtilityRegistry {
             of named utilities is included.
                 { name: 'whatever', utility: obj }
         */
-        const utilities = this.utilities[implementsInterface.interfaceId];
+        const utilities = this.utilities[getInterfaceId(implementsInterface)];
 
         // We can find any utilities so we return an empty list
         if (!utilities) {
@@ -164,12 +165,12 @@ export class UtilityRegistry implements TUtilityRegistry {
 
         // Add the unnamed utility
         if (utilities.unnamedUtility) {
-            outp.push(new utilities.unnamedUtility.utility());
+            outp.push(utilities.unnamedUtility.utility);
         }
 
         // Add named utilities
         for (const key in utilities.namedUtility) {
-            outp.push(new utilities.namedUtility[key].utility());
+            outp.push(utilities.namedUtility[key].utility);
         }
         return outp;
     }

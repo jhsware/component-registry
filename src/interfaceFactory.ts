@@ -7,12 +7,13 @@ import {
   hasArrayPropImplements,
   isString,
   isWildcard,
-  isUndefined
+  isUndefined,
+  getInterfaceId
 } from './utils'
 import { ObjectPrototype } from './objectFactory';
 import { TAdapterRegistry } from './adapterRegistry';
 import { TUtilityRegistry } from './utilityRegistry';
-import { Utility } from './utilityFactory';
+import { TUtility, Utility } from './utilityFactory';
 const NAMESPACE = 'bc901568-0169-42a8-aac8-52fa2ffd0670';
 
 const _idLookup: Record<string, string> = {};
@@ -39,11 +40,11 @@ export class MarkerInterface implements Interface {
     if (hasArrayPropImplements(obj)) {
       // Object has a list of interfaces it implements
       for (let i = 0, imax = obj.__implements__.length; i < imax; i++) {
-        if (obj.__implements__[i].prototype.interfaceId === this.interfaceId) {
+        if (getInterfaceId(obj.__implements__[i]) === this.interfaceId) {
           return true;
         };
       }
-    // } else if (hasPropImplements(obj) && obj.__implements__.prototype.interfaceId === this.interfaceId) {
+    // } else if (hasPropImplements(obj) && getInterfaceId(obj.__implements__) === this.interfaceId) {
     //   // Object implements a single interface (probably a utility)
     //   return true;
     }
@@ -64,11 +65,11 @@ export class ObjectInterface implements Interface {
     if (hasArrayPropImplements(obj)) {
       // Object has a list of interfaces it implements
       for (let i = 0, imax = obj.__implements__.length; i < imax; i++) {
-        if (obj.__implements__[i].prototype.interfaceId === this.interfaceId) {
+        if (getInterfaceId(obj.__implements__[i]) === this.interfaceId) {
           return true;
         };
       }
-    // } else if (hasPropImplements(obj) && obj.__implements__.prototype.interfaceId === this.interfaceId) {
+    // } else if (hasPropImplements(obj) && getInterfaceId(obj.__implements__) === this.interfaceId) {
     //   // Object implements a single interface (probably a utility)
     //   return true;
     }
@@ -87,17 +88,18 @@ export class AdapterInterface implements Interface {
 
 export class UtilityInterface implements Interface {
   get interfaceId(): string { return };
-  constructor(name?: string | TUtilityRegistry, registry?: TUtilityRegistry) {
-    if (isString(name)) {
-      const r = registry ?? globalRegistry;
+  constructor(nameOrRegistry?: string | TUtilityRegistry, registry?: TUtilityRegistry) {
+    if (isString(nameOrRegistry)) {
+      const name = nameOrRegistry;
+      const reg = registry ?? globalRegistry;
       if (isWildcard(name)) {
-        return r.getUtilities(this);
+        return reg.getUtilities(this);
       } else {
-        return r.getUtility(this, name);
+        return reg.getUtility(this, name);
       }
     } else {
-      const r = (name ?? registry ?? globalRegistry) as TUtilityRegistry;
-      return r.getUtility(this) as any;
+      const reg = (nameOrRegistry ?? registry ?? globalRegistry) as TUtilityRegistry;
+      return reg.getUtility(this) as any;
     }
   }
 }

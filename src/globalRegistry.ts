@@ -1,6 +1,7 @@
 import { AdapterRegistry, TAdapterRegistry } from './adapterRegistry'
 import { TUtilityRegistry, UtilityRegistry } from './utilityRegistry'
 import { isTest } from './common';
+import { isUndefined } from './utils';
 
 export type TRegistry = TUtilityRegistry & TAdapterRegistry;
 
@@ -25,11 +26,11 @@ export class Registry implements TRegistry {
 
         */
 
-        if (typeof global.registry === 'undefined') {
-            isTest || console.log('[component-registry] Creating component utility registry');
+        if (isUndefined(global.registry)) {
+            isTest || console.log('[component-registry] Utility Registry');
             global.registry = new UtilityRegistry();
 
-            isTest || console.log('[component-registry] Creating component adapter registry');
+            isTest || console.log('[component-registry] Adapter Registry');
             const tmp = new AdapterRegistry();
 
             Object.keys(tmp).forEach(function (key) {

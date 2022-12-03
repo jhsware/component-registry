@@ -33,3 +33,7 @@ export function isFunc (inp: any): boolean {
 export function isObject (inp: any): boolean {
   return typeof inp === 'object' && inp !== null && !Array.isArray(inp);
 }
+
+export function getInterfaceId(intrfc) {
+  return intrfc.prototype?.interfaceId ?? intrfc.interfaceId
+}

@@ -4,6 +4,7 @@ import { AdapterInterface } from './interfaceFactory';
 import { ObjectPrototype } from './objectFactory';
 
 import {
+    getInterfaceId,
     isUndefined,
   notNullOrUndef,
 } from './utils'
@@ -64,8 +65,8 @@ AdapterRegistry.prototype.registerAdapter = function (adapter) {
     // TODO: else throw InterfaceNotImplementedError
     
     // Register the adapter (interfaces are stored in a list)
-    const tmpInterfaceId = implementsInterfaces.prototype.interfaceId;
-    if (typeof this.adapters[tmpInterfaceId] === 'undefined') {
+    const tmpInterfaceId = getInterfaceId(implementsInterfaces);
+    if (isUndefined(this.adapters[tmpInterfaceId])) {
         this.adapters[tmpInterfaceId] = {
             implementsInterface: implementsInterfaces[0],
             interfaceAdapters: [],
@@ -75,7 +76,7 @@ AdapterRegistry.prototype.registerAdapter = function (adapter) {
     
     const adapters = this.adapters[tmpInterfaceId];
     
-    if (adapts.prototype.interfaceId) {
+    if (getInterfaceId(adapts)) {
         // This should be registered as an interface
         adapters.interfaceAdapters.push({
             adapts: adapts,
@@ -101,11 +102,11 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
         Optionally add a specific param adaptsInterface in case there are several 
         adapters that implement the interface and match the object.
     */
-    const adapters = this.adapters[implementsInterface.interfaceId];
+    const adapters = this.adapters[getInterfaceId(implementsInterface)];
     
     // if we didn't find an adapter for this we throw an error
-    if (typeof adapters === 'undefined') {
-        const message = "No registered adapter(s) found for: " + implementsInterface.name;
+    if (isUndefined(adapters)) {
+        const message = "No registered adapter(s) found for: " + implementsInterface.__name__;
         throw new AdapterRegistryException(message, (isDevelopment ? obj : undefined));
     }
     
@@ -118,10 +119,12 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
             if (obj instanceof tmp.adapts) {
                 // Clone adapter and return with context set
                 // TODO: Is there a better way of returning the instance?
-                return {
+                const Adapter = {
                     context: obj,
                     ...tmp.adapter
                 };
+                Adapter.prototype = tmp.adapter;
+                return Adapter;
             }
             
         } 
@@ -129,14 +132,14 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
         // passed object to find the first match.
 
         // INTEGRITY CHECK: Throw a useful error if the passed object doesn't have __implements__
-        if (isUndefined(obj.prototype?.interfaceId) && isUndefined(obj.__implements__?.[0])) {
+        if (isUndefined(getInterfaceId(obj)) && isUndefined(obj.__implements__?.[0])) {
             const errorContext = (isDevelopment ? {
                 context: obj, 
                 implements: implementsInterface,
                 registry: this
             } : undefined)
             throw new AdapterRegistryException(
-                "Context (first param) doesn't have any __implements__ property, and thus no interfaces to use for look up", 
+                "Context missing __implements__ property, nothing to look up", 
                 errorContext
             )
         };
@@ -153,18 +156,20 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
             const tmpInterface = tmpImplements[j];
             for (let i = 0, imax = adapters.interfaceAdapters.length; i < imax; i++) {
                 const tmp = adapters.interfaceAdapters[i];
-                if (tmpInterface.prototype.interfaceId === tmp.adapts.prototype.interfaceId) {
+                if (getInterfaceId(tmpInterface) === getInterfaceId(tmp.adapts)) {
                     // If we got the adaptsInterface parameter we need to check that it matches otherwise
                     // keep on looking
-                    if (notNullOrUndef(adaptsInterface) && adaptsInterface.prototype.interfaceId !== tmp.adapts.prototype.interfaceId) {
+                    if (notNullOrUndef(adaptsInterface) && getInterfaceId(adaptsInterface) !== getInterfaceId(tmp.adapts)) {
                         continue
                     }
                     // Clone adapter and return with context set
                     // TODO: Is there a better way of returning the instance?
-                    return {
+                    const Adapter = {
                         context: obj,
                         ...tmp.adapter
                     };
+                    Adapter.prototype = tmp.adapter;
+                    return Adapter;
                 }
                 
             }
@@ -172,16 +177,16 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
     };
     
     // If we get this far, throws error if no adapter is found
-    const message = ["No registered adapter implementing [" + implementsInterface.name + "] found that adapts: " + (obj._iname || obj)];
+    const message = ["No registered adapter implementing [" + implementsInterface.__name__ + "] found that adapts: " + (obj.name || obj)];
 
     if (isDevelopment) {
         message.push("Registered adapters adapt the follwing interfaces:")
         adapters.interfaceAdapters.forEach(function (adapter) {
-            message.push("[" + adapter.__adapts__.name + "] " + adapter.__adapts__.prototype.interfaceId);
+            message.push("[" + adapter.__adapts__.name + "] " + getInterfaceId(adapter.__adapts__));
         });
         message.push("But we needed to adapt one of the following interfaces:")
         obj.__implements__.forEach(function (intrfc) {
-            message.push("[" + intrfc.prototype.name + "] " + intrfc.prototype.interfaceId);
+            message.push("[" + intrfc.__name__ + "] " + getInterfaceId(intrfc));
         })
         message.push("If the interface name matches, check the namespace.")
     }
