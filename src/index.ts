@@ -9,7 +9,7 @@ export { LocalRegistry } from './localRegistry'
 export { AdapterRegistry } from './adapterRegistry'
 export { UtilityRegistry } from './utilityRegistry'
 
-export { createInterfaceClass } from './interfaceFactory'
+export * from './interfaceFactory'
 
 export { Adapter } from './adapterFactory'
 

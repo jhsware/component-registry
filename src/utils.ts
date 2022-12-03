@@ -11,11 +11,11 @@ export function notNullOrUndef (inp: any): boolean {
 }
 
 export function hasPropImplements (inp: any): boolean {
-  return notNullOrUndef(inp) && notNullOrUndef(inp._implements)
+  return notNullOrUndef(inp) && notNullOrUndef(inp.__implements__)
 }
 
 export function hasArrayPropImplements (inp: any): boolean {
-  return notNullOrUndef(inp) && Array.isArray(inp._implements)
+  return notNullOrUndef(inp) && Array.isArray(inp.__implements__)
 }
 
 export function isString (inp: any): boolean {

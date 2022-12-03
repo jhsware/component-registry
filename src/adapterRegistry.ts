@@ -1,16 +1,11 @@
 
 import { TAdapter } from './adapterFactory';
 import { isDevelopment } from './common'
-import { TInterface } from './interfaceFactory';
+import { AdapterInterface } from './interfaceFactory';
 import { ObjectPrototype } from './objectFactory';
 
 import {
-  hasPropRegistry,
   notNullOrUndef,
-  hasPropImplements,
-  hasArrayPropImplements,
-  isString,
-  isWildcard
 } from './utils'
 
 /*
@@ -33,7 +28,7 @@ function AdapterRegistryException(message, context) {
 */
 
 type TAdapterEntry = {
-    implementsInterface: TInterface,
+    implementsInterface: AdapterInterface,
     interfaceAdapters: TAdapter[],
     objectAdapters: TAdapter[]
 }
@@ -41,7 +36,7 @@ type TAdapterEntry = {
 export type TAdapterRegistry = {
     adapters: Record<string, TAdapterEntry>;
     registerAdapter(adapter: TAdapter): void;
-    getAdapter(obj: ObjectPrototype<any>, implementsInterface: TInterface, adaptsInterface: TInterface): TAdapter;
+    getAdapter(obj: ObjectPrototype<any>, implementsInterface: AdapterInterface, adaptsInterface: AdapterInterface): TAdapter;
 }
 
 export class AdapterRegistry implements TAdapterRegistry {
@@ -62,8 +57,8 @@ AdapterRegistry.prototype.registerAdapter = function (adapter) {
         implementsInterface -- the interface that the adapter implements
         adapter -- the prototype of the adapter to instantiate on get
     */
-    const adapts = adapter.prototype._adapts, 
-        implementsInterfaces = adapter.prototype._implements;
+    const adapts = adapter.prototype.__adapts__, 
+        implementsInterfaces = adapter.prototype.__implements__;
         
     // TODO: Check that the adapter implements the interface
     // TODO: else throw InterfaceNotImplementedError
@@ -152,15 +147,15 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
         // Then check if an interface adapter matches, iterate over each interface implemented by the
         // passed object to find the first match.
 
-        // INTEGRITY CHECK: Throw a useful error if the passed object doesn't have _implements
-        if (!(obj.interfaceId || (obj._implements && obj._implements.length > 0))) {
+        // INTEGRITY CHECK: Throw a useful error if the passed object doesn't have __implements__
+        if (!(obj.interfaceId || (obj.__implements__ && obj.__implements__.length > 0))) {
             const errorContext = (isDevelopment ? {
                 context: obj, 
                 implements: implementsInterface,
                 registry: this
             } : undefined)
             throw new AdapterRegistryException(
-                "Context (first param) doesn't have any _implements property, and thus no interfaces to use for look up", 
+                "Context (first param) doesn't have any __implements__ property, and thus no interfaces to use for look up", 
                 errorContext
             )
         };
@@ -172,7 +167,7 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
         
         // Now support finding adapter by supplying an interface. Useful if no object exists yet such as
         // in a schema with ObjectField or for create views.
-        const tmpImplements = notNullOrUndef(obj._implements) ? obj._implements : [obj];
+        const tmpImplements = notNullOrUndef(obj.__implements__) ? obj.__implements__ : [obj];
         for (let j = 0, jmax = tmpImplements.length; j < jmax; j++) {
             const tmpInterface = tmpImplements[j];
             for (let i = 0, imax = adapters.interfaceAdapters.length; i < imax; i++) {
@@ -201,7 +196,7 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
             message.push("[" + adapter.adapts.name + "] " + adapter.adapts.interfaceId);
         });
         message.push("But we needed to adapt one of the following interfaces:")
-        obj._implements.forEach(function (intrfc) {
+        obj.__implements__.forEach(function (intrfc) {
             message.push("[" + intrfc.name + "] " + intrfc.interfaceId);
         })
         message.push("If the interface name matches but the ID of that interface doesn't, you might have imported a module containing the mismatched interface from two different places. They need to be exactly the same module to get the same ID. The ID is used for lookups.")

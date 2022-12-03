@@ -1,4 +1,4 @@
-import { TInterface } from './interfaceFactory'
+import { Interface, MarkerInterface, ObjectInterface } from './interfaceFactory'
 
 import {
   isObject,
@@ -6,7 +6,7 @@ import {
 } from './utils'
 
 export class ObjectPrototype<T> {
-  readonly __implements__: TInterface[] = [];
+  readonly __implements__: (typeof MarkerInterface | typeof ObjectInterface)[] = [];
 
   constructor(data?: T) {
     if (isObject(data)) {

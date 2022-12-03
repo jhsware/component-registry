@@ -1,6 +1,6 @@
 
 import { isDevelopment } from './common'
-import { TInterface } from './interfaceFactory';
+import { UtilityInterface } from './interfaceFactory';
 import { TUtility } from './utilityFactory';
 
 /*
@@ -22,7 +22,7 @@ function UtilityRegistryException(message) {
 */
 
 type TUtilityEntry = {
-    implementsInterface: TInterface,
+    implementsInterface: UtilityInterface,
     unnamedUtility: TUtility[] | undefined,
     namedUtility: Record<string, TUtility>
 }
@@ -30,8 +30,8 @@ type TUtilityEntry = {
 export type TUtilityRegistry = {
     utilities: Record<string, TUtilityEntry>;
     registerUtility(utility: TUtility): void;
-    getUtility(implementsInterface: TInterface, name?: string, fallbackReturnValue?: any): TUtility;
-    getUtilities(implementsInterface: TInterface): TUtility[];
+    getUtility(implementsInterface: UtilityInterface, name?: string, fallbackReturnValue?: any): TUtility;
+    getUtilities(implementsInterface: UtilityInterface): TUtility[];
 }
 
 export class UtilityRegistry implements TUtilityRegistry {
@@ -49,7 +49,7 @@ export class UtilityRegistry implements TUtilityRegistry {
             utility -- the prototype of the utility to instantiate on get
             name -- OPTIONAL add as named utility
         */
-        const implementsInterface = utility.prototype._implements,
+        const implementsInterface = utility.prototype.__implements__,
             name = utility.prototype._name;
 
         // TODO: Check that the utility implements the interface

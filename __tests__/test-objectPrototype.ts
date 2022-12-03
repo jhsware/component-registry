@@ -471,7 +471,7 @@ describe('Object Prototypes', function() {
         
         const newUser = new User(data);
         
-        expect(newUser.hasOwnProperty('_implements')).toEqual(false);
+        expect(newUser.hasOwnProperty('__implements__')).toEqual(false);
     });
 
     it("adds schema fields for all implemented interfaces", function() {

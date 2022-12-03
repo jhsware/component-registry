@@ -77,7 +77,7 @@ const Employee = createObjectPrototype({
     ...
 })
 ```
-The ObjectPrototype should be called Employee, which corresponds to the most significant Interface it implements. When you instantiate an object of type Employee you will find the Interfaces as the property `_implements`.
+The ObjectPrototype should be called Employee, which corresponds to the most significant Interface it implements. When you instantiate an object of type Employee you will find the Interfaces as the property `__implements__`.
 
 The `globalRegistry` uses these interfaces in order to find Adapters for you that can be used with your Employee objects. Say that you want to render a directory listing of your employees. You decide you want each row to be rendered by using an Adapter that you find with the interface `IDirectoryListEntryWidget`, you can call the Interface what ever you want. Now you need to implement that Adapter so it can render your Employee object. It would look something like this:
 

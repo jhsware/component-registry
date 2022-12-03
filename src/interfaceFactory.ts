@@ -3,15 +3,12 @@
 import { v5 as uuid } from 'uuid'
 import { globalRegistry, TRegistry } from './globalRegistry'
 import {
-  hasPropRegistry,
   hasPropImplements,
   hasArrayPropImplements,
   isString,
-  isWildcard
+  isWildcard,
+  isUndefined
 } from './utils'
-import {
-  isDevelopment,
-} from './common'
 import { ObjectPrototype } from './objectFactory';
 import { TAdapterRegistry } from './adapterRegistry';
 import { TUtilityRegistry } from './utilityRegistry';
@@ -21,12 +18,12 @@ function _providedBy(obj) {
   // Does the specified object implement this interface
   if (hasArrayPropImplements(obj)) {
     // Object has a list of interfaces it implements
-    for (let i = 0, imax = obj._implements.length; i < imax; i++) {
-      if (obj._implements[i].interfaceId === this.interfaceId) {
+    for (let i = 0, imax = obj.__implements__.length; i < imax; i++) {
+      if (obj.__implements__[i].interfaceId === this.interfaceId) {
         return true;
       };
     }
-  } else if (hasPropImplements(obj) && obj._implements.interfaceId === this.interfaceId) {
+  } else if (hasPropImplements(obj) && obj.__implements__.interfaceId === this.interfaceId) {
     // Object implements a single interface (probably a utility)
     return true;
   }
@@ -34,179 +31,77 @@ function _providedBy(obj) {
   return false;
 }
 
-function _getRegistry(context, opts): TAnyRegistry {
-  if (hasPropRegistry(opts)) return opts.registry;
-  else if (hasPropRegistry(context)) return (context as { registry: TAnyRegistry }).registry
-  return globalRegistry
+export function createNamespace(namespace: string) {
+  return (name: string) => uuid(`${namespace}.${name}`, NAMESPACE);
 }
 
-function _lookup(_this, intrfc, registry) {
-  if (hasPropImplements(intrfc)) {
-    // Adapter lookup
-    return registry.getAdapter(intrfc, _this.constructor)
-  } else if (isString(intrfc)) {
-    if (isWildcard(intrfc)) {
-      // Lookup all utilities
-      return registry.getUtilities(_this.constructor)
-    }
-    else {
-      // Named utility lookup
-      return registry.getUtility(_this.constructor, intrfc)
-    }
-  } else {
-    // Unnamed utility lookup
-    return registry.getUtility(_this.constructor)
+export class Interface {
+  readonly interfaceId: string;
+}
+
+export class MarkerInterface implements Interface {
+  readonly interfaceId: string;
+  providedBy = _providedBy;
+}
+
+export class ObjectInterface implements Interface {
+  readonly interfaceId: string;
+  constructor(context: ObjectPrototype<any>) {
+    // TODO: Create facade for context
+    // - Check that it implements this interface
+    // - Only expose subset of props using proxy
+  }
+  providedBy = _providedBy;
+}
+
+export class AdapterInterface implements Interface {
+  readonly interfaceId: string;
+  constructor(context: object, registry?: TAdapterRegistry) {
+    const r = registry ?? globalRegistry;
+    return r.getAdapter(context);
   }
 }
 
-function _NOOP() { }
-
-export type TInterface = {
-  name: string;
-  interfaceId: string;
-  schema?: any;
-  init?(obj: ObjectPrototype<any>, data: any): void;
-  providedBy(obj: ObjectPrototype<any>): boolean;
-  addProperties?(obj: ObjectPrototype<any>): void;
-}
-
-type TAnyRegistry = TRegistry | TAdapterRegistry | TUtilityRegistry;
-type TInterfaceType = undefined | 'adapter' | 'utility';
-type TInterfaceConstructor = { name: string, type?: TInterfaceType, schema?: any, init?(data: any): void };
-// Any type of registry
-export function createInterfaceClass(namespace: string) {
-  class Interface implements TInterface {
-
-    name: string;
-    interfaceId: string;
-    schema?: any;
-    init?(obj: ObjectPrototype<any>, data?: any) {};
-    providedBy(obj: ObjectPrototype<any>): boolean { return false };
-    addProperties(): void { };
-
-    constructor({ name, type = undefined, schema = undefined, init }: TInterfaceConstructor) {
-      switch (type) {
-        case "adapter":
-          return createAdapterInterface({ namespace, name, schema }) as any;
-        case "utility":
-          return createUtilityInterface({ namespace, name, schema }) as any;
-        default:
-          return createInterface({ namespace, name, schema, init }) as any;
+export class UtilityInterface implements Interface {
+  readonly interfaceId: string;
+  constructor(name?: string | TUtilityRegistry, registry?: TUtilityRegistry) {
+    if (isString(name)) {
+      const r = registry ?? globalRegistry;
+      if (isWildcard(name)) {
+        return r.getUtilities(this);
+      } else {
+        return r.getUtility(this, name);
       }
+    } else {
+      const r = (name ?? registry ?? globalRegistry) as TUtilityRegistry;
+      return r.getUtility(this) as any;
     }
   }
-  return Interface as { new(props: { name: string, type?: TInterfaceType, schema?: any, init?(data?: any): void }): Interface };
 }
 
-// Object and marker interface for object prototypes
-function createInterface({ namespace, name, schema, init }: TInterfaceConstructor & { namespace: string }) {
-  class Interface implements TInterface {
-    name: string;
-    interfaceId: string;
-    schema?: any;
-    init?(obj: ObjectPrototype<any>, data?: any) {};
+/*
+class IUser extends ObjectInterface {
+  interfaceId = 
+}
+const IUserAdapter = new AdapterInterface(NAMESPACE, 'IUserAdapter');
 
-    providedBy = _providedBy;
-    addProperties(obj: ObjectPrototype<any>) {
-      typeof this.schema?.addProperties === 'function' ? this.schema.addProperties(obj) : _NOOP
-    };
+type TUserAdapter = {
+  adapts: ObjectPrototype<any> | Interface;
+  registry?: TAdapterRegistry;
+  Component(): Function;
+}
+class UserAdapter extends Adapter {
+  __implements__ = IUserAdapter;
+  Component: () => Function;
+  constructor({ adapts, registry = undefined, Component}: TUserAdapter) {
+    super({ adapts, registry, Component});
   }
-
-  Object.defineProperties(Interface, {
-    name: {value: name, configurable: false, writable: false},
-    interfaceId: {value: uuid(`${namespace}.${name}`, NAMESPACE), configurable: false, writable: false},
-  });
-  if (init) {
-    Object.defineProperty(Interface, 'init', {value: init, configurable: false, writable: false})
-  }
-  if (schema) {
-    Object.defineProperty(Interface, 'schema', {value: schema, configurable: false, writable: false})
-  }
-
-  return Interface
 }
 
-// Adpater class interface for registry
-export type TAdapterInterface = TInterface & {
-  new(
-    context: ObjectPrototype<any> | { adapts: ObjectPrototype<any>, registry?: TAnyRegistry } | { implements: TInterface, registry?: TAnyRegistry },
-    opts?: { registry: TAnyRegistry }
-  ): AdapterInterface
-};
-export abstract class AdapterInterface implements TInterface {
-  name: string;
-  interfaceId: string;
-  schema?: any;
-  providedBy(obj: ObjectPrototype<any>): boolean { return };
-    
-  constructor(
-    context: any,
-    opts?: any) { }
-}
-
-function createAdapterInterface({ namespace, name, schema }: Omit<TInterfaceConstructor, 'init'> & { namespace: string }) {
-  class AdapterInterface implements TInterface {
-    name: string;
-    interfaceId: string;
-    schema?: any;
-    providedBy = _providedBy;
-
-    constructor(
-      context: ObjectPrototype<any> | { adapts: ObjectPrototype<any>, implements?: TInterface, registry?: TAnyRegistry },
-      opts?: { registry: TAnyRegistry }) {
-
-      let registry = _getRegistry(context, opts);
-      const adapt = (context as any).adapts || context
-      return _lookup(this, adapt, registry);
-    }
-  }
-
-  Object.defineProperties(AdapterInterface, {
-    name: {value: name, configurable: false, writable: false},
-    interfaceId: {value: uuid(`${namespace}.${name}`, NAMESPACE), configurable: false, writable: false},
-    schema: {value: schema, configurable: false, writable: false},
-  });
-  return AdapterInterface;
-}
-
-// Utility class interface for registry
-export type TUtilityInterface = TInterface & {
-  new(
-    context: TInterface | { implements: TInterface, name?: string, registry?: TAnyRegistry },
-    opts?: { registry: TAnyRegistry }
-  ): AdapterInterface};
-export abstract class UtilityInterface implements TInterface {
-  name: string;
-  interfaceId: string;
-  schema?: any;
-  providedBy(obj: ObjectPrototype<any>): boolean { return };
-
-  constructor(
-    context: any,
-    opts?: any) { }
-}
-
-function createUtilityInterface({ namespace, name, schema }: Omit<TInterfaceConstructor, 'init'> & { namespace: string }) {
-  class UtilityInterface implements TInterface {
-    name: string;
-    interfaceId: string;
-    schema?: any;
-    providedBy = _providedBy;
-
-    constructor(
-      context: TInterface | { implements: TInterface, name?: string, registry?: TAnyRegistry },
-      opts?: { registry: TAnyRegistry }) {
-
-      let registry = _getRegistry(context, opts);
-      return _lookup(this, name, registry);
-    }
-  }
-
-  Object.defineProperties(UtilityInterface, {
-    name: {value: name, configurable: false, writable: false},
-    interfaceId: {value: uuid(`${namespace}.${name}`, NAMESPACE), configurable: false, writable: false},
-    schema: {value: schema, configurable: false, writable: false},
-  });
-
-  return UtilityInterface;
-}
+new UserAdapter({
+  adapts: IUser,
+  Component() {
+    return this.context.name
+  },
+})
+*/

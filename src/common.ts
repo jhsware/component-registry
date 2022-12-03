@@ -19,10 +19,10 @@ export function extendPrototypeWithThese(prototype, extendThese): void {
             const tmpObj = item.prototype;
             const _iname = "_" + tmpObj._iname;
             for (const key in tmpObj) {
-                if (key === '_implements') {
+                if (key === '__implements__') {
                     // Implements should be extended with later coming before earlier
                     // TODO: Filter so we remove duplicates from existing list (order makes difference)
-                    outp.prototype._implements = tmpObj._implements.concat(outp.prototype._implements); 
+                    outp.prototype.__implements__ = tmpObj.__implements__.concat(outp.prototype.__implements__); 
                 } else {
                     // All others added and lower indexes override higher
                     if (!outp.prototype[_iname]) {

@@ -1,204 +1,121 @@
 import { describe, expect, it } from "@jest/globals";
-// import { TUtilityRegistry } from "../dist/types";
-import { AdapterRegistry, createInterfaceClass, Adapter } from '../src/index'
-import { TAdapterInterface } from "../src/interfaceFactory";
+import { Utility } from "../src";
+import { Adapter, TAdapter } from "../src/adapterFactory";
+import {
+  ObjectInterface,
+  UtilityInterface,
+  AdapterInterface,
+  createNamespace,
+ } from "../src/interfaceFactory";
 import { ObjectPrototype } from "../src/objectFactory";
-const Interface = createInterfaceClass('test')
+import { TUtility } from "../src/utilityFactory";
 
+const id = createNamespace('namespace');
 
 describe('Lookup gets correct type', function() {
   it('for adapter', function() {
-      const registry = new AdapterRegistry();
-      
+    class IUser extends ObjectInterface {
+      readonly interfaceId = id('IUser');
+      name: string;
+    }
 
-      const IUser = new Interface({
-        name: "IUser"
-      });
-
-      type TUserAdapter = {
-        prettyPrint(): string;
+    type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+    class User extends ObjectPrototype<TUser> implements TUser {
+      readonly __implements__ = [IUser];
+      name: string;
+      constructor ({ name }: TUser) {
+        super({ name });
       }
-      const IUserAdapter = new Interface({name: "IUserAdapter", type: "adapter"}) as unknown as TAdapterInterface;
-      
-      const UserAdapter = new Adapter({
-          registry: registry,
-          implements: IUserAdapter,
-          adapts: IUser
-      })
+    }
 
+    const user = new User({
+      name: 'Julia'
+    });
 
-
-      // export var Blog = createObjectPrototype({
-      //   implements: [IBlog, IObject],
-      //   extends: [RoleManager, Permissions, PublishWorkflow],
-      //     this._IRoleManager.constructor.call(this, params)
-      //   }
-      // })
-
-
-      interface TPermissions {
-        permissions?: string[];
+    // Adapter
+    class INameAdapter extends AdapterInterface {
+      readonly interfaceId = id('INameAdapter');
+      Component(): string {return};
+    }
+    // We don't need implements because adapter is looked up using the interface
+    class NameAdapter extends Adapter {
+      readonly __implements__ = INameAdapter;
+      constructor({ adapts, Component, registry}: Omit<INameAdapter, 'interfaceId'> & TAdapter) {
+        super({adapts, Component, registry});
       }
+    }
 
-      class Permissions extends ObjectPrototype<TPermissions> implements TPermissions {
-        permissions: [];
+    new NameAdapter({
+      adapts: IUser,
+      Component() {
+        return this.context.name;
       }
-      
+    });
 
-      const IPermissions = new Interface({
-        name: "IPermissions",
-        init(obj, data?: any) {
-          obj.permissions = data?.permissions ?? ["all"];
-        }
-      });
-
-
-      
-      interface TUser {
-        name: string;
-      }
-
-      class User extends ObjectPrototype<TUser & TPermissions> implements TUser, TPermissions {
-        readonly __implements__ = [IUser, IPermissions];
-        name: string;
-        permissions = [];
-
-        constructor(data: TUser & TPermissions) {
-          super(data);
-          IPermissions.init(this, data);
-        }
-      }
-
-      // How do I get the type TUser instead of ObjectPrototype
-
-      const theUser = new User({
-        name: "Jenson"
-      });
-
-      const clara = new User({
-        name: "Clara"
-      });
-      
-      const ua = new IUserAdapter(theUser, { registry: registry });
-
-      expect(ua).toBeInstanceOf(UserAdapter);
+    const nameAdapter = new INameAdapter(user);
+    nameAdapter.Component
   });
+
+  it('for utility', function () {
+    // Define the utility
+    class ITranslateUtil extends UtilityInterface {
+      readonly interfaceId = id('ITranslateUtil');
+      translate(inp: string): string {return};
+    }
+    class TranslateUtil extends Utility {
+      readonly __implements__ = ITranslateUtil;
+      constructor({ name, translate, registry}: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
+        super({name, translate, registry});
+      }
+    }
+
+    // Implement the utility
+    new TranslateUtil({
+      name: "sv",
+      translate(inp: string) {
+        return inp;
+      }
+    })
+
+    // Fetch the utility
+    const trans = new ITranslateUtil('sv');
+    trans.translate('hej');
+  })
 });
 
 
 
 describe('ObjectPrototype gets type safety', function() {
-  it('for adapter', function() {
-      const IUser = new Interface({
-        name: "IUser"
-      });
+  it('basic', function() {
+    // Define an object
+    class IUser extends ObjectInterface {
+      readonly interfaceId = id('IUser');
+      name: string;
+    }
 
-      abstract class TUser {
-        constructor(data?) {};
-        height: number;
-        weight?: number;
+    // An object prototype can be a mix of interfaces so we need to create
+    // a type for it that can be used to provide typing in various places
+    type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+    class User extends ObjectPrototype<TUser> implements TUser {
+      readonly __implements__ = [IUser];
+      name: string;
+      // Named params provides hints during use
+      constructor ({ name }: TUser) {
+        // Setting data with super call enforces setting all the required props
+        super({ name });
       }
-      
-      const INameable = new Interface({
-        name: "INameable"
-      });
+    }
 
-      type TNameable = {
-        firstName: string;
-        lastName: string;
-      }
+    const user = new User({
+      name: 'Julia'
+    });
 
-      // class User extends ObjectPrototype implements TUser, TNameable {
-      //   implements = [IUser, INameable];
-      //   extends = [];
-      //   name: string;
-      // }
+    user.name
 
-      // TODO: Use same method of class returning a class as we do in interfaceFactory.
-      class User extends ObjectPrototype<TUser & TNameable> implements TUser, TNameable {
-        static implements = [IUser, INameable];
-        height;
-        firstName;
-        lastName;
-        
-      }
-
-      // How do I get the type TUser instead of ObjectPrototype
-
-      const theUser = new User({
-        height: 200,
-        weight: 100,
-        firstName: "heidi",
-        lastName: "plum"
-      })
-
-      function test(t: TUser) {
-        return
-      }
-
-      // Should work
-      test(theUser);
-      
-      // Should fail
-      // test(IUser);
-
-      const isTrue = IUser.providedBy(theUser);
-
-      expect(theUser).toBeInstanceOf(User);
+    const name = user.name;
   });
 });
 
 
 
 
-
-
-(function test() {
-  class ObjectPrototype {
-    constructor(data) {
-      // Do all the stuff here
-    }
-  
-    toJSON() {
-  
-    }
-  }
-
-  class IUserCls extends Interface {
-    name = "IUser";
-    schema = {};
-  }
-
-  const IUserObj = new Interface({
-    name: "IUser",
-    schema: {}
-  });
-
-  class UserClass extends ObjectPrototype {
-    implements = [IUserCls];
-    extends = []
-  }
-
-
-  IUserCls.name
-
-
-
-  
-  class User extends ObjectPrototype {
-    static extends = [User];
-    static implement = [IUserCls, IUserObj];  
-    name;
-    age;
-    height;
-    constructor(data?) {
-      super(data);
-    }
-  }
-  
-  const user = new User();
-  
-  
-  const a = user instanceof User
-  const b = user instanceof ObjectPrototype;
-})()
