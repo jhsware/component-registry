@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { Adapter, AdapterInterface, AdapterRegistry, createIdFactory, ObjectInterface, ObjectPrototype, Utility } from '../src/index'
+import { AdapterInterface, createIdFactory, MarkerInterface, ObjectInterface, ObjectPrototype, UtilityInterface } from '../src/index'
 const id = createIdFactory('test');
 
 describe('Interfaces', function () {
@@ -12,35 +12,37 @@ describe('Interfaces', function () {
         expect(IUser.name).toBe('IUser');
         expect(IUser.prototype.interfaceId).not.toBe(undefined);
     });
-    
+
     it('can create MarkerInterface', function () {
-        // class IUser extends ObjectInterface {
-        //     get interfaceId() { return id('IUser') };
-        //     name: string;
-        // }
+        class IMarker extends MarkerInterface {
+            get interfaceId() { return id('IMarker') };
+        }
 
-        // expect(IUser.name).toBe('IUser');
-        // expect(IUser.prototype.interfaceId).not.toBe(undefined);
+
+        expect(IMarker.name).toBe('IMarker');
+        expect(IMarker.prototype.interfaceId).not.toBe(undefined);
     });
-    
+
     it('can create AdapterInterface', function () {
-        // class IUser extends ObjectInterface {
-        //     get interfaceId() { return id('IUser') };
-        //     name: string;
-        // }
+        class INameAdapter extends AdapterInterface {
+            get interfaceId() { return id('INameAdapter') };
+            Component(): string { return };
+        }
 
-        // expect(IUser.name).toBe('IUser');
-        // expect(IUser.prototype.interfaceId).not.toBe(undefined);
+
+        expect(INameAdapter.name).toBe('INameAdapter');
+        expect(INameAdapter.prototype.interfaceId).not.toBe(undefined);
     });
-    
-    it('can create UtilityInterface', function () {
-        // class IUser extends ObjectInterface {
-        //     get interfaceId() { return id('IUser') };
-        //     name: string;
-        // }
 
-        // expect(IUser.name).toBe('IUser');
-        // expect(IUser.prototype.interfaceId).not.toBe(undefined);
+    it('can create UtilityInterface', function () {
+        class INameUtil extends UtilityInterface {
+            get interfaceId() { return id('INameUtil') };
+            Component(): string { return };
+        }
+
+
+        expect(INameUtil.name).toBe('INameUtil');
+        expect(INameUtil.prototype.interfaceId).not.toBe(undefined);
     });
 
     it('can test if an object implements it', function () {
@@ -51,7 +53,7 @@ describe('Interfaces', function () {
         class IUser extends ObjectInterface {
             get interfaceId() { return id('IUser') };
             sayHi(): string { return };
-        }    
+        }
 
         type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
         class User extends ObjectPrototype<TUser> implements TUser {
