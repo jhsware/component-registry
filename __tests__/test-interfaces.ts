@@ -3,7 +3,7 @@ import { Adapter, AdapterInterface, AdapterRegistry, createIdFactory, ObjectInte
 const id = createIdFactory('test');
 
 describe('Interfaces', function () {
-    it('can be created', function () {
+    it('can create ObjectInterface', function () {
         class IUser extends ObjectInterface {
             get interfaceId() { return id('IUser') };
             name: string;
@@ -11,6 +11,36 @@ describe('Interfaces', function () {
 
         expect(IUser.name).toBe('IUser');
         expect(IUser.prototype.interfaceId).not.toBe(undefined);
+    });
+    
+    it('can create MarkerInterface', function () {
+        // class IUser extends ObjectInterface {
+        //     get interfaceId() { return id('IUser') };
+        //     name: string;
+        // }
+
+        // expect(IUser.name).toBe('IUser');
+        // expect(IUser.prototype.interfaceId).not.toBe(undefined);
+    });
+    
+    it('can create AdapterInterface', function () {
+        // class IUser extends ObjectInterface {
+        //     get interfaceId() { return id('IUser') };
+        //     name: string;
+        // }
+
+        // expect(IUser.name).toBe('IUser');
+        // expect(IUser.prototype.interfaceId).not.toBe(undefined);
+    });
+    
+    it('can create UtilityInterface', function () {
+        // class IUser extends ObjectInterface {
+        //     get interfaceId() { return id('IUser') };
+        //     name: string;
+        // }
+
+        // expect(IUser.name).toBe('IUser');
+        // expect(IUser.prototype.interfaceId).not.toBe(undefined);
     });
 
     it('can test if an object implements it', function () {
