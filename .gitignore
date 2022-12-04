@@ -31,7 +31,6 @@ assets/js/*
 assets/build/*
 build/
 .vscode
-package-lock.json
 launch.json
 lib/
 dist/
