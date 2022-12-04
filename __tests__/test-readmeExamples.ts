@@ -27,10 +27,10 @@ describe('Readme Examples', function() {
     }
 
     type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
-    class User extends ObjectPrototype<Omit<TUser, 'sayHi'>> implements TUser {
+    class User extends ObjectPrototype<TUser> implements TUser {
         readonly __implements__ = [IUser];
         name: string;
-        constructor({ name }: Omit<TUser, 'sayHi'>) {
+        constructor({ name }: TUser) {
             super({ name });
         }
     }

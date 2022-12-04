@@ -4,41 +4,70 @@
 
 The purpose of component-registry is to help you create reusable components that are easy to extend and customise. It is heavily inspired by battle proven concepts that have been available for many years in the Python community through the Zope Toolkit(ZTK).
 
-Think of it as decoupled imports and a straightforward way of doing composition.
+Think of it as decoupled imports and elegant composition.
 
-### Migration to 1.0 ###
-Check the end of this document for a migration guide!
+### v3 Rewrite for Typescript
+This is a rewrite of component-registry for Typescript. All the typechecking can now be done by Typescript which shrinks this package from ~20KB to ~6KB. As you would expect, typing incurs an overhead when defining you object, adapter and utility classes. The end result is excellent coding hints and type safety.
 
-Version 1.0 should be a drop in replacement for 0.2.x and 0.3.x. All tests from 0.3 have been moved to the refactored 1.0 release.
+Features that have been removed in the Typescript version:
+- multiple inheritance -- although very useful it brings magic which makes application code harder to understand
+- type checking -- this now done by Typescript
 
 ### Sample Code ###
-```javascript
-import { createInterfaceClass, Adapter, createObjectPrototype } from 'component-registry'
-const Interface = createInterfaceClass('test')
+```typescript
+import {
+  Adapter,
+  AdapterInterface,
+  createIdFactory,
+  ObjectInterface,
+  ObjectPrototype,
+  TAdapter,
+ } from 'component-registry'
+// We need an id factory for the interfaces
+const id = createIdFactory('test');
 
-const IUser = new Interface({name: 'IUser'})
+// Entity object interface and class
+class IUser extends ObjectInterface {
+  get interfaceId() { return id('IUser') };
+  name: string;
+}
 
-const IDisplayWidget = new Interface({name: 'IDisplayWidget'})
-IDisplayWidget.prototype.render = function () {}
+type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+class User extends ObjectPrototype<TUser> implements TUser {
+  readonly __implements__ = [IUser];
+  name: string;
+  constructor({ name }: TUser) {
+      super({ name });
+  }
+}
 
-const adapter = new Adapter({
-    implements: IDisplayWidget,
-    adapts: IUser,
-    render: function () {
-        console.log(`I am a ${this.context._type}`)
-    }
+// Adapter interface and class
+class IDisplayWidget extends AdapterInterface {
+  get interfaceId() { return id('IDisplayWidget') };
+  render(): void { return };
+}
+
+class DisplayWidget extends Adapter {
+  get __implements__() { return IDisplayWidget };
+  constructor({ adapts, render, registry }: Omit<IDisplayWidget, 'interfaceId'> & TAdapter) {
+    super({ adapts, render, registry });
+  }
+}
+
+// Adapter instance that can operate on objects implementing IUser
+new DisplayWidget({
+  adapts: IUser,
+  render () {
+  console.log(`My name is ${this.context.name}`)
+  }
 })
 
-const User = createObjectPrototype({
-    implements: [IUser],
-    constructor(params) {
-        this._type = 'User'
-    }
-})
 
-const oneUser = new User()
+// Create our entity object instance
+const user = new User({ name: 'Julia' })
 
-new IDisplay(oneUser).render()
+// Look up the DisplayWidget adapter instance and invoke the render method
+new IDisplayWidget(user).render()
 // [console]$ I am a User
 ```
 
@@ -68,60 +97,48 @@ Why is this good? Well it forces you to think about the architecture of your app
 Another brilliant side-effect is that you can move your implementation code around, and also split it into it's own NPM-packages at any time. As long as you don't move the Interface, all the components can still do their lookups without changing a single line of code. This makes refactoring simple, fun and helps in agile development.  
 
 ### More on ObjectPrototypes and Adapters ##
-ObjectPrototypes contain a bit more than just data. They are passed `implements` that contains an array of Interfaces that describe the capabilities of that object. The order is important, the first Interface in this array tells us what this ObjectPrototype is. The rest tell us what other things this ObjectPrototype contains or can be used for. This could be a list of implemented Interfaces:
+ObjectPrototypes contain a bit more than just data. They provide a property `__implements__` that contains an array of Interfaces that describe the capabilities of that object. The order is important, the first Interface in this array tells us what this ObjectPrototype is. The rest tell us what other things this ObjectPrototype contains or can be used for. This could be a list of implemented Interfaces:
 
-```javascript
-import { createObjectPrototype } from 'component-registry'
-const Employee = createObjectPrototype({
-    implements: [IEmployee, IUser, IHasAvatar],
-    ...
-})
+```typescript
+import { ObjectPrototype } from 'component-registry';
+type TEmployee = Omit<IEmployee & IUser & IHasAvatar, 'interfaceId' | 'providedBy'>;
+class Employee extends ObjectPrototype<TEmployee> implements TEmployee {
+  readonly __implements__ = [IEmployee, IUser, IHasAvatar];
+  ...
+}
 ```
 The ObjectPrototype should be called Employee, which corresponds to the most significant Interface it implements. When you instantiate an object of type Employee you will find the Interfaces as the property `__implements__`.
 
 The `globalRegistry` uses these interfaces in order to find Adapters for you that can be used with your Employee objects. Say that you want to render a directory listing of your employees. You decide you want each row to be rendered by using an Adapter that you find with the interface `IDirectoryListEntryWidget`, you can call the Interface what ever you want. Now you need to implement that Adapter so it can render your Employee object. It would look something like this:
 
-```javascript
-import { Adapter } from 'component-registry'
+```typescript
+import { Adapter, TAdapter } from 'component-registry'
 
-const DirectoryListEntryWidget = new Adapter({
-    implements: IDirectoryListEntryWidget,
-    adapts: IEmployee,
-    render: function () { ... }
+class DirectoryListEntryWidget extends Adapter {
+  get __implements__() { return IDirectoryListEntryWidget };
+  constructor({ adapts, render, registry }: Omit<IDirectoryListEntryWidget, 'interfaceId'> & TAdapter) {
+    super({ adapts, render, registry });
+  }
+}
+new DirectoryListEntryWidget({
+  adapts: IEmployee,
+  render () { ... }
 })
 ```
-The parameter **implements** tells the globalRegistry what the Adapter can do. The parameter **adapts** tells the globalRegistry what kind of object it can do this with.
+The parameter **__implements__** tells the globalRegistry what the Adapter can do. The parameter **adapts** tells the globalRegistry what kind of object it can do this with.
 
 So when you want to render the list you would write something like this:
 
-```javascript
+```typescript
 import { IDirectoryListEntryWidget } from './myAppInterfaces'
 function renderList (entries) {
-    const outp = entries.map((entry) => new IDirectoryListEntryWidget(entry).render())
-    return outp.join('\n')
+  const outp = entries.map((entry) => new IDirectoryListEntryWidget(entry).render())
+  return outp.join('\n')
 }
 ```
 Your list rendering code has no idea how the individual widgets are rendered, it is all done by the widget. All it knows is that it should get the `IDirectoryListEntryWidget` adapter that adapts the `entry` object.
 
 In a simple case with only a single object type this still makes the code compact and readable. But the power becomes more apparent if we have more object types in our entries list. There could be ten different object types, each with their own registered Adapter that implements IDirectoryListEntryWidget. These list items can all be rendered by the same code which is blissfully unaware of how different the implementations are.
-
-### The Power of Inheritance ##
-The ObjectPrototype doesn't only have Interfaces, it can also inherit interfaces and methods from other ObjectPrototypes. This allows us to gradually refine the capabilities of our entity objects. Employee could inherit from BaseObject. SalesRep and Manager could inherit from Employee. This is done by adding an `extends` property when creating your ObjectPrototype:
-
-```javascript
-const Manager = createObjectPrototype({
-    implements: [IManager],
-    extends: [Employee],
-    constructor: function (data) {
-        ...
-    }
-}) 
-```
-The cool thing with Adapters is that since we have extended Employee, our new Manager object will also implement IEmployee. This means that if we ask for IDirectoryListEntryWidget it will return the Adapter we created to render the Employee (i.e. which adapts IEmployee). In other words, by extending Employee we get everything available to Employee objects out of the box. However, once we create a specialised Adapter which implements IManager, this will take precedence during the lookup process in `globalRegistry`. In order words we will be able to render our Manager object out of the box, but we can create a specialised widget at any time.
-
-This is super powerful when creating a CMS. There will be a ton of Employee widgets that you can and want to share with Manager objects. You only need to create special widgets in the few cases where you want Manager objects to be rendered differently.
-
-SIDE NOTE: Since Javascript is a dynamicly typed language and all lookups can be resolved at run-time which means you can also use composition-style inheritance. All you need to do is add the Interfaces you want your object to implement, and also any inherited methods, during the execution of your contructor method. If you are really into that stuff you'll probably figure it out. But I suggest using the existing inheritance mechanism to start with, it is very powerful.
 
 ## Public API ##
 
@@ -140,7 +157,7 @@ You will also use these extensively:
 ```javascript
 // To ceate interfaces
 import { createInterfaceClass } from 'component-registry'
-const Interface = createInterfaceClass('my-namespace') 
+const id = createIdFactory('test');
 
 // To create adapters
 import { Adapter } from 'component-registry'
@@ -160,37 +177,12 @@ import { Registry, AdapterRegistry, UtilityRegistry } from 'component-registry'
 
 ## Object Prototypes ##
 
-We implement Object Prototypes as a means of creating base prototypes with support for inheritance. These support multiple inheritance so you can organise your code in a flexible way. The order of inheritance decides overloading, first in line is most important. You can create inheritance graphs like this (left to right)
+Object Prototypes can implement interfaces. This declares what capabilities they support. Interfaces are used for looking up Adapters among other things. You can use the `.providedBy(obj)` method on interfaces to check if it is implemented by an object.
 
-    BaseProto
-            |- UserProto
-            |          |- AdminUserProto
-            |- ProductProto
-                          |- ProductWithVariantsProto
-                          |- VariableLengthProductProto
-                          
-But also (left to right)
-
-    BaseProto ---|
-                 |- NewsProto
-    SocialProto -|
-
-Object Prototypes can implement interfaces. This declares what capabilities they are supposed to support. Interfaces are used for looking up Adapters among other things. An Object Prototype will inherit all interfaces from it's inherited Object Prototypes.
-
-NOTE: A prototype object that extends other prototype objects won't pass an instaceof check on the inherited prototype. Provided the above inheritance graph we get:
-
-    const obj = new NewsProto();
-    obj instanceof NewsProto == true;
-    obj instanceof BaseProto == false;
-
-For type checking you should use Interfaces, which also is more predictable when doing composition (multiple inheritance).
-
-```javascript
-INewsProto.providedBy(obj) == true
-IBaseProto.providedBy(obj) == true
+```typescript
+INews.providedBy(obj) === true;
+INotImplemented.providedBy(obj) === false;
 ```
-
-Bascially you aren't asking what type the object is, you ask what capabilities (i.e. Interfaces) it provides.
 
 Interfaces also provide a convenient way of looking up adapters and utilities.
 
@@ -205,13 +197,9 @@ import { globalRegistry } from 'component-registry'
 // The pretext here is that we have registered adapters somewhere
 // wich adapt userObj that was also created somehow
 
-const userObj = ...
+const userObj = new User(...);
 
-// New and more readable syntax
-const permissionsByShorthand =  new IPermissions(userObj).getPermissions()
-
-// Old syntax 
-const permissionsTheOldWay = globalRegistry.getAdapter(userObj, IPermissions).getPermissions()
+const permissionsByShorthand =  new IPermissions(userObj).getPermissions();
 ```
 
 So this is what happens during a lookup:
@@ -246,13 +234,8 @@ import { globalRegistry } from 'component-registry'
 
 // The pretext here is that we have registered utilities somewhere
 
-// New and more readable syntax
-const connectionByShorthand =  new IDatabaseService().connect()
-const namedConnectionByShorthand =  new IDatabaseService('mongodb').connect()
-
-// Old syntax 
-const connectionTheOldWay = globalRegistry.getUtility(IDatabaseService).connect()
-const namedConnectionTheOldWay = globalRegistry.getUtility(IDatabaseService, 'mongodb').connect()
+const connection =  new IDatabaseService().connect()
+const otherConnection =  new IDatabaseService('mongodb').connect()
 ```
 
 The point of using utilities is that you can define the interface in a general component but leave the implementation up to the application that uses the component. An example would be a database connection. The component needs a database connection but doesn't know what authorisation credentials to use, so it asks for these by calling the utility registry and requesting say a IDatabaseCredentials utility. It is then up to the application developer to create this utility and register it as an implementation of IDatabaseCredentials.
@@ -267,158 +250,101 @@ Another example of how to use a utility could be if you want to provide internat
 
 ### Object Prototypes ###
 
-```javascript
-import { createObjectPrototype } from 'component-registry'
-const MyObjectPrototype = createObjectPrototype({
-    implements: [IObject],
+```typescript
+import { ObjectPrototype } from 'component-registry'
+
+type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+class User extends ObjectPrototype<TUser> implements TUser {
+    readonly __implements__ = [IUser];
+    name: string;
+    constructor({ name }: TUser) {
+        super({ name });
+    }
     sayHi() {
         return "Hi!"
     }
-})
+}
 ```
 The object implements the provided list of interfaces and the method sayHi will be added to the object.prototype and available to instantiated objects.
 
 The first interface in the list is significant. It should be a unique interface describing the object. The name of this interface is used for inheritance.
 
-```javascript
-const obj = new MyObjectPrototype();
+```typescript
+const obj = new User();
 ```
 Creates an instance of the object prototype you created above.
 
-### Object Prototypes and Inheritance ###
-You can create an object prototype that inherits methods and interfaces from other object prototypes
-
-```javascript
-import { createObjectPrototype } from 'component-registry'
-const AnotherObjectPrototype = createObjectPrototype({
-    extends: [MyObjectPrototype],
-    implements: [IAnotherObject],
-    // Inherits IObject from MyObjectPrototype
-    sayHo() {
-        return "Ho!"
-    }
-    // Inherits sayHi() from MyObjectPrototype
-})
-
-import { createObjectPrototype } from 'component-registry'
-const OverridingPrototype = createObjectPrototype({
-    extends: [AnotherObjectPrototype],
-    implements: [IOverriding],
-    // Inherits IObject from MyObjectPrototype
-    // Inherits IAnotherObject from AnotherObjectPrototype
-    sayHi() {
-        return "Ho! " + this._IObject.sayHi.call(this);
-    }
-    // Inherits sayHo() from AnotherObjectPrototype
-    // Inherits sayHi() from MyObjectPrototype but overrides it
-})
-```
-`OverridingPrototype` inherits the method *sayHi()* but it is overridden by the local implementation of *sayHi()*. It is still possible to access the original sayHi() method but it will be available like thos `this._IObject.sayHi.call(this)`, where `_IObject` is derived from the name of the first implemented interface of *MyObjectProtype*.
-
-The method sayHi() returns "Ho! Hi!".
-
 ### Interfaces ###
-```javascript
-import { createInterfaceClass } from 'component-registry'
-const Interface = createInterfaceClass('my-namespace') // Use the name of your module as namespace
+First you need an id factory. Ids are in fact GUID style strings created with the UUID-package. The id is memoised by the returned id function to reduce the overhead of id generation.
+
+```typescript
+import { createIdFactory } from 'component-registry'
+const id = createIdFactory('my-namespace'); // Use the name of your module as namespace
 ```
 
-Create the Interface class which in turn is used to create interfaces. It takes a single parameter, namespace, to prevent name and id conflicts. The id of the interface is a UUID built from namespace and name. The id should be the same regardless of when you create it.
+Create the Interface class with a getter method to set the interface. The id of the interface is a UUID built from namespace and name. The id will be the same regardless of when you create it.
 
-```javascript
+```typescript
 // We need the Interface created above
-const IInterface = new Interface({ name: 'IInterface' });
+class IUser extends ObjectInterface {
+  get interfaceId() { return id('IUser') };
+}
 ```
-Creates a simple marker interface.
+Creates a simple object interface. You have four different kinds of interfaces:
+
+- MarkerInterface -- when all you want is to use `.providedBy(obj)` method in your application code
+- ObjectInterface -- define your entity objects. Allows adding an `.init(...)` property that you can call from your object constructor. This allows sharing functionality through composition.
+- AdapterInterface -- define your adapters. Allows looking up the adapter using shorthand `new IMyAdapter(obj)`
+- UtilityInterface -- define you utilities. Allows looking up the utility using shorthand `new IMyUtility()`
 
 Use the convention of prefixing interfaces with "I" to improve readability.
 
-An interface will add any params you pass prefixed with underscore ('_'):
-
-```javascript
-// We need the Interface created above
-const IInterface = new Interface({
-    name: 'IInterface',
-    schema: {...}
-});
-```
-- name: Used to create the id
-- schema: `isomorphic-schema` field definition that will add propper JS properties to object prototypes respecting `readOnly`
-
-```javascript
-import { Schema } from 'isomorphic-schema'
-import { TextField } from 'isomorphic-schema/lib/field_validators/TextField'
-const IUser = new Interface({
-    name: 'IUser',
-    schema: new Schema({
-        schemaName: 'IUser Schema',
-        fields: {
-            name: new TextField({})
-        }
-    })
-})
-
-const User = createObjectPrototype({
-    implements: [IUser]
-})
-
-const user = new User()
-user.hasOwnProperty('name')
-// true
-user.name
-// undefined
-```
-
 You can add dummy functions to your interface prototype to show what methods are required for an adapter, utility or object prototype that implements that interface. Note: object prototypes will in most cases be simple data objects with no or few methods.
 
-```javascript
-import { IUser } from './my/app/interfaces'
-
-const IDisplayWidget = new Interface({
-    name: 'IDisplayWidget'
-})
-
-IDisplayWidget.prototype.render = function () {}
-
-const a = new Adapter({
-    implements: IDisplayWidget,
-    adapts: IUser,
-    render() { /* do something */ }
-})
-// The render method exists so this completes without issues
-
-const b = new Adapter({
-    implements: IDisplayWidget,
-    adapts: IUser
-})
-// The render method is missing and the Adapter constructor will throw an error
+```typescript
+class IUser extends ObjectInterface {
+  get interfaceId() { return id('IUser') };
+  sayHi(): string { return };
+}
 ```
 
+Don't forget to omit function members from your constructor props type.
+
+TODO: Add example
+
 ### Adapters ###
-
-
-
 
 **new Adapter(params)**
 
 Create and adapter that adapts an interface or an object prototype. It is automatically registered with the `globalRegistry` available in component-registry.
 
-```javascript
-import { Adapter } from 'component-registry'
+```typescript
+import { Adapter, TAdapter } from 'component-registry'
 
 const MyAdapter = new Adapter({
     implements: IInterface,
     adapts: IInterface || ObjectPrototype
 })
+
+class MyAdapter extends Adapter {
+  get __implements__() { return IMyAdapter };
+  constructor({ adapts, registry }: Omit<IMyAdapter, 'interfaceId'> & TAdapter) {
+    super({ adapts, registry });
+  }
+}
+
+// Adapter instance that can operate on objects implementing IUser
+new MyAdapter({
+  adapts: IUser,
+})
 ```
 
-If you want to register the created adapter with a scoped registry instead of `globalRegistry` you pass it as a parameter.
+If you want to register the created adapter with a scoped registry instead of `globalRegistry` you pass it as a parameter. This is useful in tests to make sure you have a known set adapters registered.
 
-```javascript
-const MyAdapter = new Adapter({
-    registry: myOwnRegistry,
-    implements: IInterface,
-    adapts: IInterface || ObjectPrototype
+```typescript
+new MyAdapter({
+  adapts: IUser,
+  registry: myOwnRegistry
 })
 ```
 
@@ -426,7 +352,7 @@ const MyAdapter = new Adapter({
 
 Create an unamed utility that implements a given interface. It is automatically registered with the `globalRegistry` available in component-registry.
 
-```javascript
+```typescript
 const utility = new Utility({
     implements: IInterface
 });
@@ -434,28 +360,43 @@ const utility = new Utility({
 
 Create a named utility that implements a given interface and has a variation name. It is automatically registered with the `globalRegistry` available in component-registry.
 
-```javascript
-const utility = new Utility({
-    implements: IInterface,
-    name: 'name'
-});
+```typescript
+import { Utility, TUtility } from 'component-registry';
+// The pretext is that we already have created the UtilityInterface ITranslateUtil
+class TranslateUtil extends Utility implements Omit<ITranslateUtil, 'interfaceId'> {
+  get __implements__() { return ITranslateUtil };
+  constructor({ name, translate, registry }: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
+    super({ name, translate, registry });
+  }
+  translate(inp: string): string { return };
+}
+
+const util = new TranslateUtil({
+  name: "sv",
+  translate(inp: string) {
+    return inp;
+  }
+})
 ```
 
 Just like an adapter you can pass a scoped registry to register the utility there.
 
-```javascript
-const utility = new Utility({
-    registry: myRegistry,
-    implements: IInterface
-});
+```typescript
+const util = new TranslateUtil({
+  name: "sv",
+  translate(inp: string) {
+    return inp;
+  },
+  registry: myRegistry
+})
 ```
 
 Find all registered utilities (named and unnamed) that implement the given interface.
 
 ```javascript
-const utils = new IInterface('*');
-const utilsAltSyntax = registry.getUtilities(IInterface);
-const utilsFromScopedRegistry = new IInterface('*', { registry: myRegistry });
+const utils = new IMyInterface('*');
+const utilsAltSyntax = registry.getUtilities(IMyInterface);
+const utilsFromScopedRegistry = new IMyInterface('*', myRegistry);
 ```
 
 ## Creating a scoped registry ##
@@ -463,73 +404,20 @@ const utilsFromScopedRegistry = new IInterface('*', { registry: myRegistry });
 You can create a scoped registry if you want to have an alternative set of utilities or adapters available for a task. This feature is useful for tests.
 
 ```javascript
-import { AdapterRegistry, UtilityRegistry, Registry } from 'comonent-registry'
-const myRegistry = new Registry();
+import { AdapterRegistry, UtilityRegistry, LocalRegistry } from 'comonent-registry'
 const myAdapterRegistry = new AdapterRegistry();
 const myUtilityRegistry = new UtilityRegistry();
+const myRegistry = new LocalRegistry(); // Combines an adapter and utility registry
 ```
 
 If you have created a scoped registry in application code you might want to register some of your existing adapters. In this case you would use the registration API:
 
-```javascript
-    myRegistry.registerAdapter(MyAdapter);
-    myRegistry.registerUtility(utility);
+```typescript
+  myRegistry.registerAdapter(MyAdapter);
+  myRegistry.registerUtility(utility);
 ```
 
 Good luck!
 
 ## Migrating to 2.0 ##
-Version 2.0 is compatible with 1.0, but we have dropped support for createInterface, createUtility and createAdapter. If you are usnig these, follow the 1.0 migration instructions below.
-
-## Migrating to 1.0 ##
-
-Migration is mostly about search and replace, all params are the same. Note, if you do introspection there might be a slight change of naming of props on the created objects.
-
-### Interface ###
-```javascript
-// Old syntax
-import { createInterface } from 'component-registry'
-
-const IDummy = createInterface({ name: 'IDummy' })
-
-// New syntax
-import { createInterfaceClass } from 'component-registry'
-const Interface = createInterfaceClass('my-app-namespace')
-
-const IDummy = new Interface({ name: 'IDummy' })
-```
-
-### Adapter ###
-```javascript
-// Old syntax
-import { createAdapter } from 'component-registry'
-createAdapter({
-    implements: IWidget,
-    adapts: IMyObject
-}).registerWith(globalRegistry)
-
-// New syntax
-import { Adapter } from 'component-registry'
-new Adapter({
-    implements: IWidget,
-    adapts: IMyObject
-})
-```
-
-### Utility ###
-```javascript
-// Old syntax
-import { createUtility } from 'component-registry'
-createUtility({
-    implements: IService
-}).registerWith(globalRegistry)
-
-// New syntax
-import { Utility } from 'component-registry'
-new Utility({
-    implements: IService
-})
-```
-
-### ObjectPrototype ###
-No changes!
+The Typescript version of component-registry is a complete rewrite to leverage the typing features of Typescript. The main hurdle is to restructure your code to remove inheritance, and especially multiple inheritance. In v3 you need to be explicit, but this also makes the code more readable since inheritance can feel like magic and magic can be hard to understand.
