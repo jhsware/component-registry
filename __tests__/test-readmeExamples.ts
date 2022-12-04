@@ -17,32 +17,14 @@ describe('Readme Examples', function() {
   it('Sample Code', function() {
     let console = new consoleMock()
 
+    // We need an id factory for the interfaces
     const id = createIdFactory('test');
 
+    // Entity object interface and class
     class IUser extends ObjectInterface {
       get interfaceId() { return id('IUser') };
       name: string;
     }
-
-    class IDisplayWidget extends AdapterInterface {
-      get interfaceId() { return id('IDisplayWidget') };
-      render(): void { return };
-    }
-    // We don't need implements because adapter is looked up using the interface
-    class DisplayWidget extends Adapter {
-      get __implements__() { return IDisplayWidget };
-      constructor({ adapts, render, registry }: Omit<IDisplayWidget, 'interfaceId'> & TAdapter) {
-        super({ adapts, render, registry });
-      }
-    }
-
-    // Create an adapter for IUser
-    new DisplayWidget({
-      adapts: IUser,
-      render () {
-        console.log(`My name is ${this.context.name}`)
-      }
-    })
 
     type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
     class User extends ObjectPrototype<Omit<TUser, 'sayHi'>> implements TUser {
@@ -53,8 +35,32 @@ describe('Readme Examples', function() {
         }
     }
 
+    // Adapter interface and class
+    class IDisplayWidget extends AdapterInterface {
+      get interfaceId() { return id('IDisplayWidget') };
+      render(): void { return };
+    }
+
+    class DisplayWidget extends Adapter {
+      get __implements__() { return IDisplayWidget };
+      constructor({ adapts, render, registry }: Omit<IDisplayWidget, 'interfaceId'> & TAdapter) {
+        super({ adapts, render, registry });
+      }
+    }
+
+    // Adapter instance that can operate on objects implementing IUser
+    new DisplayWidget({
+      adapts: IUser,
+      render () {
+        console.log(`My name is ${this.context.name}`)
+      }
+    })
+
+
+    // Create our entity object instance
     const user = new User({ name: 'Julia' })
 
+    // Look up the DisplayWidget adapter instance and invoke the render method
     new IDisplayWidget(user).render()
     // [console]$ I am a User
     
