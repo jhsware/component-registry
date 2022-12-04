@@ -3,7 +3,7 @@ import { describe, expect, it, beforeEach } from "@jest/globals";
 import {
     globalRegistry as registry,
     LocalRegistry,
-    AdapterInterface, createIdFactory, ObjectInterface, TAdapter, TUtility, UtilityInterface, Utility, Adapter, ObjectPrototype
+    AdapterInterface, createIdFactory, ObjectInterface, TAdapter, TUtility, UtilityInterface, Utility, Adapter, ObjectPrototype, UtilityNotFound
 } from "../src";
 
 const id = createIdFactory('test');
@@ -141,7 +141,7 @@ describe('Global Registry', function () {
 
         class User extends ObjectPrototype<any> {
             __implements__ = [IUser];
-          }
+        }
         const theUser = new User();
 
         const ua = new IUserAdapter(theUser);
@@ -172,7 +172,7 @@ describe('Global Registry', function () {
 
         class User extends ObjectPrototype<any> {
             __implements__ = [IUser, IStrong];
-          }
+        }
 
         const theUser = new User();
 
@@ -184,7 +184,7 @@ describe('Global Registry', function () {
     it('can get an adapter registered by object', function () {
         class User extends ObjectPrototype<any> {
 
-          }
+        }
 
         class IUserAdapter extends AdapterInterface {
             get interfaceId() { return id('IUserAdapter') };
@@ -243,34 +243,39 @@ describe('Local Registry', function () {
             get interfaceId() { return id('IDummyUtility') };
         }
 
-        const DummyUtility = new Utility({
-            registry,
-            implements: IDummyUtility
-        });
+        class DummyUtility extends Utility implements Omit<IDummyUtility, 'interfaceId'> {
+            get __implements__() { return IDummyUtility };
+            constructor({ name, registry }: TUtility) {
+                super({ name, registry });
+            }
+        }
 
-        const util = new IDummyUtility(registry);
+        const util = new DummyUtility({ registry });
 
         expect(util).toBeInstanceOf(DummyUtility);
     });
 
     it('no leaking to second registry', function () {
-        const localRegistry = new LocalRegistry()
+        const localRegistry = new LocalRegistry();
+        const localRegistry2 = new LocalRegistry();
+
         class IDummyUtility extends UtilityInterface {
             get interfaceId() { return id('IDummyUtility') };
         }
 
-        const DummyUtility = new Utility({
-            registry: localRegistry,
-            implements: IDummyUtility
-        });
-
-        const localRegistry2 = new LocalRegistry()
-
+        class DummyUtility extends Utility implements Omit<IDummyUtility, 'interfaceId'> {
+            get __implements__() { return IDummyUtility };
+            constructor({ name, registry }: TUtility) {
+                super({ name, registry });
+            }
+        }
+        new DummyUtility({ registry: localRegistry });
+        
         const util = new IDummyUtility(localRegistry);
-        const util2 = localRegistry2.getUtilities(IDummyUtility);
+        const util2 = new IDummyUtility(localRegistry2);
 
         expect(util).toBeInstanceOf(DummyUtility);
-        expect(util2.length).toEqual(0);
+        expect(util2).toBeInstanceOf(UtilityNotFound);
     });
 
     it('no leaking to global registry', function () {
@@ -279,15 +284,18 @@ describe('Local Registry', function () {
             get interfaceId() { return id('IDummyUtility') };
         }
 
-        const DummyUtility = new Utility({
-            registry: localRegistry,
-            implements: IDummyUtility
-        });
+        class DummyUtility extends Utility implements Omit<IDummyUtility, 'interfaceId'> {
+            get __implements__() { return IDummyUtility };
+            constructor({ name, registry }: TUtility) {
+                super({ name, registry });
+            }
+        }
+        new DummyUtility({ registry: localRegistry });
 
         const util = new IDummyUtility(localRegistry);
-        const util2 = registry.getUtilities(IDummyUtility);
+        const util2 = new IDummyUtility();
 
         expect(util).toBeInstanceOf(DummyUtility);
-        expect(util2.length).toEqual(0);
+        expect(util2).toBeInstanceOf(UtilityNotFound);
     });
 });

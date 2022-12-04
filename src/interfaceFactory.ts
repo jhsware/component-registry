@@ -13,7 +13,8 @@ import {
 import { ObjectPrototype } from './objectFactory';
 import { TAdapterRegistry } from './adapterRegistry';
 import { TUtilityRegistry } from './utilityRegistry';
-import { TUtility, Utility } from './utilityFactory';
+import { TUtility, Utility, UtilityNotFound } from './utilityFactory';
+import { AdapterNotFound } from './adapterFactory';
 const NAMESPACE = 'bc901568-0169-42a8-aac8-52fa2ffd0670';
 
 const _idLookup: Record<string, string> = {};
@@ -82,7 +83,7 @@ export class AdapterInterface implements Interface {
   get interfaceId(): string { return };
   constructor(context: object, registry?: TAdapterRegistry) {
     const r = registry ?? globalRegistry;
-    return r.getAdapter(context, this);
+    return (r.getAdapter(context, this) ?? new AdapterNotFound());
   }
 }
 
@@ -95,11 +96,11 @@ export class UtilityInterface implements Interface {
       if (isWildcard(name)) {
         return reg.getUtilities(this);
       } else {
-        return reg.getUtility(this, name);
+        return (reg.getUtility(this, name) ?? new UtilityNotFound()) as any;
       }
     } else {
       const reg = (nameOrRegistry ?? registry ?? globalRegistry) as TUtilityRegistry;
-      return reg.getUtility(this) as any;
+      return (reg.getUtility(this) ?? new UtilityNotFound()) as any;
     }
   }
 }

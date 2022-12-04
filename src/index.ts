@@ -1,8 +1,5 @@
 
-export {
-  Registry,
-  globalRegistry
-} from './globalRegistry'
+export * from './globalRegistry'
 export * from './localRegistry'
 
 export * from './adapterRegistry'

@@ -10,11 +10,11 @@ import { getInterfaceId, isUndefined } from './utils';
 
 */
 
-function UtilityRegistryException(message) {
-    this.message = message;
-    this.name = "UtilityRegistryException";
-    this.stack = (new Error()).stack;
-}
+// function UtilityRegistryException(message) {
+//   this.message = message;
+//   this.name = "UtilityRegistryException";
+//   this.stack = (new Error()).stack;
+// }
 
 /*
 
@@ -23,155 +23,99 @@ function UtilityRegistryException(message) {
 */
 
 type TUtilityEntry = {
-    implementsInterface: UtilityInterface,
-    unnamedUtility: TUtility[] | undefined,
-    namedUtility: Record<string, TUtility>
+  implementsInterface: UtilityInterface,
+  unnamedUtility: TUtility[] | undefined,
+  namedUtility: Record<string, TUtility>
 }
 
 export type TUtilityRegistry = {
-    utilities: Record<string, TUtilityEntry>;
-    registerUtility(utility: TUtility): void;
-    getUtility(implementsInterface: UtilityInterface, name?: string, fallbackReturnValue?: any): TUtility;
-    getUtilities(implementsInterface: UtilityInterface): TUtility[];
+  utilities: Record<string, TUtilityEntry>;
+  registerUtility(utility: TUtility): void;
+  getUtility(implementsInterface: UtilityInterface, name?: string, fallbackReturnValue?: any): TUtility;
+  getUtilities(implementsInterface: UtilityInterface): TUtility[];
 }
 
 export class UtilityRegistry implements TUtilityRegistry {
-    utilities;
+  utilities;
 
-    constructor() {
-        this.utilities = {};
+  constructor() {
+    this.utilities = {};
+  }
+
+  registerUtility(utility): void {
+    /*
+        Add a utility to the registry
+    
+        implementsInterface -- the interface that the utility implements
+        utility -- the prototype of the utility to instantiate on get
+        name -- OPTIONAL add as named utility
+    */
+    const implementsInterface = utility.__implements__,
+      name = utility.__name__;
+
+    // TODO: Check that the utility implements the interface
+    // TODO: else throw InterfaceNotImplementedError
+
+    // Register the utility
+    if (isUndefined(this.utilities[getInterfaceId(implementsInterface)])) {
+      this.utilities[getInterfaceId(implementsInterface)] = {
+        implementsInterface: implementsInterface,
+        unnamedUtility: undefined,
+        namedUtility: {}
+      }
     }
 
-    registerUtility(utility): void {
-        /*
-            Add a utility to the registry
-        
-            implementsInterface -- the interface that the utility implements
-            utility -- the prototype of the utility to instantiate on get
-            name -- OPTIONAL add as named utility
-        */
-        const implementsInterface = utility.__implements__,
-            name = utility.__name__;
+    const utilities = this.utilities[getInterfaceId(implementsInterface)];
 
-        // TODO: Check that the utility implements the interface
-        // TODO: else throw InterfaceNotImplementedError
+    if (name) {
+      // Register as a named utility
+      // If named utility already registered, just skip it
+      utilities.namedUtility[name] ??= utility;
+    } else {
+      // Register as an unnamed utility
+      // If utility already registered, just skip it
+      utilities.unnamedUtility ??= utility;
+    }
+  };
 
-        // Register the utility
-        if (isUndefined(this.utilities[getInterfaceId(implementsInterface)])) {
-            this.utilities[getInterfaceId(implementsInterface)] = {
-                implementsInterface: implementsInterface,
-                unnamedUtility: undefined,
-                namedUtility: {}
-            }
-        }
+  // TODO: Implement hasUtility (return true/false), look at getUtility
 
-        const utilities = this.utilities[getInterfaceId(implementsInterface)];
+  getUtility(implementsInterface, name = undefined): TUtility {
+    /*
+        Return an instance of a utility that implements the given interface
+        and optionally has provided name.
+    */
+    const utilities = this.utilities[getInterfaceId(implementsInterface)];
 
-        if (name) {
-            // Register as a named utility
-            if (utilities.namedUtility[name]) {
-                // Utility already registered, just skip it
-                // "There is a utility already registered for: (" + implementsInterface.name + ", '" + name + "'). Check that you have registered it!")
-                // Since this is literally the same component, it should be okay. This can happen when running code on server with several variations of
-                // the same app
-                return
-            }
-            utilities.namedUtility[name] = {
-                utility: utility,
-                name: name
-            }
-        } else {
-            // Register as an unnamed utility
-            if (utilities.unnamedUtility) {
-                // Utility already registered, just skip it
-                // "There is a utility already registered for: (" + implementsInterface.name + ", '" + name + "'). Check that you have registered it!")
-                // Since this is literally the same component, it should be okay. This can happen when running code on server with several variations of
-                // the same app
-                return
-            }
-
-            utilities.unnamedUtility = {
-                utility: utility
-            }
-        }
-    };
-
-    // TODO: Implement hasUtility (return true/false), look at getUtility
-
-    getUtility(implementsInterface, name = undefined, fallbackReturnValue = undefined): TUtility {
-        /*
-            Return an instance of a utility that implements the given interface
-            and optionally has provided name.
-        */
-        const utilities = this.utilities[getInterfaceId(implementsInterface)];
-
-        if (utilities && name) {
-            if (utilities.namedUtility[name]) {
-                const Utility = utilities.namedUtility[name].utility;
-                return Utility;
-            } else {
-                if (arguments.length === 3) {
-                    return fallbackReturnValue;
-                } else {
-                    const message = ["Lookup Error: No utility registered for: (" + implementsInterface.name + ", '" + name + "')"];
-
-                    if (isDevelopment) {
-                        message.push("Available named utilities matching interface:")
-                        Object.keys(utilities.namedUtility).forEach((key) => {
-                            const intrfc = utilities.implementsInterface
-                            message.push("[" + intrfc.__name__ + "." + key + "] " + getInterfaceId(intrfc));
-                        });
-                    }
-
-                    throw new UtilityRegistryException(message.join('\n'));
-                }
-            }
-        } else if (utilities && utilities.unnamedUtility) {
-            const Utility = utilities.unnamedUtility.utility;
-            return Utility;
-        } else {
-            if (arguments.length === 3) {
-                return fallbackReturnValue;
-            } else {
-                const message = ["Lookup Error: No utility registered for: " + implementsInterface.name];
-
-                if (isDevelopment) {
-                    message.push("Registered utilities implement:")
-                    Object.keys(this.utilities).forEach((key) => {
-                        const util = this.utilities[key]
-                        message.push("[" + util.implementsInterface.__name__ + "] " + getInterfaceId(util.implementsInterface));
-                    });
-                }
-
-                throw new UtilityRegistryException(message.join('\n'));
-            }
-        }
+    if (isUndefined(name)) {
+      return utilities?.unnamedUtility;
     }
 
-    getUtilities(implementsInterface): TUtility[] {
-        /*
-            Return a list of objects with utilities implementing the given interface. The name
-            of named utilities is included.
-                { name: 'whatever', utility: obj }
-        */
-        const utilities = this.utilities[getInterfaceId(implementsInterface)];
+    return utilities?.namedUtility[name];
+  }
 
-        // We can find any utilities so we return an empty list
-        if (!utilities) {
-            return []
-        }
+  getUtilities(implementsInterface): TUtility[] {
+    /*
+        Return a list of objects with utilities implementing the given interface. The name
+        of named utilities is included.
+            { name: 'whatever', utility: obj }
+    */
+    const utilities = this.utilities[getInterfaceId(implementsInterface)];
 
-        const outp = [];
-
-        // Add the unnamed utility
-        if (utilities.unnamedUtility) {
-            outp.push(utilities.unnamedUtility.utility);
-        }
-
-        // Add named utilities
-        for (const key in utilities.namedUtility) {
-            outp.push(utilities.namedUtility[key].utility);
-        }
-        return outp;
+    // We can find any utilities so we return an empty list
+    if (isUndefined(utilities)) {
+      return []
     }
+
+    if (utilities.unnamedUtility) {
+      return [
+        utilities.unnamedUtility,
+        ...Object.values(utilities.namedUtility)
+      ]
+    }
+
+    return [
+      ...Object.values(utilities.namedUtility)
+    ]
+  }
 }

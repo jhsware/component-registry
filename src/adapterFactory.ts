@@ -22,3 +22,5 @@ export class Adapter {
     }
   }
 }
+
+export class AdapterNotFound {}

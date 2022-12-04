@@ -24,4 +24,6 @@ export type TUtility = {
       }
     }
   }
+
+  export class UtilityNotFound {}
   
