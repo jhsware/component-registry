@@ -1,6 +1,6 @@
 # component-registry #
 [![Build Status](https://travis-ci.org/jhsware/component-registry.svg?branch=master)](https://travis-ci.org/jhsware/component-registry)
-[![gzip size](http://img.badgesize.io/https://unpkg.com/component-registry/dist/cjs/index.min.js?compression=gzip)](https://unpkg.com/component-registry/dist/cjs/index.min.js)
+[![gzip size](http://img.badgesize.io/https://unpkg.com/component-registry/dist/cjs/index.min.js?compression=gzip)](https://unpkg.com/component-registry/dist/index.cjs.js)
 
 The purpose of component-registry is to help you create reusable components that are easy to extend and customise. It is heavily inspired by battle proven concepts that have been available for many years in the Python community through the Zope Toolkit(ZTK).
 
