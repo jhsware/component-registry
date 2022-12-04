@@ -1,52 +1,43 @@
+export const isDevelopment = process?.env.NODE_ENV !== 'production';
+export const isTest = process?.env.NODE_ENV === 'test';
 
-export const isDevelopment = typeof process !== 'undefined' && process.env.NODE_ENV !== 'production';
-
-export function DeprecatedException(message) {
-  this.message = message;
-  this.name = "DeprecatedException";
-  this.stack = (new Error()).stack;
-}
-
-export function throwDeprecatedCompat() {
-  throw new DeprecatedException('Since version 2.0 we no longer support compatibility mode which supported pre 1.0 implementations. Check how to upgrade to 1.0, it\'s worth it.')
-}
-
-export function assert(isValid, msg) {
+export function assert(isValid, msg): void {
     if (!isValid) throw new Error(msg)
 }
 
-export function extendPrototypeWithThese(prototype, extendThese) {
+export function extendPrototypeWithThese(prototype, extendThese): void {
     /*
         Helper method to implement a simple inheritance model for object prototypes.
     */
     
-    var outp = prototype;
+    const outp = prototype;
     
     if (extendThese) {
     
         // Applying inherited methods right to left so first (most left) overrides last (most right) in list
         for (const item of extendThese) {
-            var tmpObj = item.prototype;
-            var _iname = "_" + tmpObj._iname;
-            for (var key in tmpObj) {
-                if (key === '_implements') {
+            const tmpObj = item.prototype;
+            const _iname = "_" + tmpObj._iname;
+            for (const key in tmpObj) {
+                if (key === '__implements__') {
                     // Implements should be extended with later coming before earlier
                     // TODO: Filter so we remove duplicates from existing list (order makes difference)
-                    outp.prototype._implements = tmpObj._implements.concat(outp.prototype._implements); 
+                    outp.prototype.__implements__ = tmpObj.__implements__.concat(outp.prototype.__implements__); 
                 } else {
                     // All others added and lower indexes override higher
                     if (!outp.prototype[_iname]) {
                         outp.prototype[_iname] = {};
                     };
-                    
+
+                    let extendsKey;
                     if (key == '_constructor') {
-                        var extendsKey = 'constructor';
+                        extendsKey = 'constructor';
                         outp.prototype[_iname][extendsKey] = tmpObj[key];
                         // Add the constructor so that if we don't implement one when extending, the inherited left
                         // most constructor is used
                         outp.prototype['_constructor'] = tmpObj[key];
                     } else {
-                        var extendsKey = key;
+                        extendsKey = key;
                         outp.prototype[_iname][extendsKey] = tmpObj[key];
                     }
                     
@@ -80,12 +71,12 @@ export function addMembers(outp, params) {
 }
 
 export function checkMembers(ObjectPrototype, intrfcs) {
-    for (var i = 0; i < intrfcs.length; i++) {
-        var intrfc = intrfcs[i]
+    for (let i = 0; i < intrfcs.length; i++) {
+        const intrfc = intrfcs[i]
         for (const key in intrfc.prototype) {
           if (key === 'providedBy') return
           
-          var memberTypeDesc = intrfc.prototype[key];
+          const memberTypeDesc = intrfc.prototype[key];
           assert(ObjectPrototype.prototype[key] !== undefined, 'ObjectPrototype "' + ObjectPrototype.name + '" is missing member "' + key + ': ' + memberTypeDesc + '" specified in "' + intrfc.name + '"')
         }
     }
