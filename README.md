@@ -13,6 +13,9 @@ Features that have been removed in the Typescript version:
 - multiple inheritance -- although very useful it brings magic which makes application code harder to understand
 - type checking -- this now done by Typescript
 
+### v2 for Javascript
+The Javascript version of component-registry is [available on the v2-branch](https://github.com/jhsware/component-registry/tree/v2-javascript).
+
 ### Sample Code ###
 ```typescript
 import {
