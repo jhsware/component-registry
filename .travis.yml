@@ -1,8 +1,8 @@
 language: node_js
 node_js:
-  - '14.21.1'
   - '16.18.1'
   - '18.12.1'
+  - '19.2.0'
 deploy:
   provider: npm
   email: sebastian@urbantalk.se
