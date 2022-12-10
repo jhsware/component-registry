@@ -9,7 +9,6 @@ import {
   TypeFromInterface,
  } from "../src/interfaceFactory";
 import { ObjectPrototype } from "../src/objectFactory";
-import { TUtility } from "../src/utilityFactory";
 
 const id = createIdFactory('namespace');
 
@@ -58,21 +57,19 @@ describe('Lookup gets correct type', function() {
     // Define the utility
     class ITranslateUtil extends UtilityInterface {
       get interfaceId() { return id('ITranslateUtil') };
-      translate(inp: string): string {return ''};
+      translate: (inp: string) => string;
     }
-    class TranslateUtil extends Utility {
+    class TranslateUtil extends Utility<ITranslateUtil> {
       get __implements__() { return ITranslateUtil };
-      constructor({ name, translate, registry}: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
-        super({name, translate, registry});
+      
+      translate(inp: string) {
+        return inp;
       }
     }
 
     // Implement the utility
     new TranslateUtil({
       name: "sv",
-      translate(inp: string) {
-        return inp;
-      }
     })
 
     // Fetch the utility

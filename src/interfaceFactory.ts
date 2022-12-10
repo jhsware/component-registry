@@ -13,7 +13,7 @@ import {
 import { ObjectPrototype } from './objectFactory';
 import { TAdapterRegistry } from './adapterRegistry';
 import { TUtilityRegistry } from './utilityRegistry';
-import { TUtility, Utility, UtilityNotFound } from './utilityFactory';
+import { UtilityNotFound } from './utilityFactory';
 import { AdapterNotFound } from './adapterFactory';
 const NAMESPACE = 'bc901568-0169-42a8-aac8-52fa2ffd0670';
 

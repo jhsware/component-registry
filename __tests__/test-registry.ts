@@ -3,7 +3,7 @@ import { describe, expect, it, beforeEach } from "@jest/globals";
 import {
   globalRegistry as registry,
   LocalRegistry,
-  AdapterInterface, createIdFactory, ObjectInterface, TUtility, UtilityInterface, Utility, Adapter, ObjectPrototype, UtilityNotFound
+  AdapterInterface, createIdFactory, ObjectInterface, UtilityInterface, Utility, Adapter, ObjectPrototype, UtilityNotFound
 } from "../src";
 
 const id = createIdFactory('test');
@@ -23,11 +23,8 @@ describe('Global Registry', function () {
       get interfaceId() { return id('IDummyUtility') };
     }
 
-    class DummyUtility extends Utility {
+    class DummyUtility extends Utility<IDummyUtility> {
       get __implements__() { return IDummyUtility };
-      constructor({ name, registry }: TUtility) {
-        super({ name, registry });
-      }
     }
 
     new DummyUtility({})
@@ -42,11 +39,8 @@ describe('Global Registry', function () {
       get interfaceId() { return id('IDummyUtility') };
     }
 
-    class DummyUtility extends Utility {
+    class DummyUtility extends Utility<IDummyUtility> {
       get __implements__() { return IDummyUtility };
-      constructor({ name, registry }: TUtility) {
-        super({ name, registry });
-      }
     }
 
     new DummyUtility({ name: 'basic' });
@@ -61,11 +55,8 @@ describe('Global Registry', function () {
       get interfaceId() { return id('IDummyUtility') };
     }
 
-    class DummyUtility extends Utility {
+    class DummyUtility extends Utility<IDummyUtility> {
       get __implements__() { return IDummyUtility };
-      constructor({ name, registry }: TUtility) {
-        super({ name, registry });
-      }
     }
 
     const me = new DummyUtility({ name: 'basic' });
@@ -229,11 +220,8 @@ describe('Local Registry', function () {
       get interfaceId() { return id('IDummyUtility') };
     }
 
-    class DummyUtility extends Utility implements Omit<IDummyUtility, 'interfaceId'> {
+    class DummyUtility extends Utility<IDummyUtility> {
       get __implements__() { return IDummyUtility };
-      constructor({ name, registry }: TUtility) {
-        super({ name, registry });
-      }
     }
 
     const util = new DummyUtility({ registry });
@@ -249,11 +237,8 @@ describe('Local Registry', function () {
       get interfaceId() { return id('IDummyUtility') };
     }
 
-    class DummyUtility extends Utility implements Omit<IDummyUtility, 'interfaceId'> {
+    class DummyUtility extends Utility<IDummyUtility> {
       get __implements__() { return IDummyUtility };
-      constructor({ name, registry }: TUtility) {
-        super({ name, registry });
-      }
     }
     new DummyUtility({ registry: localRegistry });
 
@@ -270,11 +255,8 @@ describe('Local Registry', function () {
       get interfaceId() { return id('IDummyUtility') };
     }
 
-    class DummyUtility extends Utility implements Omit<IDummyUtility, 'interfaceId'> {
+    class DummyUtility extends Utility<IDummyUtility> {
       get __implements__() { return IDummyUtility };
-      constructor({ name, registry }: TUtility) {
-        super({ name, registry });
-      }
     }
     new DummyUtility({ registry: localRegistry });
 

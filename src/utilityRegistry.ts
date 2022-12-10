@@ -1,7 +1,7 @@
 
 import { isDevelopment } from './common'
 import { UtilityInterface } from './interfaceFactory';
-import { TUtility } from './utilityFactory';
+import { Utility } from './utilityFactory';
 import { getInterfaceId, isUndefined } from './utils';
 
 /*
@@ -24,15 +24,15 @@ import { getInterfaceId, isUndefined } from './utils';
 
 type TUtilityEntry = {
   implementsInterface: UtilityInterface,
-  unnamedUtility: TUtility[] | undefined,
-  namedUtility: Record<string, TUtility>
+  unnamedUtility: Utility<any>[] | undefined,
+  namedUtility: Record<string, Utility<any>>
 }
 
 export type TUtilityRegistry = {
   utilities: Record<string, TUtilityEntry>;
-  registerUtility(utility: TUtility): void;
-  getUtility(implementsInterface: UtilityInterface, name?: string, fallbackReturnValue?: any): TUtility;
-  getUtilities(implementsInterface: UtilityInterface): TUtility[];
+  registerUtility(utility: Utility<any>): void;
+  getUtility(implementsInterface: UtilityInterface, name?: string, fallbackReturnValue?: any): Utility<any>;
+  getUtilities(implementsInterface: UtilityInterface): Utility<any>[];
 }
 
 export class UtilityRegistry implements TUtilityRegistry {
@@ -80,7 +80,7 @@ export class UtilityRegistry implements TUtilityRegistry {
 
   // TODO: Implement hasUtility (return true/false), look at getUtility
 
-  getUtility(implementsInterface, name = undefined): TUtility {
+  getUtility(implementsInterface, name = undefined): Utility<any> {
     /*
         Return an instance of a utility that implements the given interface
         and optionally has provided name.
@@ -94,7 +94,7 @@ export class UtilityRegistry implements TUtilityRegistry {
     return utilities?.namedUtility[name];
   }
 
-  getUtilities(implementsInterface): TUtility[] {
+  getUtilities(implementsInterface): Utility<any>[] {
     /*
         Return a list of objects with utilities implementing the given interface. The name
         of named utilities is included.
@@ -116,6 +116,6 @@ export class UtilityRegistry implements TUtilityRegistry {
 
     return [
       ...Object.values(utilities.namedUtility)
-    ]
+    ] as Utility<any>[]
   }
 }
