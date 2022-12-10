@@ -14,7 +14,7 @@ describe('Readme Examples', function() {
     globalRegistry.adapters = {}
   })
 
-  it('Sample Code', function() {
+  it('Sample Code', async function() {
     let console = new consoleMock()
 
     // We need an id factory for the interfaces

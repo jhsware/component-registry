@@ -39,7 +39,7 @@ describe('Adapter Registry', function () {
 
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string { return };
+      Component(): string { return '' };
     }
 
     // We don't need implements because adapter is looked up using the interface
@@ -83,7 +83,7 @@ describe('Adapter Registry', function () {
 
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string { return };
+      Component(): string { return '' };
     }
 
     // We don't need implements because adapter is looked up using the interface

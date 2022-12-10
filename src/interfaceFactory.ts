@@ -31,11 +31,11 @@ export function createIdFactory(namespace: string) {
 }
 
 export class Interface {
-  get interfaceId(): string { return };
+  get interfaceId(): string { return '' };
 }
 
 export class MarkerInterface implements Interface {
-  get interfaceId(): string { return };
+  get interfaceId(): string { return '' };
   providedBy(obj: ObjectPrototype<any>) {
     // Does the specified object implement this interface
     if (hasArrayPropImplements(obj)) {
@@ -45,9 +45,9 @@ export class MarkerInterface implements Interface {
           return true;
         };
       }
-    // } else if (hasPropImplements(obj) && getInterfaceId(obj.__implements__) === this.interfaceId) {
-    //   // Object implements a single interface (probably a utility)
-    //   return true;
+      // } else if (hasPropImplements(obj) && getInterfaceId(obj.__implements__) === this.interfaceId) {
+      //   // Object implements a single interface (probably a utility)
+      //   return true;
     }
     // If we came this far, the object doesn't implement this interface
     return false;
@@ -55,7 +55,7 @@ export class MarkerInterface implements Interface {
 }
 
 export class ObjectInterface implements Interface {
-  get interfaceId(): string { return };
+  get interfaceId(): string { return '' };
   constructor(context: ObjectPrototype<any>) {
     // TODO: Create facade for context
     // - Check that it implements this interface
@@ -70,9 +70,9 @@ export class ObjectInterface implements Interface {
           return true;
         };
       }
-    // } else if (hasPropImplements(obj) && getInterfaceId(obj.__implements__) === this.interfaceId) {
-    //   // Object implements a single interface (probably a utility)
-    //   return true;
+      // } else if (hasPropImplements(obj) && getInterfaceId(obj.__implements__) === this.interfaceId) {
+      //   // Object implements a single interface (probably a utility)
+      //   return true;
     }
     // If we came this far, the object doesn't implement this interface
     return false;
@@ -80,7 +80,7 @@ export class ObjectInterface implements Interface {
 }
 
 export class AdapterInterface implements Interface {
-  get interfaceId(): string { return };
+  get interfaceId(): string { return '' };
   constructor(context: object, registry?: TAdapterRegistry) {
     const r = registry ?? globalRegistry;
     return (r.getAdapter(context, this) ?? new AdapterNotFound());
@@ -88,7 +88,7 @@ export class AdapterInterface implements Interface {
 }
 
 export class UtilityInterface implements Interface {
-  get interfaceId(): string { return };
+  get interfaceId(): string { return '' };
   constructor(nameOrRegistry?: string | TUtilityRegistry, registry?: TUtilityRegistry) {
     if (isString(nameOrRegistry)) {
       const name = nameOrRegistry;

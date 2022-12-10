@@ -83,7 +83,7 @@ describe('Global Registry', function () {
     // }
 
     //     const DummyUtility_1 = new Utility({
-    //         implements: IDummyUtility,
+    //         __implements__ IDummyUtility,
     //         name: 'one'
     //     });
 

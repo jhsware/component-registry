@@ -159,7 +159,7 @@ You will also use these extensively:
 
 ```javascript
 // To ceate interfaces
-import { createInterfaceClass } from 'component-registry'
+import { createIdFactory } from 'component-registry'
 const id = createIdFactory('test');
 
 // To create adapters
@@ -325,7 +325,7 @@ Create and adapter that adapts an interface or an object prototype. It is automa
 import { Adapter, TAdapter } from 'component-registry'
 
 const MyAdapter = new Adapter({
-    implements: IInterface,
+    __implements__ IInterface,
     adapts: IInterface || ObjectPrototype
 })
 
@@ -357,7 +357,7 @@ Create an unamed utility that implements a given interface. It is automatically 
 
 ```typescript
 const utility = new Utility({
-    implements: IInterface
+    __implements__ IInterface
 });
 ```
 

@@ -13,7 +13,7 @@ import { TUtility } from "../src/utilityFactory";
 const id = createIdFactory('namespace');
 
 describe('Lookup gets correct type', function() {
-  it('for adapter', function() {
+  it('for adapter', async function() {
     class IUser extends ObjectInterface {
       get interfaceId() { return id('IUser') };
       name: string;
@@ -35,7 +35,7 @@ describe('Lookup gets correct type', function() {
     // Adapter
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string {return};
+      Component(): string {return ''};
     }
     // We don't need implements because adapter is looked up using the interface
     class NameAdapter extends Adapter {
@@ -60,7 +60,7 @@ describe('Lookup gets correct type', function() {
     // Define the utility
     class ITranslateUtil extends UtilityInterface {
       get interfaceId() { return id('ITranslateUtil') };
-      translate(inp: string): string {return};
+      translate(inp: string): string {return ''};
     }
     class TranslateUtil extends Utility {
       get __implements__() { return ITranslateUtil };
@@ -86,7 +86,7 @@ describe('Lookup gets correct type', function() {
 
 
 describe('ObjectPrototype gets type safety', function() {
-  it('basic', function() {
+  it('basic', async function() {
     // Define an object
     class IUser extends ObjectInterface {
       get interfaceId() { return id('IUser') };

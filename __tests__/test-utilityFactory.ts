@@ -7,7 +7,7 @@ describe('Utility Factory', function () {
   it('can create a utility', function () {
     class ITranslateUtil extends UtilityInterface {
       get interfaceId() { return id('INameAdapter') };
-      translate(inp: string): string { return };
+      translate(inp: string): string { return '' };
     }
     class TranslateUtil extends Utility {
       get __implements__() { return ITranslateUtil };
@@ -28,14 +28,14 @@ describe('Utility Factory', function () {
   it('can create a named utility', function () {
     class ITranslateUtil extends UtilityInterface {
       get interfaceId() { return id('INameAdapter') };
-      translate(inp: string): string { return };
+      translate(inp: string): string { return '' };
     }
     class TranslateUtil extends Utility implements Omit<ITranslateUtil, 'interfaceId'> {
       get __implements__() { return ITranslateUtil };
       constructor({ name, translate, registry }: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
         super({ name, translate, registry });
       }
-      translate(inp: string): string { return };
+      translate(inp: string): string { return '' };
     }
 
     const util = new TranslateUtil({

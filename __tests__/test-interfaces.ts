@@ -26,7 +26,7 @@ describe('Interfaces', function () {
     it('can create AdapterInterface', function () {
         class INameAdapter extends AdapterInterface {
             get interfaceId() { return id('INameAdapter') };
-            Component(): string { return };
+            Component(): string { return '' };
         }
 
 
@@ -37,7 +37,7 @@ describe('Interfaces', function () {
     it('can create UtilityInterface', function () {
         class INameUtil extends UtilityInterface {
             get interfaceId() { return id('INameUtil') };
-            Component(): string { return };
+            Component(): string { return '' };
         }
 
 
@@ -52,7 +52,7 @@ describe('Interfaces', function () {
 
         class IUser extends ObjectInterface {
             get interfaceId() { return id('IUser') };
-            sayHi(): string { return };
+            sayHi(): string { return '' };
         }
 
         type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;

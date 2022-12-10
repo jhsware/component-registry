@@ -18,14 +18,14 @@ describe('Utility Registry', function () {
 
     class ITranslateUtil extends UtilityInterface {
       get interfaceId() { return id('INameAdapter') };
-      translate(inp: string): string { return };
+      translate(inp: string): string { return '' };
     }
     class TranslateUtil extends Utility implements Omit<ITranslateUtil, 'interfaceId'> {
       get __implements__() { return ITranslateUtil };
       constructor({ name, translate, registry }: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
         super({ name, translate, registry });
       }
-      translate(inp: string): string { return };
+      translate(inp: string): string { return ''};
     }
 
     new TranslateUtil({
@@ -44,14 +44,14 @@ describe('Utility Registry', function () {
 
     class ITranslateUtil extends UtilityInterface {
       get interfaceId() { return id('INameAdapter') };
-      translate(inp: string): string { return };
+      translate(inp: string): string { return ''};
     }
     class TranslateUtil extends Utility implements Omit<ITranslateUtil, 'interfaceId'> {
       get __implements__() { return ITranslateUtil };
       constructor({ name, translate, registry }: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
         super({ name, translate, registry });
       }
-      translate(inp: string): string { return };
+      translate(inp: string): string { return ''};
     }
 
     new TranslateUtil({
@@ -71,14 +71,14 @@ describe('Utility Registry', function () {
 
     class ITranslateUtil extends UtilityInterface {
       get interfaceId() { return id('INameAdapter') };
-      translate(inp: string): string { return };
+      translate(inp: string): string { return ''};
     }
     class TranslateUtil extends Utility implements Omit<ITranslateUtil, 'interfaceId'> {
       get __implements__() { return ITranslateUtil };
       constructor({ name, translate, registry }: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
         super({ name, translate, registry });
       }
-      translate(inp: string): string { return };
+      translate(inp: string): string { return ''};
     }
 
     new TranslateUtil({
@@ -99,14 +99,14 @@ describe('Utility Registry', function () {
 
     class ITranslateUtil extends UtilityInterface {
       get interfaceId() { return id('INameAdapter') };
-      translate(inp: string): string { return };
+      translate(inp: string): string { return ''};
     }
     class TranslateUtil extends Utility implements Omit<ITranslateUtil, 'interfaceId'> {
       get __implements__() { return ITranslateUtil };
       constructor({ name, translate, registry }: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
         super({ name, translate, registry });
       }
-      translate(inp: string): string { return };
+      translate(inp: string): string { return ''};
     }
 
     const correctUtil = new TranslateUtil({
@@ -136,14 +136,14 @@ describe('Utility Registry', function () {
 
     class ITranslateUtil extends UtilityInterface {
       get interfaceId() { return id('INameAdapter') };
-      translate(inp: string): string { return };
+      translate(inp: string): string { return ''};
     }
     class TranslateUtil extends Utility implements Omit<ITranslateUtil, 'interfaceId'> {
       get __implements__() { return ITranslateUtil };
       constructor({ name, translate, registry }: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
         super({ name, translate, registry });
       }
-      translate(inp: string): string { return };
+      translate(inp: string): string { return ''};
     }
 
     const utilSv = new TranslateUtil({
@@ -176,14 +176,14 @@ describe('Utility Registry', function () {
 
     class ITranslateUtil extends UtilityInterface {
       get interfaceId() { return id('INameAdapter') };
-      translate(inp: string): string { return };
+      translate(inp: string): string { return '' };
     }
     class TranslateUtil extends Utility implements Omit<ITranslateUtil, 'interfaceId'> {
       get __implements__() { return ITranslateUtil };
       constructor({ name, translate, registry }: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
         super({ name, translate, registry });
       }
-      translate(inp: string): string { return };
+      translate(inp: string): string { return '' };
     }
 
     const utilSv = new TranslateUtil({
@@ -223,14 +223,16 @@ describe('Utility Registry', function () {
 
     class ITranslateUtil extends UtilityInterface {
       get interfaceId() { return id('INameAdapter') };
-      translate(inp: string): string { return };
+      translate(inp: string): string { return '' };
     }
-    class TranslateUtil extends Utility implements Omit<ITranslateUtil, 'interfaceId'> {
+    type TTranslateUtil = Omit<ITranslateUtil, 'interfaceId'>;
+
+    class TranslateUtil extends Utility implements TTranslateUtil {
       get __implements__() { return ITranslateUtil };
-      constructor({ name, translate, registry }: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
+      constructor({ name, translate, registry }: TTranslateUtil & TUtility) {
         super({ name, translate, registry });
       }
-      translate(inp: string): string { return };
+      translate(inp: string): string { return '' };
     }
 
     const utilSv = new TranslateUtil({
@@ -256,8 +258,11 @@ describe('Utility Registry', function () {
       registry,
     });
 
+    // We need a type conversion to allow manipulating results as list
+    const utils = new ITranslateUtil('*', registry) as unknown as TTranslateUtil[];
 
-    const utils = new ITranslateUtil('*', registry);
+    // Check that type marks as array
+    utils.forEach((u) => true);
 
     expect(utils[0]).toBeInstanceOf(TranslateUtil);
     expect(utils[1]).toBeInstanceOf(TranslateUtil);
@@ -272,7 +277,7 @@ describe('Utility Registry', function () {
 
     class ITranslateUtil extends UtilityInterface {
       get interfaceId() { return id('INameAdapter') };
-      translate(inp: string): string { return };
+      translate(inp: string): string { return '' };
     }
 
     const utils = registry.getUtilities(ITranslateUtil);
@@ -287,7 +292,7 @@ describe('Utility Registry', function () {
 
   //     const DummyUtility_1 = new Utility({
   //         registry: registry,
-  //         implements: IDummyUtility,
+  //         __implements__ IDummyUtility,
   //         name: 'one'
   //     });
 

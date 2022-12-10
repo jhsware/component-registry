@@ -15,7 +15,7 @@ describe('Adapter Factory', function () {
   it('can create an adapter interface', function () {
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string { return };
+      Component(): string { return '' };
     }
 
     expect(INameAdapter.prototype.interfaceId).not.toBe(undefined);
@@ -24,7 +24,7 @@ describe('Adapter Factory', function () {
   it('can create an adapter class', function () {
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string { return };
+      Component(): string { return ''};
     }
 
     // We don't need implements because adapter is looked up using the interface
@@ -47,7 +47,7 @@ describe('Adapter Factory', function () {
 
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string { return };
+      Component(): string { return '' };
     }
     // We don't need implements because adapter is looked up using the interface
     class NameAdapter extends Adapter {
@@ -85,7 +85,7 @@ describe('Adapter Factory', function () {
 
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string { return };
+      Component(): string { return '' };
     }
     // We don't need implements because adapter is looked up using the interface
     class NameAdapter extends Adapter {

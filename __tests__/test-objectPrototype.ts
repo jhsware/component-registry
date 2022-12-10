@@ -9,7 +9,7 @@ describe('Object Prototypes', function () {
         class IUser extends ObjectInterface {
             get interfaceId() { return id('IUser') };
             name: string;
-            sayHi(): string { return };
+            sayHi(): string { return ''};
         }
         type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
         class User extends ObjectPrototype<Omit<TUser, 'sayHi'>> implements TUser {
@@ -34,7 +34,7 @@ describe('Object Prototypes', function () {
         class IUser extends ObjectInterface {
             get interfaceId() { return id('IUser') };
             name: string;
-            sayHi(): string { return };
+            sayHi(): string { return '' };
         }
         type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
         class User extends ObjectPrototype<Omit<TUser, 'sayHi'>> implements TUser {
@@ -73,7 +73,7 @@ describe('Object Prototypes', function () {
     //     const IUser = new Interface({ name: 'IUser' });
 
     //     const User = createObjectPrototype({
-    //         implements: [IUser],
+    //         __implements__ [IUser],
     //         constructor: function () {
     //             this._userVal = 1;
     //             this.title = "title"
@@ -94,7 +94,7 @@ describe('Object Prototypes', function () {
     //     const IUser = new Interface({ name: 'IUser' });
 
     //     const User = createObjectPrototype({
-    //         implements: [IUser],
+    //         __implements__ [IUser],
     //     })
 
     //     const user = new User({
@@ -121,7 +121,7 @@ describe('Object Prototypes', function () {
     //     const IUser = new Interface({ name: 'IUser' });
 
     //     const User = createObjectPrototype({
-    //         implements: [IUser],
+    //         __implements__ [IUser],
     //     })
 
     //     const user = new User({
@@ -139,7 +139,7 @@ describe('Object Prototypes', function () {
 
     // it("can update value of properties", function () {
     //     const IUser = new Interface({
-    //         name: 'IUser',
+    //         get interfaceId() { return id('IUser') };
     //         schema: new Schema({
     //             title: "",
     //             empty: ""
@@ -147,7 +147,7 @@ describe('Object Prototypes', function () {
     //     });
 
     //     const User = createObjectPrototype({
-    //         implements: [IUser],
+    //         __implements__ [IUser],
     //     })
 
     //     const user = new User({
@@ -164,7 +164,7 @@ describe('Object Prototypes', function () {
 
     // it("can be created with an interface as property", function () {
     //     const IUser = new Interface({
-    //         name: 'IUser',
+    //         get interfaceId() { return id('IUser') };
     //         schema: new Schema({
     //             title: "",
     //             empty: ""
@@ -174,7 +174,7 @@ describe('Object Prototypes', function () {
     //     const IAsProp = new Interface({})
 
     //     const User = createObjectPrototype({
-    //         implements: [IUser],
+    //         __implements__ [IUser],
     //     })
 
     //     const user = new User({
@@ -186,13 +186,13 @@ describe('Object Prototypes', function () {
 
     // it("can convert object with function JSON", function () {
     //     const IUser = new Interface({
-    //         name: 'IUser',
+    //         get interfaceId() { return id('IUser') };
     //     });
 
     //     const IAsProp = new Interface({})
 
     //     const User = createObjectPrototype({
-    //         implements: [IUser],
+    //         __implements__ [IUser],
     //     })
 
     //     const user = new User({
@@ -207,7 +207,7 @@ describe('Object Prototypes', function () {
 
     // it("can remove schema field property", function () {
     //     const IUser = new Interface({
-    //         name: 'IUser',
+    //         get interfaceId() { return id('IUser') };
     //         schema: new Schema({
     //             title: "",
     //             empty: ""
@@ -215,7 +215,7 @@ describe('Object Prototypes', function () {
     //     });
 
     //     const User = createObjectPrototype({
-    //         implements: [IUser],
+    //         __implements__ [IUser],
     //     })
 
     //     const user = new User({
@@ -232,7 +232,7 @@ describe('Object Prototypes', function () {
 
     // it("won't overwrite prototype properties", function () {
     //     const IUser = new Interface({
-    //         name: 'IUser',
+    //         get interfaceId() { return id('IUser') };
     //         schema: new Schema({
     //             title: "",
     //             empty: ""
@@ -240,7 +240,7 @@ describe('Object Prototypes', function () {
     //     });
 
     //     const User = createObjectPrototype({
-    //         implements: [IUser],
+    //         __implements__ [IUser],
     //     })
 
     //     const user = new User({
@@ -257,11 +257,11 @@ describe('Object Prototypes', function () {
     // });
 
     // it("adds schema fields for all implemented interfaces", function () {
-    //     const IUser = new Interface({ name: 'IUser', schema: new Schema({ name: '', age: '' }) });
-    //     const ILooks = new Interface({ name: 'ILooks', schema: new Schema({ eyes: '', height: '' }) });
+    //     const IUser = new Interface({ get interfaceId() { return id('IUser', schema: new Schema({ name: '') }; age: '' }) });
+    //     const ILooks = new Interface({ get interfaceId() { return id('ILooks', schema: new Schema({ eyes: '') }; height: '' }) });
 
     //     const userProto = createObjectPrototype({
-    //         implements: [IUser, ILooks]
+    //         __implements__ [IUser, ILooks]
     //     })
     //     const user = new userProto();
 
@@ -279,7 +279,7 @@ describe('Object Prototypes', function () {
     //     IFlexer.prototype.flex = function () { };
 
     //     const userProto = createObjectPrototype({
-    //         implements: [ITalker, IFlexer],
+    //         __implements__ [ITalker, IFlexer],
     //         talk: function () { },
     //         flex: function () { }
     //     })
@@ -288,7 +288,7 @@ describe('Object Prototypes', function () {
     //     let failed
     //     try {
     //         const userProto = createObjectPrototype({
-    //             implements: [ITalker, IFlexer],
+    //             __implements__ [ITalker, IFlexer],
     //             flex: function () { }
     //         })
     //     } catch (e) {
