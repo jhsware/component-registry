@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from "@jest/globals";
-import { Adapter, AdapterInterface, createIdFactory, globalRegistry, ObjectInterface, ObjectPrototype, TAdapter } from "../src";
+import { Adapter, AdapterInterface, createIdFactory, globalRegistry, ObjectInterface, ObjectPrototype, TypeFromInterface } from "../src";
 
 class consoleMock {
   logResult;
@@ -26,7 +26,7 @@ describe('Readme Examples', function() {
       name: string;
     }
 
-    type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+    type TUser = TypeFromInterface<IUser>;
     class User extends ObjectPrototype<TUser> implements TUser {
         readonly __implements__ = [IUser];
         name: string;
@@ -41,19 +41,16 @@ describe('Readme Examples', function() {
       render(): void { return };
     }
 
-    class DisplayWidget extends Adapter {
+    class DisplayWidget extends Adapter<IDisplayWidget, IUser> {
       get __implements__() { return IDisplayWidget };
-      constructor({ adapts, render, registry }: Omit<IDisplayWidget, 'interfaceId'> & TAdapter) {
-        super({ adapts, render, registry });
+      render () {
+        console.log(`My name is ${this.context.name}`)
       }
     }
 
     // Adapter instance that can operate on objects implementing IUser
     new DisplayWidget({
       adapts: IUser,
-      render () {
-        console.log(`My name is ${this.context.name}`)
-      }
     })
 
 

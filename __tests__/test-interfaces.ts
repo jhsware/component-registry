@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { AdapterInterface, createIdFactory, MarkerInterface, ObjectInterface, ObjectPrototype, UtilityInterface } from '../src/index'
+import { AdapterInterface, createIdFactory, MarkerInterface, ObjectInterface, ObjectPrototype, TypeFromInterface, UtilityInterface } from '../src/index'
 const id = createIdFactory('test');
 
 describe('Interfaces', function () {
@@ -55,7 +55,7 @@ describe('Interfaces', function () {
             sayHi(): string { return '' };
         }
 
-        type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+        type TUser = TypeFromInterface<IUser>;
         class User extends ObjectPrototype<TUser> implements TUser {
             readonly __implements__ = [IUser];
             name: string;

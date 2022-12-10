@@ -34,7 +34,7 @@ export class Interface {
   get interfaceId(): string { return '' };
 }
 
-export class MarkerInterface implements Interface {
+export abstract class MarkerInterface implements Interface {
   get interfaceId(): string { return '' };
   providedBy(obj: ObjectPrototype<any>) {
     // Does the specified object implement this interface
@@ -54,7 +54,9 @@ export class MarkerInterface implements Interface {
   }
 }
 
-export class ObjectInterface implements Interface {
+export type TypeFromInterface<T> = Omit<T, 'interfaceId' | 'providedBy'>; 
+
+export abstract class ObjectInterface implements Interface {
   get interfaceId(): string { return '' };
   constructor(context: ObjectPrototype<any>) {
     // TODO: Create facade for context
@@ -79,7 +81,7 @@ export class ObjectInterface implements Interface {
   }
 }
 
-export class AdapterInterface implements Interface {
+export abstract class AdapterInterface implements Interface {
   get interfaceId(): string { return '' };
   constructor(context: object, registry?: TAdapterRegistry) {
     const r = registry ?? globalRegistry;
@@ -87,7 +89,7 @@ export class AdapterInterface implements Interface {
   }
 }
 
-export class UtilityInterface implements Interface {
+export abstract class UtilityInterface implements Interface {
   get interfaceId(): string { return '' };
   constructor(nameOrRegistry?: string | TUtilityRegistry, registry?: TUtilityRegistry) {
     if (isString(nameOrRegistry)) {

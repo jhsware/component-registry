@@ -1,5 +1,4 @@
 import { describe, expect, it } from "@jest/globals";
-import { TAdapter, TAdapterRegistry } from "../dist/types.js";
 import {
   createIdFactory,
   Adapter,
@@ -7,6 +6,7 @@ import {
   AdapterRegistry,
   ObjectInterface,
   ObjectPrototype,
+  TypeFromInterface,
 
 } from "../src/index";
 const id = createIdFactory('test');
@@ -28,7 +28,7 @@ describe('Adapter Registry', function () {
       get interfaceId() { return id('IUser') };
       name: string;
     }
-    type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+    type TUser = TypeFromInterface<IUser>;
     class User extends ObjectPrototype<TUser> implements TUser {
       readonly __implements__ = [IUser];
       name: string;
@@ -39,30 +39,23 @@ describe('Adapter Registry', function () {
 
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string { return '' };
+      Component: () => string;
     }
 
-    // We don't need implements because adapter is looked up using the interface
-    class NameAdapter extends Adapter {
+    class NameAdapter extends Adapter<INameAdapter, IUser> {
       get __implements__() { return INameAdapter };
-      constructor({ adapts, Component, registry }: Omit<INameAdapter, 'interfaceId'> & TAdapter) {
-        super({ adapts, Component, registry });
+
+      __Component__() {
+        return this.context.name;
       }
     }
-
-    const adapter = new NameAdapter({
-      adapts: IUser,
-      Component() {
-        return this.context.name;
-      },
-      registry,
-    })
+    new NameAdapter({ adapts: IUser, registry });
 
     const user = new User({ name: 'Julia' });
 
-    const outp = new INameAdapter(user, registry).Component();
+    const Component = NameAdapter.prototype.for(user, registry) as Function;
 
-    expect(outp).toBe('Julia');
+    expect(Component()).toBe('Julia');
   });
 
   it('can get an adapter registered by ObjectPrototype', function () {
@@ -71,8 +64,8 @@ describe('Adapter Registry', function () {
       get interfaceId() { return id('IUser') };
       name: string;
     }
-    type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
 
+    type TUser = TypeFromInterface<IUser>;
     class User extends ObjectPrototype<TUser> implements TUser {
       readonly __implements__ = [IUser];
       name: string;
@@ -83,30 +76,23 @@ describe('Adapter Registry', function () {
 
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string { return '' };
+      Component: () => string;
     }
 
-    // We don't need implements because adapter is looked up using the interface
-    class NameAdapter extends Adapter {
+    class NameAdapter extends Adapter<INameAdapter, IUser> {
       get __implements__() { return INameAdapter };
-      constructor({ adapts, Component, registry }: Omit<INameAdapter, 'interfaceId'> & TAdapter) {
-        super({ adapts, Component, registry });
+
+      __Component__() {
+        return this.context.name;
       }
     }
-
-    const adapter = new NameAdapter({
-      adapts: User,
-      Component() {
-        return this.context.name;
-      },
-      registry,
-    })
+    new NameAdapter({ adapts: User, registry });
 
     const user = new User({ name: 'Julia' });
 
-    const outp = new INameAdapter(user, registry).Component();
+    const Component = NameAdapter.prototype.for(user, registry) as Function;
 
-    expect(outp).toBe('Julia');
+    expect(Component()).toBe('Julia');
   });
 
   // it("returns an error when registering an adapter that doesn't implement interface", function() {});

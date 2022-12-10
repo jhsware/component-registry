@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { createIdFactory, ObjectInterface, ObjectPrototype } from "../src/index";
+import { createIdFactory, ObjectInterface, ObjectPrototype, TypeFromInterface } from "../src/index";
 import { Schema } from '../__mocks__/mock-schema'
 
 const id = createIdFactory('test');
@@ -11,7 +11,7 @@ describe('Object Prototypes', function () {
             name: string;
             sayHi(): string { return ''};
         }
-        type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+        type TUser = TypeFromInterface<IUser>;
         class User extends ObjectPrototype<Omit<TUser, 'sayHi'>> implements TUser {
             readonly __implements__ = [IUser];
             name: string;
@@ -36,7 +36,7 @@ describe('Object Prototypes', function () {
             name: string;
             sayHi(): string { return '' };
         }
-        type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+        type TUser = TypeFromInterface<IUser>;
         class User extends ObjectPrototype<Omit<TUser, 'sayHi'>> implements TUser {
             readonly __implements__ = [IUser];
             name: string;

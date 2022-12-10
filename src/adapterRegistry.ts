@@ -1,10 +1,11 @@
-import { TAdapter } from './adapterFactory';
+import { Adapter } from './adapterFactory';
 import { isDevelopment } from './common'
-import { AdapterInterface } from './interfaceFactory';
+import { AdapterInterface, ObjectInterface } from './interfaceFactory';
 import { ObjectPrototype } from './objectFactory';
 
 import {
   getInterfaceId,
+  isFunc,
   isUndefined,
   notNullOrUndef,
 } from './utils'
@@ -29,15 +30,14 @@ function AdapterRegistryException(message, context) {
 */
 
 type TAdapterEntry = {
-  implementsInterface: AdapterInterface,
-  interfaceAdapters: TAdapter[],
-  objectAdapters: TAdapter[]
+  interfaceAdapters: Adapter<any, any>[],
+  objectAdapters: Adapter<any, any>[]
 }
 
 export type TAdapterRegistry = {
   adapters: Record<string, TAdapterEntry>;
-  registerAdapter(adapter: TAdapter): void;
-  getAdapter(obj: ObjectPrototype<any>, implementsInterface: AdapterInterface, adaptsInterface: AdapterInterface): TAdapter;
+  registerAdapter(adapter: Adapter<any, any>): void;
+  getAdapter(obj: ObjectPrototype<any>, implementsInterface: AdapterInterface, adaptsInterface: AdapterInterface): Adapter<any, any>;
 }
 
 export class AdapterRegistry implements TAdapterRegistry {
@@ -50,7 +50,7 @@ export class AdapterRegistry implements TAdapterRegistry {
   }
 }
 
-AdapterRegistry.prototype.registerAdapter = function (adapter) {
+AdapterRegistry.prototype.registerAdapter = function (implementation, implementsInterfaceId) {
   /*
       Add an adapter to the registry
   
@@ -58,35 +58,30 @@ AdapterRegistry.prototype.registerAdapter = function (adapter) {
       implementsInterface -- the interface that the adapter implements
       adapter -- the prototype of the adapter to instantiate on get
   */
-  const adapts = adapter.__adapts__,
-    implementsInterfaces = adapter.__implements__;
-
-  // TODO: Check that the adapter implements the interface
-  // TODO: else throw InterfaceNotImplementedError
+  const adapts = implementation.__adapts__;
+  implementsInterfaceId ??= getInterfaceId(implementation.__implements__);
 
   // Register the adapter (interfaces are stored in a list)
-  const tmpInterfaceId = getInterfaceId(implementsInterfaces);
-  if (isUndefined(this.adapters[tmpInterfaceId])) {
-    this.adapters[tmpInterfaceId] = {
-      implementsInterface: implementsInterfaces[0],
-      interfaceAdapters: [],
-      objectAdapters: []
+  if (isUndefined(this.adapters[implementsInterfaceId])) {
+    this.adapters[implementsInterfaceId] = {
+      interfaceAdapters: [], // TODO: This could be a dictionary for massive performance boost
+      objectAdapters: [] // TODO: This could be a dictionary for massive performance boost
     }
   }
 
-  const adapters = this.adapters[tmpInterfaceId];
+  const adapters = this.adapters[implementsInterfaceId];
 
   if (getInterfaceId(adapts)) {
     // This should be registered as an interface
     adapters.interfaceAdapters.push({
       adapts: adapts,
-      adapter: adapter
+      adapter: implementation
     });
   } else {
     // This should be registered as an object adaptor
     adapters.objectAdapters.push({
       adapts: adapts,
-      adapter: adapter
+      adapter: implementation
     });
 
   }
@@ -94,7 +89,7 @@ AdapterRegistry.prototype.registerAdapter = function (adapter) {
 
 // TODO: implement hasAdapter (returns true or false), look at getAdapter
 
-AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adaptsInterface) {
+AdapterRegistry.prototype.getAdapter = function (context: ObjectPrototype<any>, implementsInterface) {
   /*
       Return an instance of an adapter for the provided object which implements
       the provided interface.
@@ -102,7 +97,8 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
       Optionally add a specific param adaptsInterface in case there are several 
       adapters that implement the interface and match the object.
   */
-  const adapters = this.adapters[getInterfaceId(implementsInterface)];
+  const implementsInterfaceId = getInterfaceId(implementsInterface);
+  const adapters = this.adapters[implementsInterfaceId];
 
   // if we didn't find an adapter for this we throw an error
   if (isUndefined(adapters)) {
@@ -112,16 +108,14 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
 
   // Ok so we found adapters that implement this interface, let's see if they
   // adapt the provided object.
+  const obj = context as ObjectPrototype<any>;
   if (adapters) {
     // First check if an object adapter matches
-    for (let i = 0, imax = adapters.objectAdapters.length; i < imax; i++) {
-      const tmp = adapters.objectAdapters[i];
-      if (obj instanceof tmp.adapts) {
+    for (const { adapter, adapts } of adapters.objectAdapters) {
+      if (obj instanceof adapts) {
         // Clone adapter and return with context set
         // TODO: Is there a better way of returning the instance?
-        const adapter = Object.create(tmp.adapter);
-        adapter.context = obj;
-        return adapter;
+        return createAdapterInstance(adapter, obj);
       }
 
     }
@@ -131,12 +125,11 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
     // INTEGRITY CHECK: Throw a useful error if the passed object doesn't have __implements__
     if (isUndefined(getInterfaceId(obj)) && isUndefined(obj.__implements__?.[0])) {
       const errorContext = (isDevelopment ? {
-        context: obj,
-        implements: implementsInterface,
+        obj: obj,
         registry: this
       } : undefined)
       throw new AdapterRegistryException(
-        "Context missing __implements__ property, nothing to look up",
+        "Object missing __implements__ property, nothing to look up",
         errorContext
       )
     };
@@ -146,24 +139,17 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
     // need to think about how this works and write the docs first, then tests and then implement it so it
     // is easy to understand and reason about.
 
-    // Now support finding adapter by supplying an interface. Useful if no object exists yet such as
-    // in a schema with ObjectField or for create views.
+    // Now support finding adapter by interface
+
     const tmpImplements = notNullOrUndef(obj.__implements__) ? obj.__implements__ : [obj];
-    for (let j = 0, jmax = tmpImplements.length; j < jmax; j++) {
-      const tmpInterface = tmpImplements[j];
-      for (let i = 0, imax = adapters.interfaceAdapters.length; i < imax; i++) {
-        const tmp = adapters.interfaceAdapters[i];
-        if (getInterfaceId(tmpInterface) === getInterfaceId(tmp.adapts)) {
-          // If we got the adaptsInterface parameter we need to check that it matches otherwise
-          // keep on looking
-          if (notNullOrUndef(adaptsInterface) && getInterfaceId(adaptsInterface) !== getInterfaceId(tmp.adapts)) {
-            continue
-          }
+    for (const objImplements of tmpImplements) {
+      for (const interfaceAdapter of adapters.interfaceAdapters) {
+        if (getInterfaceId(objImplements) === getInterfaceId(interfaceAdapter.adapts)) {
           // Clone adapter and return with context set
           // TODO: Is there a better way of returning the instance?
-          const adapter = Object.create(tmp.adapter);
-          adapter.context = obj;
-          return adapter;
+          const { adapter } = interfaceAdapter;
+
+          return createAdapterInstance(adapter, obj);
         }
 
       }
@@ -172,4 +158,26 @@ AdapterRegistry.prototype.getAdapter = function (obj, implementsInterface, adapt
 
   // Return undefined if nothing found
   return;
+}
+
+function createAdapterInstance(adapter, context) {
+  // Function component (for Inferno/React/etc.)
+  if (isFunc(adapter.__Component__)) {
+    return adapter.__Component__.bind({ context });
+  }
+
+  // Class component (for Inferno/React/etc.)
+  if (notNullOrUndef(adapter.__Component__)) {
+    return adapter.__Component__;
+  }
+
+  // Regular Adapter
+  return Object.create(
+    adapter, {
+    context: {
+      writable: false,
+      configurable: false,
+      value: context,
+    },
+  });
 }

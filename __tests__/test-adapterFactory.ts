@@ -6,9 +6,10 @@ import {
   AdapterRegistry,
   Interface,
   ObjectInterface,
-  ObjectPrototype
+  ObjectPrototype,
+  TypeFromInterface
 } from '../src/index'
-import type { TAdapter, TAdapterRegistry } from "../src/index";
+import type { TAdapterRegistry } from "../src/index";
 const id = createIdFactory('test');
 
 describe('Adapter Factory', function () {
@@ -22,20 +23,20 @@ describe('Adapter Factory', function () {
   });
 
   it('can create an adapter class', function () {
+    // class INameAdapter extends AdapterInterface {
+    //   get interfaceId() { return id('INameAdapter') };
+    //   Component(): string { return ''};
+    // }
+
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string { return ''};
     }
 
-    // We don't need implements because adapter is looked up using the interface
-    class NameAdapter extends Adapter {
+    class NameAdapter extends Adapter<INameAdapter, any> {
       get __implements__() { return INameAdapter };
-      constructor({ adapts, Component, registry }: Omit<INameAdapter, 'interfaceId'> & TAdapter) {
-        super({ adapts, Component, registry });
-      }
     }
 
-    expect(NameAdapter.prototype.__implements__.prototype.interfaceId).toBe(INameAdapter.prototype.interfaceId);
+    expect(NameAdapter).toBeDefined();
   });
 
   it('we can create an adapter that adapts interface', function () {
@@ -47,23 +48,19 @@ describe('Adapter Factory', function () {
 
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string { return '' };
-    }
-    // We don't need implements because adapter is looked up using the interface
-    class NameAdapter extends Adapter {
-      get __implements__() { return INameAdapter };
-      constructor({ adapts, Component, registry }: Omit<INameAdapter, 'interfaceId'> & TAdapter) {
-        super({ adapts, Component, registry });
-      }
+      Component: () => string;
     }
 
-    const adapter = new NameAdapter({
-      adapts: IUser,
-      Component() {
+    class NameAdapter extends Adapter<INameAdapter, IUser> {
+      get __implements__() { return INameAdapter };
+
+      __Component__() {
         return this.context.name;
-      },
-      registry,
-    })
+      }
+    }
+    new NameAdapter({ adapts: IUser, registry });
+
+    const adapter = new NameAdapter({ adapts: IUser, registry });
 
     expect(adapter).toBeInstanceOf(NameAdapter);
   });
@@ -74,34 +71,28 @@ describe('Adapter Factory', function () {
       get interfaceId() { return id('IUser') };
       name: string;
     }
-    type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
-    class User extends ObjectPrototype<TUser> implements TUser {
-      __implements__ = [IUser];
-      name: string;
-      constructor({ name }: TUser) {
-        super({ name });
-      }
-    }
+    // type TUser = TypeFromInterface<IUser>;
+    // class User extends ObjectPrototype<TUser> implements TUser {
+    //   __implements__ = [IUser];
+    //   name: string;
+    //   constructor({ name }: TUser) {
+    //     super({ name });
+    //   }
+    // }
 
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string { return '' };
-    }
-    // We don't need implements because adapter is looked up using the interface
-    class NameAdapter extends Adapter {
-      get __implements__() { return INameAdapter };
-      constructor({ adapts, Component, registry }: Omit<INameAdapter, 'interfaceId'> & TAdapter) {
-        super({ adapts, Component, registry });
-      }
+      __Component__: () => string;
     }
 
-    const adapter = new NameAdapter({
-      adapts: User,
-      Component() {
+    class NameAdapter extends Adapter<INameAdapter, IUser> {
+      get __implements__() { return INameAdapter };
+
+      __Component__() {
         return this.context.name;
-      },
-      registry,
-    })
+      }
+    }
+    const adapter = new NameAdapter({ adapts: IUser, registry });
 
     expect(adapter).toBeInstanceOf(NameAdapter);
   });

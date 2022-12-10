@@ -35,7 +35,7 @@ class IUser extends ObjectInterface {
   name: string;
 }
 
-type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+type TUser = TypeFromInterface<IUser>;
 class User extends ObjectPrototype<TUser> implements TUser {
   readonly __implements__ = [IUser];
   name: string;
@@ -256,7 +256,7 @@ Another example of how to use a utility could be if you want to provide internat
 ```typescript
 import { ObjectPrototype } from 'component-registry'
 
-type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+type TUser = TypeFromInterface<IUser>;
 class User extends ObjectPrototype<TUser> implements TUser {
     readonly __implements__ = [IUser];
     name: string;

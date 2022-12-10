@@ -1,11 +1,12 @@
 import { describe, expect, it } from "@jest/globals";
 import { Utility } from "../src";
-import { Adapter, TAdapter } from "../src/adapterFactory";
+import { Adapter } from "../src/adapterFactory";
 import {
   ObjectInterface,
   UtilityInterface,
   AdapterInterface,
   createIdFactory,
+  TypeFromInterface,
  } from "../src/interfaceFactory";
 import { ObjectPrototype } from "../src/objectFactory";
 import { TUtility } from "../src/utilityFactory";
@@ -19,7 +20,7 @@ describe('Lookup gets correct type', function() {
       name: string;
     }
 
-    type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+    type TUser = TypeFromInterface<IUser>;
     class User extends ObjectPrototype<TUser> implements TUser {
       readonly __implements__ = [IUser];
       name: string;
@@ -35,25 +36,22 @@ describe('Lookup gets correct type', function() {
     // Adapter
     class INameAdapter extends AdapterInterface {
       get interfaceId() { return id('INameAdapter') };
-      Component(): string {return ''};
+      __Component__: () => string;
     }
     // We don't need implements because adapter is looked up using the interface
-    class NameAdapter extends Adapter {
+    class NameAdapter extends Adapter<INameAdapter, IUser> {
       get __implements__() { return INameAdapter };
-      constructor({ adapts, Component, registry}: Omit<INameAdapter, 'interfaceId'> & TAdapter) {
-        super({adapts, Component, registry});
+      __Component__() {
+        return this.context.name;
       }
     }
 
     new NameAdapter({
       adapts: IUser,
-      Component() {
-        return this.context.name;
-      }
     });
 
-    const nameAdapter = new INameAdapter(user);
-    nameAdapter.Component
+    const Component = new INameAdapter(user) as unknown as Function;
+    Component();
   });
 
   it('for utility', function () {
@@ -95,7 +93,7 @@ describe('ObjectPrototype gets type safety', function() {
 
     // An object prototype can be a mix of interfaces so we need to create
     // a type for it that can be used to provide typing in various places
-    type TUser = Omit<IUser, 'interfaceId' | 'providedBy'>;
+    type TUser = TypeFromInterface<IUser>;
     class User extends ObjectPrototype<TUser> implements TUser {
       readonly __implements__ = [IUser];
       name: string;
