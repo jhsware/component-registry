@@ -91,6 +91,7 @@ export abstract class AdapterInterface implements Interface {
 
 export abstract class UtilityInterface implements Interface {
   get interfaceId(): string { return '' };
+  __name__: string;
   constructor(nameOrRegistry?: string | TUtilityRegistry, registry?: TUtilityRegistry) {
     if (isString(nameOrRegistry)) {
       const name = nameOrRegistry;
