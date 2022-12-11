@@ -1,6 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { createIdFactory, Utility, UtilityInterface, UtilityRegistry } from '../src/index'
-import { TUtility } from "../dist/types";
+import { createIdFactory, Utility, UtilityInterface } from '../src/index'
 const id = createIdFactory('test');
 
 describe('Utility Factory', function () {

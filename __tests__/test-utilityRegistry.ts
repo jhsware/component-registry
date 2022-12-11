@@ -3,6 +3,9 @@ import { UtilityRegistry, Utility, UtilityInterface, createIdFactory } from "../
 const id = createIdFactory('test');
 
 describe('Utility Registry', function () {
+  it('can return __Component__', function () {
+    // TODO: implement
+  });
   it('can be created', function () {
     const registry = new UtilityRegistry();
 

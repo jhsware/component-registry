@@ -88,10 +88,12 @@ export class UtilityRegistry implements TUtilityRegistry {
     const utilities = this.utilities[getInterfaceId(implementsInterface)];
 
     if (isUndefined(name)) {
-      return utilities?.unnamedUtility;
+      const util = utilities?.unnamedUtility;
+      return util.__Component__ ?? util;
     }
 
-    return utilities?.namedUtility[name];
+    const util = utilities?.namedUtility[name];
+    return util.__Component__ ?? util;
   }
 
   getUtilities(implementsInterface): Utility<any>[] {
