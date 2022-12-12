@@ -45,8 +45,8 @@ describe('Adapter Registry', function () {
     class NameAdapter extends Adapter<INameAdapter, IUser> {
       get __implements__() { return INameAdapter };
 
-      __Component__() {
-        return this.context.name;
+      __Component__(user: IUser) {
+        return user.name;
       }
     }
     new NameAdapter({ adapts: IUser, registry });
@@ -55,7 +55,7 @@ describe('Adapter Registry', function () {
 
     const Component = NameAdapter.prototype.for(user, registry) as Function;
 
-    expect(Component()).toBe('Julia');
+    expect(Component(user)).toBe('Julia');
   });
 
   it('can get an adapter registered by ObjectPrototype', function () {
@@ -82,8 +82,8 @@ describe('Adapter Registry', function () {
     class NameAdapter extends Adapter<INameAdapter, IUser> {
       get __implements__() { return INameAdapter };
 
-      __Component__() {
-        return this.context.name;
+      __Component__(user: IUser) {
+        return user.name;
       }
     }
     new NameAdapter({ adapts: User, registry });
@@ -92,7 +92,7 @@ describe('Adapter Registry', function () {
 
     const Component = NameAdapter.prototype.for(user, registry) as Function;
 
-    expect(Component()).toBe('Julia');
+    expect(Component(user)).toBe('Julia');
   });
 
   // it("returns an error when registering an adapter that doesn't implement interface", function() {});

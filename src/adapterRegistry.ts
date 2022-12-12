@@ -115,7 +115,7 @@ AdapterRegistry.prototype.getAdapter = function (context: ObjectPrototype<any>, 
       if (obj instanceof adapts) {
         // Clone adapter and return with context set
         // TODO: Is there a better way of returning the instance?
-        return createAdapterInstance(adapter, obj);
+        return createAdapterInstance(adapter);
       }
 
     }
@@ -149,7 +149,7 @@ AdapterRegistry.prototype.getAdapter = function (context: ObjectPrototype<any>, 
           // TODO: Is there a better way of returning the instance?
           const { adapter } = interfaceAdapter;
 
-          return createAdapterInstance(adapter, obj);
+          return createAdapterInstance(adapter);
         }
 
       }
@@ -160,24 +160,17 @@ AdapterRegistry.prototype.getAdapter = function (context: ObjectPrototype<any>, 
   return;
 }
 
-function createAdapterInstance(adapter, context) {
-  // Function component (for Inferno/React/etc.)
-  if (isFunc(adapter.__Component__)) {
-    return adapter.__Component__.bind({ context });
-  }
+function createAdapterInstance(adapter) {
+  // TODO: Perhaps cloning the adapter is a problem. Look att diffing algo and see if we should:
+  // - set key to prove identity
+  // - not clone and skip setting context
+  // When a form is updated, the element gets swapped out, thus loosing focus on the field
 
-  // Class component (for Inferno/React/etc.)
+  // Function or Class Component (for Inferno/React/etc.)
   if (notNullOrUndef(adapter.__Component__)) {
     return adapter.__Component__;
   }
 
   // Regular Adapter
-  return Object.create(
-    adapter, {
-    context: {
-      writable: false,
-      configurable: false,
-      value: context,
-    },
-  });
+  return adapter;
 }
