@@ -105,7 +105,10 @@ describe('ObjectPrototype gets type safety', function () {
 
     user.name
 
-    const name = user.name;
+    let name: string;
+    name = user.name;
+    
+    expect(typeof user.name).toEqual('string');
   });
 });
 
