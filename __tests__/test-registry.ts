@@ -3,10 +3,10 @@ import { describe, expect, it, beforeEach } from "@jest/globals";
 import {
   globalRegistry as registry,
   LocalRegistry,
-  AdapterInterface, createIdFactory, ObjectInterface, UtilityInterface, Utility, Adapter, ObjectPrototype, UtilityNotFound
+  AdapterInterface, createInterfaceDecorator, ObjectInterface, UtilityInterface, Utility, Adapter, ObjectPrototype, UtilityNotFound, globalRegistry
 } from "../src";
 
-const id = createIdFactory('test');
+const Interface = createInterfaceDecorator('test');
 
 describe('Global Registry', function () {
   beforeEach(function () {
@@ -19,15 +19,14 @@ describe('Global Registry', function () {
   });
 
   it('can get an unnamed utility', function () {
+    @Interface
     class IDummyUtility extends UtilityInterface {
-      get interfaceId() { return id('IDummyUtility') };
     }
 
+    @registry.register
     class DummyUtility extends Utility<IDummyUtility> {
-      get __implements__() { return IDummyUtility };
+      static __implements__ = IDummyUtility;
     }
-
-    new DummyUtility({})
 
     const util = new IDummyUtility();
 
@@ -35,15 +34,15 @@ describe('Global Registry', function () {
   });
 
   it('can get a named utility', function () {
+    @Interface
     class IDummyUtility extends UtilityInterface {
-      get interfaceId() { return id('IDummyUtility') };
     }
 
+    @registry.register
     class DummyUtility extends Utility<IDummyUtility> {
-      get __implements__() { return IDummyUtility };
+      static __implements__ = IDummyUtility;
+      static __name__ = 'basic';
     }
-
-    new DummyUtility({ name: 'basic' });
 
     const util = new IDummyUtility('basic');
 
@@ -51,29 +50,35 @@ describe('Global Registry', function () {
   });
 
   it('can get the correct named utility', function () {
+    @Interface
     class IDummyUtility extends UtilityInterface {
-      get interfaceId() { return id('IDummyUtility') };
     }
 
-    class DummyUtility extends Utility<IDummyUtility> {
-      get __implements__() { return IDummyUtility };
+    @registry.register
+    class DummyUtilityBasic extends Utility<IDummyUtility> {
+      static __implements__ = IDummyUtility;
+      static __name__ = 'basic';
     }
-
-    const me = new DummyUtility({ name: 'basic' });
-    const notMe = new DummyUtility({ name: 'not me' });
+    
+    @registry.register
+    class DummyUtilityNotMe extends Utility<IDummyUtility> {
+      static __implements__ = IDummyUtility;
+      static __name__ = 'not me';
+    }
 
     const util = new IDummyUtility('basic');
 
-    expect(util).toBe(me);
-    expect(util).not.toBe(notMe);
+    expect(util).toBeInstanceOf(DummyUtilityBasic);
+    expect(util).not.toBeInstanceOf(DummyUtilityNotMe);
   });
 
   // it("returns 'undefined' if named utility isn't found and we have passed true at end", function() {
-  //             class IDummyUtility extends ObjectInterface {
-  //     get interfaceId() { return id('IDummyUtility') };
-  // }
+  //             @Interface
+  // @Interface
+  //      class  IDummyUtility extends ObjectInterface {
+  //       // }
 
-  //     const DummyUtility_1 = new Utility({
+  //     class DummyUtility_1 extends Utility<> {
   //         __implements__ IDummyUtility,
   //         name: 'one'
   //     });
@@ -84,20 +89,20 @@ describe('Global Registry', function () {
   // });
 
   it('can register adapter with convenience method', function () {
+    @Interface
     class IUser extends ObjectInterface {
-      get interfaceId() { return id('IUser') };
     }
 
 
+    @Interface
     class IUserAdapter extends AdapterInterface {
-      get interfaceId() { return id('IUserAdapter') };
     }
 
-    class UserAdapter extends Adapter<IUserAdapter, IUser> {
-      get __implements__() { return IUserAdapter };
+    @registry.register
+    class UserAdapter extends Adapter<IUser> {
+      static __implements__ = IUserAdapter;
+      static __adapts__ = IUser;
     }
-
-    new UserAdapter({ adapts: IUser })
 
     class User extends ObjectPrototype<any> {
       readonly __implements__ = [IUser];
@@ -111,20 +116,19 @@ describe('Global Registry', function () {
   });
 
   it('can get an adapter registered by interface', function () {
+    @Interface
     class IUser extends ObjectInterface {
-      get interfaceId() { return id('IUser') };
 
     }
-
+    @Interface
     class IUserAdapter extends AdapterInterface {
-      get interfaceId() { return id('IUserAdapter') };
     }
 
-    class UserAdapter extends Adapter<IUserAdapter, IUser> {
-      get __implements__() { return IUserAdapter };
+    @registry.register
+    class UserAdapter extends Adapter<IUser> {
+      static __implements__ = IUserAdapter;
+      static __adapts__ = IUser;
     }
-
-    new UserAdapter({ adapts: IUser })
 
     class User extends ObjectPrototype<any> {
       __implements__ = [IUser];
@@ -137,25 +141,26 @@ describe('Global Registry', function () {
   });
 
   it('can get an adapter by specifying the adaptsInterface param', function () {
+    @Interface
     class IUser extends ObjectInterface {
-      get interfaceId() { return id('IUser') };
     }
 
+    @Interface
     class IStrong extends ObjectInterface {
-      get interfaceId() { return id('IStrong') };
     }
 
     class User extends ObjectPrototype<any> {
       __implements__ = [IUser, IStrong];
     }
-
+    @Interface
     class IUserAdapter extends AdapterInterface {
-      get interfaceId() { return id('IUserAdapter') };
     }
-    class UserAdapter extends Adapter<IUserAdapter, IUser> {
-      get __implements__() { return IUserAdapter };
+
+    @registry.register
+    class UserAdapter extends Adapter<IUser> {
+      static __implements__ = IUserAdapter;
+      static __adapts__ = IStrong;
     }
-    new UserAdapter({ adapts: IStrong })
 
     const theUser = new User();
 
@@ -168,15 +173,15 @@ describe('Global Registry', function () {
     class User extends ObjectPrototype<any> {
 
     }
-
+    @Interface
     class IUserAdapter extends AdapterInterface {
-      get interfaceId() { return id('IUserAdapter') };
     }
 
-    class UserAdapter extends Adapter<IUserAdapter, User> {
-      get __implements__() { return IUserAdapter };
+    @registry.register
+    class UserAdapter extends Adapter<User> {
+      static __implements__ = IUserAdapter;
+      static __adapts__ = User;
     }
-    new UserAdapter({ adapts: User, registry })
 
     const theUser = new User();
 
@@ -187,18 +192,18 @@ describe('Global Registry', function () {
 
 
   it('can get an adapter registered by interface by providing interface', function () {
+    @Interface
     class IUser extends ObjectInterface {
-      get interfaceId() { return id('IUser') };
     }
-
+    @Interface
     class IUserAdapter extends AdapterInterface {
-      get interfaceId() { return id('IUserAdapter') };
     }
 
-    class UserAdapter extends Adapter<IUserAdapter, IUser> {
-      get __implements__() { return IUserAdapter };
+    @registry.register
+    class UserAdapter extends Adapter<IUser> {
+      static __implements__ = IUserAdapter;
+      static __adapts__ = IUser;
     }
-    new UserAdapter({ adapts: IUser, registry })
 
     // TODO: This is pretty useless, should we support it?
     const ua = registry.getAdapter(IUser, IUserAdapter);
@@ -216,15 +221,16 @@ describe('Local Registry', function () {
 
   it('can get an unnamed utility', function () {
     const registry = new LocalRegistry()
+    @Interface
     class IDummyUtility extends UtilityInterface {
-      get interfaceId() { return id('IDummyUtility') };
     }
 
+    @registry.register
     class DummyUtility extends Utility<IDummyUtility> {
-      get __implements__() { return IDummyUtility };
+      static __implements__ = IDummyUtility;
     }
 
-    const util = new DummyUtility({ registry });
+    const util = new IDummyUtility(registry);
 
     expect(util).toBeInstanceOf(DummyUtility);
   });
@@ -232,15 +238,14 @@ describe('Local Registry', function () {
   it('no leaking to second registry', function () {
     const localRegistry = new LocalRegistry();
     const localRegistry2 = new LocalRegistry();
-
+    @Interface
     class IDummyUtility extends UtilityInterface {
-      get interfaceId() { return id('IDummyUtility') };
     }
 
+    @localRegistry.register
     class DummyUtility extends Utility<IDummyUtility> {
-      get __implements__() { return IDummyUtility };
+      static __implements__ = IDummyUtility;
     }
-    new DummyUtility({ registry: localRegistry });
 
     const util = new IDummyUtility(localRegistry);
     const util2 = new IDummyUtility(localRegistry2);
@@ -251,14 +256,15 @@ describe('Local Registry', function () {
 
   it('no leaking to global registry', function () {
     const localRegistry = new LocalRegistry()
+
+    @Interface
     class IDummyUtility extends UtilityInterface {
-      get interfaceId() { return id('IDummyUtility') };
     }
 
+    @localRegistry.register
     class DummyUtility extends Utility<IDummyUtility> {
-      get __implements__() { return IDummyUtility };
+      static __implements__ = IDummyUtility;
     }
-    new DummyUtility({ registry: localRegistry });
 
     const util = new IDummyUtility(localRegistry);
     const util2 = new IDummyUtility();

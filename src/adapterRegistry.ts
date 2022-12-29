@@ -1,6 +1,6 @@
 import { Adapter } from './adapterFactory';
 import { isDevelopment } from './common'
-import { AdapterInterface, ObjectInterface } from './interfaceFactory';
+import { AdapterInterface, MarkerInterface, ObjectInterface } from './interfaceFactory';
 import { ObjectPrototype } from './objectFactory';
 
 import {
@@ -30,23 +30,28 @@ function AdapterRegistryException(message, context) {
 */
 
 type TAdapterEntry = {
-  interfaceAdapters: Adapter<any, any>[],
-  objectAdapters: Adapter<any, any>[]
+  interfaceAdapters: Adapter<any>[],
+  objectAdapters: Adapter<any>[]
 }
 
 export type TAdapterRegistry = {
   adapters: Record<string, TAdapterEntry>;
-  registerAdapter(adapter: Adapter<any, any>): void;
-  getAdapter(obj: ObjectPrototype<any>, implementsInterface: AdapterInterface, adaptsInterface: AdapterInterface): Adapter<any, any>;
+  registerAdapter(adapter: Adapter<any>): void;
+  getAdapter(obj: ObjectPrototype<any> | typeof ObjectInterface | typeof MarkerInterface, implementsInterface: AdapterInterface | typeof AdapterInterface): Adapter<any>;
+  register: Function;
 }
 
 export class AdapterRegistry implements TAdapterRegistry {
   adapters;
   registerAdapter;
   getAdapter;
+  register: Function;
 
   constructor() {
     this.adapters = {};
+    this.register = (target) => {
+      this.registerAdapter(target);
+    }
   }
 }
 
@@ -115,7 +120,7 @@ AdapterRegistry.prototype.getAdapter = function (context: ObjectPrototype<any>, 
       if (obj instanceof adapts) {
         // Clone adapter and return with context set
         // TODO: Is there a better way of returning the instance?
-        return createAdapterInstance(adapter);
+        return createAdapterInstance(adapter, context);
       }
 
     }
@@ -149,7 +154,7 @@ AdapterRegistry.prototype.getAdapter = function (context: ObjectPrototype<any>, 
           // TODO: Is there a better way of returning the instance?
           const { adapter } = interfaceAdapter;
 
-          return createAdapterInstance(adapter);
+          return createAdapterInstance(adapter, context);
         }
 
       }
@@ -160,17 +165,17 @@ AdapterRegistry.prototype.getAdapter = function (context: ObjectPrototype<any>, 
   return;
 }
 
-function createAdapterInstance(adapter) {
+function createAdapterInstance(adapter, context) {
   // TODO: Perhaps cloning the adapter is a problem. Look att diffing algo and see if we should:
   // - set key to prove identity
   // - not clone and skip setting context
   // When a form is updated, the element gets swapped out, thus loosing focus on the field
 
   // Function or Class Component (for Inferno/React/etc.)
-  if (notNullOrUndef(adapter.__Component__)) {
-    return adapter.__Component__;
+  if (notNullOrUndef(adapter.prototype.__Component__)) {
+    return adapter.prototype.__Component__;
   }
 
   // Regular Adapter
-  return adapter;
+  return new adapter(context);
 }

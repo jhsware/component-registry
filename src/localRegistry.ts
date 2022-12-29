@@ -1,6 +1,7 @@
-import { AdapterRegistry } from './adapterRegistry'
-import { TRegistry } from './globalRegistry';
-import { UtilityRegistry } from './utilityRegistry'
+import { AdapterRegistry, TAdapterRegistry } from './adapterRegistry'
+import { TUtilityRegistry, UtilityRegistry } from './utilityRegistry'
+
+export type TRegistry = TUtilityRegistry & TAdapterRegistry;
 
 export class LocalRegistry extends UtilityRegistry implements TRegistry {
     utilities;

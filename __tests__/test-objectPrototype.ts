@@ -1,15 +1,14 @@
 import { describe, expect, it } from "@jest/globals";
-import { createIdFactory, ObjectInterface, ObjectPrototype, TypeFromInterface } from "../src/index";
-import { Schema } from '../__mocks__/mock-schema'
-
-const id = createIdFactory('test');
+import { createInterfaceDecorator, ObjectInterface, ObjectPrototype, TypeFromInterface } from "../src/index";
+// import { Schema } from '../__mocks__/mock-schema'
+const Interface = createInterfaceDecorator('test');
 
 describe('Object Prototypes', function () {
     it('can be created', function () {
+        @Interface
         class IUser extends ObjectInterface {
-            get interfaceId() { return id('IUser') };
             name: string;
-            sayHi(): string { return ''};
+            sayHi(): string { return '' };
         }
         type TUser = TypeFromInterface<IUser>;
         class User extends ObjectPrototype<Omit<TUser, 'sayHi'>> implements TUser {
@@ -31,8 +30,8 @@ describe('Object Prototypes', function () {
     });
 
     it('can clone other Object Prototype', function () {
+        @Interface
         class IUser extends ObjectInterface {
-            get interfaceId() { return id('IUser') };
             name: string;
             sayHi(): string { return '' };
         }
@@ -139,8 +138,7 @@ describe('Object Prototypes', function () {
 
     // it("can update value of properties", function () {
     //     const IUser = new Interface({
-    //         get interfaceId() { return id('IUser') };
-    //         schema: new Schema({
+    //             //         schema: new Schema({
     //             title: "",
     //             empty: ""
     //         })
@@ -164,8 +162,7 @@ describe('Object Prototypes', function () {
 
     // it("can be created with an interface as property", function () {
     //     const IUser = new Interface({
-    //         get interfaceId() { return id('IUser') };
-    //         schema: new Schema({
+    //             //         schema: new Schema({
     //             title: "",
     //             empty: ""
     //         })
@@ -186,8 +183,7 @@ describe('Object Prototypes', function () {
 
     // it("can convert object with function JSON", function () {
     //     const IUser = new Interface({
-    //         get interfaceId() { return id('IUser') };
-    //     });
+    //             //     });
 
     //     const IAsProp = new Interface({})
 
@@ -207,8 +203,7 @@ describe('Object Prototypes', function () {
 
     // it("can remove schema field property", function () {
     //     const IUser = new Interface({
-    //         get interfaceId() { return id('IUser') };
-    //         schema: new Schema({
+    //             //         schema: new Schema({
     //             title: "",
     //             empty: ""
     //         })
@@ -232,8 +227,7 @@ describe('Object Prototypes', function () {
 
     // it("won't overwrite prototype properties", function () {
     //     const IUser = new Interface({
-    //         get interfaceId() { return id('IUser') };
-    //         schema: new Schema({
+    //             //         schema: new Schema({
     //             title: "",
     //             empty: ""
     //         })

@@ -1,5 +1,4 @@
-import { isFunction } from 'util';
-import { Interface, MarkerInterface, ObjectInterface } from './interfaceFactory'
+import { MarkerInterface, ObjectInterface } from './interfaceFactory'
 
 import {
   isFunc,

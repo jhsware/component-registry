@@ -3,28 +3,19 @@ import { globalRegistry } from './globalRegistry'
 import { ObjectInterface, MarkerInterface, AdapterInterface } from './interfaceFactory';
 import { ObjectPrototype } from './objectFactory';
 
-type TAdapts = typeof MarkerInterface | typeof ObjectInterface | typeof ObjectPrototype<any>;
-type TAdapterProps = {
-  adapts: TAdapts,
-  registry?: TAdapterRegistry
+type TAdapter<T> = {
+  context: T;
 }
 
-export abstract class Adapter<TAdapter, TContext> {
+export abstract class Adapter<TContext = ObjectPrototype<any>> implements TAdapter<TContext> {
   //__implements__: typeof AdapterInterface;
-  get __implements__(): typeof AdapterInterface | undefined { return };
-  __adapts__: TContext;
-  context: TContext;
-  constructor({
-    adapts,
-    registry = undefined
-  }: TAdapterProps) {
-    this.__adapts__ = adapts as TContext;
-    (registry ?? globalRegistry).registerAdapter(this);
-  }
+  static __implements__: typeof AdapterInterface;
+  static __adapts__: typeof ObjectPrototype<any> | ObjectInterface | MarkerInterface;
 
-  for(obj: ObjectPrototype<any>, registry?: TAdapterRegistry): Omit<TAdapter, 'interfaceId'> & { context: TContext } | Function {
-    const r = registry ?? globalRegistry;
-    return (r.getAdapter(obj, this.__implements__) ?? new AdapterNotFound());
+  context: TContext;
+
+  constructor(context: TContext) {
+    this.context = context;
   }
 }
 

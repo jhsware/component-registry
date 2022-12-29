@@ -21,18 +21,21 @@ The Javascript version of component-registry is [available on the v2-branch](htt
 import {
   Adapter,
   AdapterInterface,
-  createIdFactory,
+  createInterfaceDecorator,
   ObjectInterface,
   ObjectPrototype,
   TAdapter,
  } from 'component-registry'
 // We need an id factory for the interfaces
-const id = createIdFactory('test');
+const Interface = createInterfaceDecorator('test');
 
 // Entity object interface and class
-class IUser extends ObjectInterface {
-  get interfaceId() { return id('IUser') };
-  name: string;
+@Interface
+        class  IUser extends ObjectInterface {
+    name: string;
+  providedBy(obj: ObjectPrototype<any>) {
+    return super.providedBy(obj);
+  };
 }
 
 type TUser = TypeFromInterface<IUser>;
@@ -46,12 +49,11 @@ class User extends ObjectPrototype<TUser> implements TUser {
 
 // Adapter interface and class
 class IDisplayWidget extends AdapterInterface {
-  get interfaceId() { return id('IDisplayWidget') };
-  render(): void { return };
+    render(): void { return };
 }
 
 class DisplayWidget extends Adapter {
-  get __implements__() { return IDisplayWidget };
+  static __implements__ = IDisplayWidget;
   constructor({ adapts, render, registry }: Omit<IDisplayWidget, 'interfaceId'> & TAdapter) {
     super({ adapts, render, registry });
   }
@@ -118,7 +120,7 @@ The `globalRegistry` uses these interfaces in order to find Adapters for you tha
 import { Adapter, TAdapter } from 'component-registry'
 
 class DirectoryListEntryWidget extends Adapter {
-  get __implements__() { return IDirectoryListEntryWidget };
+  static __implements__ = IDirectoryListEntryWidget;
   constructor({ adapts, render, registry }: Omit<IDirectoryListEntryWidget, 'interfaceId'> & TAdapter) {
     super({ adapts, render, registry });
   }
@@ -159,8 +161,8 @@ You will also use these extensively:
 
 ```javascript
 // To ceate interfaces
-import { createIdFactory } from 'component-registry'
-const id = createIdFactory('test');
+import { createInterfaceDecorator } from 'component-registry'
+const Interface = createInterfaceDecorator('test');
 
 // To create adapters
 import { Adapter } from 'component-registry'
@@ -180,11 +182,11 @@ import { Registry, AdapterRegistry, UtilityRegistry } from 'component-registry'
 
 ## Object Prototypes ##
 
-Object Prototypes can implement interfaces. This declares what capabilities they support. Interfaces are used for looking up Adapters among other things. You can use the `.providedBy(obj)` method on interfaces to check if it is implemented by an object.
+Object Prototypes can implement interfaces. This declares what capabilities they support. Interfaces are used for looking up Adapters among other things. You can use the `.prototype.providedBy(obj)` method on interfaces to check if it is implemented by an object.
 
 ```typescript
-INews.providedBy(obj) === true;
-INotImplemented.providedBy(obj) === false;
+INews.prototype.providedBy(obj) === true;
+INotImplemented.prototype.providedBy(obj) === false;
 ```
 
 Interfaces also provide a convenient way of looking up adapters and utilities.
@@ -281,21 +283,24 @@ Creates an instance of the object prototype you created above.
 First you need an id factory. Ids are in fact GUID style strings created with the UUID-package. The id is memoised by the returned id function to reduce the overhead of id generation.
 
 ```typescript
-import { createIdFactory } from 'component-registry'
-const id = createIdFactory('my-namespace'); // Use the name of your module as namespace
+import { createInterfaceDecorator } from 'component-registry'
+const Interface = createInterfaceDecorator('my-namespace'); // Use the name of your module as namespace
 ```
 
 Create the Interface class with a getter method to set the interface. The id of the interface is a UUID built from namespace and name. The id will be the same regardless of when you create it.
 
 ```typescript
 // We need the Interface created above
-class IUser extends ObjectInterface {
-  get interfaceId() { return id('IUser') };
+@Interface
+        class  IUser extends ObjectInterface {
+    providedBy(obj: ObjectPrototype<any>) {
+    return super.providedBy(obj);
+  };
 }
 ```
 Creates a simple object interface. You have four different kinds of interfaces:
 
-- MarkerInterface -- when all you want is to use `.providedBy(obj)` method in your application code
+- MarkerInterface -- when all you want is to use `.prototype.providedBy(obj)` method in your application code
 - ObjectInterface -- define your entity objects. Allows adding an `.init(...)` property that you can call from your object constructor. This allows sharing functionality through composition.
 - AdapterInterface -- define your adapters. Allows looking up the adapter using shorthand `new IMyAdapter(obj)`
 - UtilityInterface -- define you utilities. Allows looking up the utility using shorthand `new IMyUtility()`
@@ -305,9 +310,12 @@ Use the convention of prefixing interfaces with "I" to improve readability.
 You can add dummy functions to your interface prototype to show what methods are required for an adapter, utility or object prototype that implements that interface. Note: object prototypes will in most cases be simple data objects with no or few methods.
 
 ```typescript
-class IUser extends ObjectInterface {
-  get interfaceId() { return id('IUser') };
-  sayHi(): string { return };
+@Interface
+        class  IUser extends ObjectInterface {
+    sayHi(): string { return };
+  providedBy(obj: ObjectPrototype<any>) {
+    return super.providedBy(obj);
+  };
 }
 ```
 
@@ -330,7 +338,7 @@ const MyAdapter = new Adapter({
 })
 
 class MyAdapter extends Adapter {
-  get __implements__() { return IMyAdapter };
+  static __implements__ = IMyAdapter;
   constructor({ adapts, registry }: Omit<IMyAdapter, 'interfaceId'> & TAdapter) {
     super({ adapts, registry });
   }
@@ -356,7 +364,7 @@ new MyAdapter({
 Create an unamed utility that implements a given interface. It is automatically registered with the `globalRegistry` available in component-registry.
 
 ```typescript
-const utility = new Utility({
+class utility extends Utility<> {
     __implements__ IInterface
 });
 ```
@@ -367,7 +375,7 @@ Create a named utility that implements a given interface and has a variation nam
 import { Utility, TUtility } from 'component-registry';
 // The pretext is that we already have created the UtilityInterface ITranslateUtil
 class TranslateUtil extends Utility implements Omit<ITranslateUtil, 'interfaceId'> {
-  get __implements__() { return ITranslateUtil };
+  static __implements__ = ITranslateUtil;
   constructor({ name, translate, registry }: Omit<ITranslateUtil, 'interfaceId'> & TUtility) {
     super({ name, translate, registry });
   }

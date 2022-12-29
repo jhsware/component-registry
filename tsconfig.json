@@ -4,6 +4,7 @@
     "isolatedModules": true,
     "module": "es2020",
     "target": "ES2020",
+    "experimentalDecorators": true,
     "moduleResolution": "Node",
     "lib": [
       "es2020",

@@ -1,5 +1,4 @@
 
-import { isDevelopment } from './common'
 import { UtilityInterface } from './interfaceFactory';
 import { Utility } from './utilityFactory';
 import { getInterfaceId, isUndefined } from './utils';
@@ -37,9 +36,13 @@ export type TUtilityRegistry = {
 
 export class UtilityRegistry implements TUtilityRegistry {
   utilities;
+  register: Function;
 
   constructor() {
     this.utilities = {};
+    this.register = (target) => {
+      this.registerUtility(target);
+    }
   }
 
   registerUtility(utility): void {
@@ -89,11 +92,11 @@ export class UtilityRegistry implements TUtilityRegistry {
 
     if (isUndefined(name)) {
       const util = utilities?.unnamedUtility;
-      return util?.__Component__ ?? util;
+      return util && (util.prototype.__Component__ ?? new util());
     }
 
     const util = utilities?.namedUtility[name];
-    return util?.__Component__ ?? util;
+    return util && (util.prototype.__Component__ ?? new util());
   }
 
   getUtilities(implementsInterface): Utility<any>[] {
@@ -109,15 +112,15 @@ export class UtilityRegistry implements TUtilityRegistry {
       return []
     }
 
+    let outp: Utility<any>[] = [];
     if (utilities.unnamedUtility) {
-      return [
-        utilities.unnamedUtility,
-        ...Object.values(utilities.namedUtility)
-      ]
+      outp.push(new utilities.unnamedUtility());
     }
 
-    return [
-      ...Object.values(utilities.namedUtility)
-    ] as Utility<any>[]
+    for (const Util of Object.values(utilities.namedUtility)) {
+      outp.push(new (Util as any)());
+    }
+
+    return outp;
   }
 }

@@ -35,5 +35,5 @@ export function isObject (inp: any): boolean {
 }
 
 export function getInterfaceId(intrfc) {
-  return intrfc.prototype?.interfaceId ?? intrfc.interfaceId
+  return intrfc.constructor?.interfaceId ?? intrfc.interfaceId
 }

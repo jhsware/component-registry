@@ -1,21 +1,21 @@
 import { describe, expect, it } from "@jest/globals";
-import { Utility } from "../src";
+import { globalRegistry, Utility } from "../src";
 import { Adapter } from "../src/adapterFactory";
 import {
   ObjectInterface,
   UtilityInterface,
   AdapterInterface,
-  createIdFactory,
+  createInterfaceDecorator,
   TypeFromInterface,
- } from "../src/interfaceFactory";
+} from "../src/interfaceFactory";
 import { ObjectPrototype } from "../src/objectFactory";
 
-const id = createIdFactory('namespace');
+const Interface = createInterfaceDecorator('namespace');
 
-describe('Lookup gets correct type', function() {
-  it('for adapter', async function() {
+describe('Lookup gets correct type', function () {
+  it('for adapter', async function () {
+    @Interface
     class IUser extends ObjectInterface {
-      get interfaceId() { return id('IUser') };
       name: string;
     }
 
@@ -23,7 +23,7 @@ describe('Lookup gets correct type', function() {
     class User extends ObjectPrototype<TUser> implements TUser {
       readonly __implements__ = [IUser];
       name: string;
-      constructor ({ name }: TUser) {
+      constructor({ name }: TUser) {
         super({ name });
       }
     }
@@ -33,44 +33,42 @@ describe('Lookup gets correct type', function() {
     });
 
     // Adapter
+    @Interface
     class INameAdapter extends AdapterInterface {
-      get interfaceId() { return id('INameAdapter') };
       __Component__: () => string;
     }
+
     // We don't need implements because adapter is looked up using the interface
-    class NameAdapter extends Adapter<INameAdapter, IUser> {
-      get __implements__() { return INameAdapter };
-      __Component__() {
-        return this.context.name;
+    @globalRegistry.register
+    class NameAdapter extends Adapter<IUser> {
+      static __implements__ = INameAdapter;
+      static __adapts__ = IUser;
+
+      __Component__(obj) {
+        return obj.name;
       }
     }
 
-    new NameAdapter({
-      adapts: IUser,
-    });
-
     const Component = new INameAdapter(user) as unknown as Function;
-    Component();
+    expect(typeof Component).toEqual('function');
   });
 
   it('for utility', function () {
     // Define the utility
+    @Interface
     class ITranslateUtil extends UtilityInterface {
-      get interfaceId() { return id('ITranslateUtil') };
       translate: (inp: string) => string;
     }
+
+    @globalRegistry.register
     class TranslateUtil extends Utility<ITranslateUtil> {
-      get __implements__() { return ITranslateUtil };
-      
+      static __implements__ = ITranslateUtil;
+      static __name__ = 'sv';
+
       translate(inp: string) {
         return inp;
       }
     }
-
-    // Implement the utility
-    new TranslateUtil({
-      name: "sv",
-    })
 
     // Fetch the utility
     const trans = new ITranslateUtil('sv');
@@ -80,11 +78,11 @@ describe('Lookup gets correct type', function() {
 
 
 
-describe('ObjectPrototype gets type safety', function() {
-  it('basic', async function() {
+describe('ObjectPrototype gets type safety', function () {
+  it('basic', async function () {
     // Define an object
+    @Interface
     class IUser extends ObjectInterface {
-      get interfaceId() { return id('IUser') };
       name: string;
     }
 
@@ -95,7 +93,7 @@ describe('ObjectPrototype gets type safety', function() {
       readonly __implements__ = [IUser];
       name: string;
       // Named params provides hints during use
-      constructor ({ name }: TUser) {
+      constructor({ name }: TUser) {
         // Setting data with super call enforces setting all the required props
         super({ name });
       }

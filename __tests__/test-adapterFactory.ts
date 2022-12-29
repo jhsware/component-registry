@@ -1,39 +1,37 @@
 import { describe, expect, it } from "@jest/globals";
 import {
   AdapterInterface,
-  createIdFactory,
+  createInterfaceDecorator,
   Adapter,
   AdapterRegistry,
-  Interface,
   ObjectInterface,
   ObjectPrototype,
-  TypeFromInterface
+  TypeFromInterface,
 } from '../src/index'
 import type { TAdapterRegistry } from "../src/index";
-const id = createIdFactory('test');
+const Interface = createInterfaceDecorator('test');
 
 describe('Adapter Factory', function () {
   it('can create an adapter interface', function () {
+
+    @Interface
     class INameAdapter extends AdapterInterface {
-      get interfaceId() { return id('INameAdapter') };
       Component(): string { return '' };
     }
 
-    expect(INameAdapter.prototype.interfaceId).not.toBe(undefined);
+    expect(INameAdapter.interfaceId).not.toBe(undefined);
   });
 
   it('can create an adapter class', function () {
     // class INameAdapter extends AdapterInterface {
-    //   get interfaceId() { return id('INameAdapter') };
-    //   Component(): string { return ''};
+    //       //   Component(): string { return ''};
     // }
 
-    class INameAdapter extends AdapterInterface {
-      get interfaceId() { return id('INameAdapter') };
-    }
+    @Interface
+    class INameAdapter extends AdapterInterface { }
 
-    class NameAdapter extends Adapter<INameAdapter, any> {
-      get __implements__() { return INameAdapter };
+    class NameAdapter extends Adapter {
+      static __implements__ = INameAdapter;
     }
 
     expect(NameAdapter).toBeDefined();
@@ -41,58 +39,59 @@ describe('Adapter Factory', function () {
 
   it('we can create an adapter that adapts interface', function () {
     const registry = new AdapterRegistry() as TAdapterRegistry;
+    const { register } = registry;
+
+    @Interface
     class IUser extends ObjectInterface {
-      get interfaceId() { return id('IUser') };
       name: string;
     }
 
-    class INameAdapter extends AdapterInterface {
-      get interfaceId() { return id('INameAdapter') };
-      Component: () => string;
+    @Interface
+    class INameAdapter extends AdapterInterface { }
+
+    @register
+    class NameAdapter extends Adapter<IUser> {
+      static __implements__ = INameAdapter;
+      static __adapts__ = IUser;
     }
 
-    class NameAdapter extends Adapter<INameAdapter, IUser> {
-      get __implements__() { return INameAdapter };
-
-      __Component__() {
-        return this.context.name;
-      }
+    type TUser = TypeFromInterface<IUser>;
+    class User extends ObjectPrototype<TUser> implements TUser {
+      __implements__ = [IUser];
+      name: string;
     }
-    new NameAdapter({ adapts: IUser, registry });
 
-    const adapter = new NameAdapter({ adapts: IUser, registry });
+    const adapter = new INameAdapter(new User({ name: 'test' }), registry);
 
     expect(adapter).toBeInstanceOf(NameAdapter);
   });
 
   it('we can create an adapter that adapts object prototype', function () {
     const registry = new AdapterRegistry() as TAdapterRegistry;
+    const { register } = registry;
+
+    @Interface
     class IUser extends ObjectInterface {
-      get interfaceId() { return id('IUser') };
       name: string;
     }
-    // type TUser = TypeFromInterface<IUser>;
-    // class User extends ObjectPrototype<TUser> implements TUser {
-    //   __implements__ = [IUser];
-    //   name: string;
-    //   constructor({ name }: TUser) {
-    //     super({ name });
-    //   }
-    // }
 
-    class INameAdapter extends AdapterInterface {
-      get interfaceId() { return id('INameAdapter') };
-      __Component__: () => string;
+    type TUser = TypeFromInterface<IUser>;
+    class User extends ObjectPrototype<TUser> implements TUser {
+      __implements__ = [IUser];
+      name: string;
     }
 
-    class NameAdapter extends Adapter<INameAdapter, IUser> {
-      get __implements__() { return INameAdapter };
 
-      __Component__() {
-        return this.context.name;
-      }
+    @Interface
+    class INameAdapter extends AdapterInterface { }
+
+    @register
+    class NameAdapter extends Adapter<IUser> {
+      static __implements__ = INameAdapter;
+      static __adapts__ = User;
     }
-    const adapter = new NameAdapter({ adapts: IUser, registry });
+
+    const adapter = new INameAdapter(new User({ name: 'test' }), registry);
 
     expect(adapter).toBeInstanceOf(NameAdapter);
   });

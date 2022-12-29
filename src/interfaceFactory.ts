@@ -1,9 +1,8 @@
 
 // Import of uuid didn't work and I couldn't figure out how to get the settings right
 import { v5 as uuid } from 'uuid'
-import { globalRegistry, TRegistry } from './globalRegistry'
+import { globalRegistry } from './globalRegistry'
 import {
-  hasPropImplements,
   hasArrayPropImplements,
   isString,
   isWildcard,
@@ -18,30 +17,51 @@ import { AdapterNotFound } from './adapterFactory';
 const NAMESPACE = 'bc901568-0169-42a8-aac8-52fa2ffd0670';
 
 const _idLookup: Record<string, string> = {};
-export function createIdFactory(namespace: string) {
-  return function id(name: string) {
-    let id = _idLookup[`${namespace}.${name}`];
-    if (!isUndefined(id)) {
-      return id;
+function idFactory(namespace: string, name: string) {
+  let id = _idLookup[`${namespace}.${name}`];
+  if (!isUndefined(id)) {
+    return id;
+  }
+  const newId = uuid(`${namespace}.${name}`, NAMESPACE);
+  _idLookup[`${namespace}.${name}`] = newId;
+  return newId;
+}
+
+function inheritsFrom(obj, base): boolean {
+  while (!isUndefined(obj.prototype)) {
+    if (obj.prototype instanceof base) return true;
+    obj = obj.prototype
+  }
+  return false;
+}
+
+export function createInterfaceDecorator(namespace: string) {
+  return function (intrfc) {
+    // All interfaces need an interfaceId
+    intrfc.interfaceId = idFactory(namespace, intrfc.name);
+
+    // Some interfaces need providedBy
+    if (inheritsFrom(intrfc, ObjectInterface) || inheritsFrom(intrfc, MarkerInterface)) {
+      intrfc.providedBy = (obj) => {
+          return intrfc.prototype.providedBy(obj, intrfc.interfaceId);
+      }
     }
-    const newId = uuid(`${namespace}.${name}`, NAMESPACE);
-    _idLookup[`${namespace}.${name}`] = newId;
-    return newId;
   }
 }
 
-export class Interface {
-  get interfaceId(): string { return '' };
-}
+export class MarkerInterface {
+  static interfaceId: string;
+  
+  static providedBy(obj: ObjectPrototype<any>): boolean {
+    return;
+  }
 
-export abstract class MarkerInterface implements Interface {
-  get interfaceId(): string { return '' };
-  providedBy(obj: ObjectPrototype<any>) {
+  providedBy(obj: ObjectPrototype<any>, interfaceId?: string) {
     // Does the specified object implement this interface
     if (hasArrayPropImplements(obj)) {
       // Object has a list of interfaces it implements
       for (let i = 0, imax = obj.__implements__.length; i < imax; i++) {
-        if (getInterfaceId(obj.__implements__[i]) === this.interfaceId) {
+        if (getInterfaceId(obj.__implements__[i]) === interfaceId) {
           return true;
         };
       }
@@ -56,19 +76,25 @@ export abstract class MarkerInterface implements Interface {
 
 export type TypeFromInterface<T> = Omit<T, 'interfaceId' | 'providedBy'>; 
 
-export abstract class ObjectInterface implements Interface {
-  get interfaceId(): string { return '' };
+export class ObjectInterface {
+  static interfaceId: string;
+  
   constructor(context: ObjectPrototype<any>) {
     // TODO: Create facade for context
     // - Check that it implements this interface
     // - Only expose subset of props using proxy
   }
-  providedBy(obj: ObjectPrototype<any>) {
+
+  static providedBy(obj: ObjectPrototype<any>): boolean {
+    return;
+  }
+
+  providedBy(obj: ObjectPrototype<any>, interfaceId?: string ) {
     // Does the specified object implement this interface
     if (hasArrayPropImplements(obj)) {
       // Object has a list of interfaces it implements
       for (let i = 0, imax = obj.__implements__.length; i < imax; i++) {
-        if (getInterfaceId(obj.__implements__[i]) === this.interfaceId) {
+        if (getInterfaceId(obj.__implements__[i]) === interfaceId) {
           return true;
         };
       }
@@ -81,20 +107,24 @@ export abstract class ObjectInterface implements Interface {
   }
 }
 
-export abstract class AdapterInterface implements Interface {
-  get interfaceId(): string { return '' };
-  constructor(context: object, registry?: TAdapterRegistry) {
+export class AdapterInterface {
+  static interfaceId: string;
+
+  context?: ObjectPrototype<any>;
+
+  constructor(context: ObjectPrototype<any>, registry?: TAdapterRegistry) {
     const r = registry ?? globalRegistry;
     return (r.getAdapter(context, this) ?? new AdapterNotFound());
   }
 }
 
-export abstract class UtilityInterface implements Interface {
-  get interfaceId(): string { return '' };
-  __name__: string;
+export class UtilityInterface {
+  static interfaceId: string;
+  static __name__: string;
+
   constructor(nameOrRegistry?: string | TUtilityRegistry, registry?: TUtilityRegistry) {
     if (isString(nameOrRegistry)) {
-      const name = nameOrRegistry;
+      const name = nameOrRegistry as string;
       const reg = registry ?? globalRegistry;
       if (isWildcard(name)) {
         return reg.getUtilities(this);

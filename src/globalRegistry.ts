@@ -1,10 +1,17 @@
-import { AdapterRegistry, TAdapterRegistry } from './adapterRegistry'
-import { TUtilityRegistry, UtilityRegistry } from './utilityRegistry'
-import { isTest } from './common';
-import { LocalRegistry } from './localRegistry';
-// TODO: This type def should be in LocalRegistry
-export type TRegistry = TUtilityRegistry & TAdapterRegistry;
+import { LocalRegistry, TRegistry } from './localRegistry';
+import { Adapter } from './adapterFactory';
+import { Utility } from './utilityFactory';
 
 global.registry ??= new LocalRegistry();
 
-export const globalRegistry = global.registry;
+export const globalRegistry: TRegistry & { register: Function } = global.registry;
+
+globalRegistry.register = (target: any) => {
+  if (target.prototype instanceof Utility) {
+    globalRegistry.registerUtility(target);
+  } else if (target.prototype instanceof Adapter) {
+    globalRegistry.registerAdapter(target);
+  } else {
+      throw new Error('You can only register utilities or adapters');
+  }
+}
