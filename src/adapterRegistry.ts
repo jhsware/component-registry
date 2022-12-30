@@ -165,17 +165,17 @@ AdapterRegistry.prototype.getAdapter = function (context: ObjectPrototype<any>, 
   return;
 }
 
-function createAdapterInstance(adapter, context) {
+function createAdapterInstance(Adapter, context) {
   // TODO: Perhaps cloning the adapter is a problem. Look att diffing algo and see if we should:
   // - set key to prove identity
   // - not clone and skip setting context
   // When a form is updated, the element gets swapped out, thus loosing focus on the field
 
   // Function or Class Component (for Inferno/React/etc.)
-  if (notNullOrUndef(adapter.prototype.__Component__)) {
-    return adapter.prototype.__Component__;
+  if (notNullOrUndef(Adapter.__Component__)) {
+    return Adapter.__Component__;
   }
 
   // Regular Adapter
-  return new adapter(context);
+  return new Adapter(context);
 }

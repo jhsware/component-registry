@@ -42,7 +42,7 @@ describe('Adapter Registry', function () {
 
     @Interface
     class INameAdapter extends AdapterInterface {
-      Component: () => string;
+      static __Component__: () => string;
     }
 
     @register
@@ -50,7 +50,7 @@ describe('Adapter Registry', function () {
       static __implements__ = INameAdapter;
       static __adapts__ = IUser;
 
-      __Component__(user: IUser) {
+      static __Component__(user: IUser) {
         return user.name;
       }
     }
@@ -60,7 +60,7 @@ describe('Adapter Registry', function () {
     const Component = new INameAdapter(user, registry);
 
     expect((Component as any)(user)).toBe('Julia');
-    expect(Component).toEqual(NameAdapter.prototype.__Component__);
+    expect(Component).toEqual(NameAdapter.__Component__);
   });
 
   it('can get an adapter registered by ObjectPrototype', function () {
@@ -83,7 +83,7 @@ describe('Adapter Registry', function () {
 
     @Interface
     class INameAdapter extends AdapterInterface {
-      Component: () => string;
+      static __Component__: () => string;
     }
 
     @register
@@ -91,16 +91,16 @@ describe('Adapter Registry', function () {
       static __implements__ = INameAdapter;
       static __adapts__ = User;
 
-      __Component__(user: IUser) {
+      static __Component__(user: IUser) {
         return user.name;
       }
     }
 
     const user = new User({ name: 'Julia' });
 
-    const Component = new INameAdapter(user, registry);
+    const Component = new INameAdapter(user, registry) as Function;
 
-    expect((Component as any)(user)).toBe('Julia');
+    expect(Component(user)).toBe('Julia');
   });
 
   // it("returns an error when registering an adapter that doesn't implement interface", function() {});

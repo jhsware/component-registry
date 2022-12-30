@@ -171,7 +171,7 @@ import { Adapter } from 'component-registry'
 import { Utility } from 'component-registry'
 
 // To create object prototypes
-import { createObjectPrototype } from 'component-registry'
+import { ObjectPrototype } from 'component-registry'
 ```
 
 For advanced use, you can create your own adapter and/or utility registry. The use

@@ -35,7 +35,7 @@ describe('Lookup gets correct type', function () {
     // Adapter
     @Interface
     class INameAdapter extends AdapterInterface {
-      __Component__: () => string;
+      static __Component__: () => string;
     }
 
     // We don't need implements because adapter is looked up using the interface
@@ -44,7 +44,7 @@ describe('Lookup gets correct type', function () {
       static __implements__ = INameAdapter;
       static __adapts__ = IUser;
 
-      __Component__(obj) {
+      static __Component__(obj) {
         return obj.name;
       }
     }
