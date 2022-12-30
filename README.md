@@ -61,7 +61,7 @@ class DisplayWidget extends Adapter {
 
 // Adapter instance that can operate on objects implementing IUser
 new DisplayWidget({
-  adapts: IUser,
+  static __adapts__ = IUser;
   render () {
   console.log(`My name is ${this.context.name}`)
   }
@@ -126,7 +126,7 @@ class DirectoryListEntryWidget extends Adapter {
   }
 }
 new DirectoryListEntryWidget({
-  adapts: IEmployee,
+  static __adapts__ = IEmployee;
   render () { ... }
 })
 ```
@@ -346,7 +346,7 @@ class MyAdapter extends Adapter {
 
 // Adapter instance that can operate on objects implementing IUser
 new MyAdapter({
-  adapts: IUser,
+  static __adapts__ = IUser;
 })
 ```
 
@@ -354,7 +354,7 @@ If you want to register the created adapter with a scoped registry instead of `g
 
 ```typescript
 new MyAdapter({
-  adapts: IUser,
+  static __adapts__ = IUser;
   registry: myOwnRegistry
 })
 ```
