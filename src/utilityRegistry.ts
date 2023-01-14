@@ -30,8 +30,8 @@ type TUtilityEntry = {
 export type TUtilityRegistry = {
   utilities: Record<string, TUtilityEntry>;
   registerUtility(utility: Utility<any>): void;
-  getUtility(implementsInterface: UtilityInterface, name?: string, fallbackReturnValue?: any): Utility<any>;
-  getUtilities(implementsInterface: UtilityInterface): Utility<any>[];
+  getUtility<T = any>(implementsInterface: UtilityInterface, name?: string, fallbackReturnValue?: any): Utility<T>;
+  getUtilities<T = any>(implementsInterface: UtilityInterface): Utility<T>[];
 }
 
 export class UtilityRegistry implements TUtilityRegistry {
@@ -83,7 +83,7 @@ export class UtilityRegistry implements TUtilityRegistry {
 
   // TODO: Implement hasUtility (return true/false), look at getUtility
 
-  getUtility(implementsInterface, name = undefined): Utility<any> {
+  getUtility<T = any>(implementsInterface, name = undefined): Utility<T> {
     /*
         Return an instance of a utility that implements the given interface
         and optionally has provided name.
@@ -99,7 +99,7 @@ export class UtilityRegistry implements TUtilityRegistry {
     return Util && (Util.__Component__ ?? new Util());
   }
 
-  getUtilities(implementsInterface): Utility<any>[] {
+  getUtilities<T extends UtilityInterface = any>(implementsInterface): Utility<T>[] {
     /*
         Return a list of objects with utilities implementing the given interface. The name
         of named utilities is included.
@@ -112,12 +112,12 @@ export class UtilityRegistry implements TUtilityRegistry {
       return []
     }
 
-    let outp: Utility<any>[] = [];
+    let outp: Utility<T>[] = [];
     if (utilities.unnamedUtility) {
       outp.push(new utilities.unnamedUtility());
     }
 
-    for (const Util of Object.values(utilities.namedUtility)) {
+    for (const Util of Object.values<Utility<T>>(utilities.namedUtility)) {
       outp.push(new (Util as any)());
     }
 
