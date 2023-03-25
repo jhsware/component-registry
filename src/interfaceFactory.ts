@@ -36,7 +36,7 @@ function inheritsFrom(obj, base): boolean {
 }
 
 export function createInterfaceDecorator(namespace: string) {
-  return function (intrfc) {
+  return function (intrfc: any, context) {
     // All interfaces need an interfaceId
     intrfc.interfaceId = idFactory(namespace, intrfc.name);
 
@@ -46,6 +46,8 @@ export function createInterfaceDecorator(namespace: string) {
           return intrfc.prototype.providedBy(obj, intrfc.interfaceId);
       }
     }
+
+    return intrfc 
   }
 }
 

@@ -1,4 +1,5 @@
 
+import { TDecorator } from './common';
 import { UtilityInterface } from './interfaceFactory';
 import { Utility } from './utilityFactory';
 import { getInterfaceId, isUndefined } from './utils';
@@ -36,12 +37,13 @@ export type TUtilityRegistry = {
 
 export class UtilityRegistry implements TUtilityRegistry {
   utilities;
-  register: Function;
+  register: TDecorator;
 
   constructor() {
     this.utilities = {};
-    this.register = (target) => {
+    this.register = (target, context) => {
       this.registerUtility(target);
+      return target;
     }
   }
 
