@@ -1,4 +1,3 @@
-
 export * from './globalRegistry'
 export * from './localRegistry'
 

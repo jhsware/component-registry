@@ -5,7 +5,6 @@ import { ObjectPrototype } from './objectFactory';
 
 import {
   getInterfaceId,
-  isFunc,
   isUndefined,
   notNullOrUndef,
 } from './utils'

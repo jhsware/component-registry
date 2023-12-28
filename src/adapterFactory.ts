@@ -1,5 +1,3 @@
-import { TAdapterRegistry } from './adapterRegistry';
-import { globalRegistry } from './globalRegistry'
 import { ObjectInterface, MarkerInterface, AdapterInterface } from './interfaceFactory';
 import { ObjectPrototype } from './objectFactory';
 

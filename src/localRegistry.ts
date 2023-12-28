@@ -4,7 +4,6 @@ import { TUtilityRegistry, UtilityRegistry } from './utilityRegistry'
 export type TRegistry = TUtilityRegistry & TAdapterRegistry;
 
 export class LocalRegistry extends UtilityRegistry implements TRegistry {
-    utilities;
     adapters;
     registerAdapter;
     registerUtility;
