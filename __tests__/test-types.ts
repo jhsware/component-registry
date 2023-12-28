@@ -39,7 +39,6 @@ describe('Lookup gets correct type', function () {
     }
 
     // We don't need implements because adapter is looked up using the interface
-    @globalRegistry.register
     class NameAdapter extends Adapter<IUser> {
       static __implements__ = INameAdapter;
       static __adapts__ = IUser;
@@ -48,6 +47,7 @@ describe('Lookup gets correct type', function () {
         return obj.name;
       }
     }
+    globalRegistry.register(NameAdapter);
 
     const Component = new INameAdapter(user) as unknown as Function;
     expect(typeof Component).toEqual('function');
@@ -60,7 +60,6 @@ describe('Lookup gets correct type', function () {
       translate: (inp: string) => string;
     }
 
-    @globalRegistry.register
     class TranslateUtil extends Utility<ITranslateUtil> {
       static __implements__ = ITranslateUtil;
       static __name__ = 'sv';
@@ -69,6 +68,7 @@ describe('Lookup gets correct type', function () {
         return inp;
       }
     }
+    globalRegistry.register(TranslateUtil);
 
     // Fetch the utility
     const trans = new ITranslateUtil('sv');

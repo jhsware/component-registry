@@ -49,11 +49,11 @@ describe('Adapter Factory', function () {
     @Interface
     class INameAdapter extends AdapterInterface { }
 
-    @register
     class NameAdapter extends Adapter<IUser> {
       static __implements__ = INameAdapter;
       static __adapts__ = IUser;
     }
+    register(NameAdapter);
 
     type TUser = TypeFromInterface<IUser>;
     class User extends ObjectPrototype<TUser> implements TUser {
@@ -85,11 +85,11 @@ describe('Adapter Factory', function () {
     @Interface
     class INameAdapter extends AdapterInterface { }
 
-    @register
     class NameAdapter extends Adapter<IUser> {
       static __implements__ = INameAdapter;
       static __adapts__ = User;
     }
+    register(NameAdapter);
 
     const adapter = new INameAdapter(new User({ name: 'test' }), registry);
 

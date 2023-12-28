@@ -41,7 +41,7 @@ export class UtilityRegistry implements TUtilityRegistry {
 
   constructor() {
     this.utilities = {};
-    this.register = (target, context) => {
+    this.register = (target, context = undefined) => {
       this.registerUtility(target);
       return target;
     }

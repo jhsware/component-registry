@@ -48,7 +48,7 @@ export class AdapterRegistry implements TAdapterRegistry {
 
   constructor() {
     this.adapters = {};
-    this.register = (target, context) => {
+    this.register = (target, context = undefined) => {
       this.registerAdapter(target);
       return target;
     }
@@ -169,6 +169,7 @@ function createAdapterInstance(Adapter, context) {
   // TODO: Perhaps cloning the adapter is a problem. Look att diffing algo and see if we should:
   // - set key to prove identity
   // - not clone and skip setting context
+  // UPDATE: I don't think we can clone this, we should skip context and just return a stateless adapter
   // When a form is updated, the element gets swapped out, thus loosing focus on the field
 
   // Function or Class Component (for Inferno/React/etc.)

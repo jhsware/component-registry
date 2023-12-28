@@ -30,7 +30,6 @@ describe('Utility Factory', function () {
       translate: (inp: string) => string;
     }
 
-    @register
     class TranslateUtil extends Utility<ITranslateUtil> {
       static __implements__ = ITranslateUtil;
       static __name__ = 'sv';
@@ -39,6 +38,7 @@ describe('Utility Factory', function () {
         return inp;
       }
     }
+    register(TranslateUtil);
 
     // expect(util).not.toBe(undefined);
     // expect(typeof util.translate).toEqual('function');

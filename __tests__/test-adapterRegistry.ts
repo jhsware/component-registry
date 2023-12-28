@@ -45,7 +45,6 @@ describe('Adapter Registry', function () {
       static __Component__: () => string;
     }
 
-    @register
     class NameAdapter extends Adapter<IUser> {
       static __implements__ = INameAdapter;
       static __adapts__ = IUser;
@@ -54,6 +53,7 @@ describe('Adapter Registry', function () {
         return user.name;
       }
     }
+    register(NameAdapter);
 
     const user = new User({ name: 'Julia' });
 
@@ -86,7 +86,6 @@ describe('Adapter Registry', function () {
       static __Component__: () => string;
     }
 
-    @register
     class NameAdapter extends Adapter<User> {
       static __implements__ = INameAdapter;
       static __adapts__ = User;
@@ -95,6 +94,7 @@ describe('Adapter Registry', function () {
         return user.name;
       }
     }
+    register(NameAdapter);
 
     const user = new User({ name: 'Julia' });
 
@@ -118,11 +118,11 @@ describe('Adapter Registry', function () {
     @Interface
     class INameAdapter extends AdapterInterface { }
 
-    @register
     class NameAdapter extends Adapter<IUser> {
       static __implements__ = INameAdapter;
       static __adapts__ = IUser;
     }
+    register(NameAdapter);
 
     type TUser = TypeFromInterface<IUser>;
     class User extends ObjectPrototype<TUser> implements TUser {

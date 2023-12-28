@@ -23,10 +23,10 @@ describe('Global Registry', function () {
     class IDummyUtility extends UtilityInterface {
     }
 
-    @registry.register
     class DummyUtility extends Utility<IDummyUtility> {
       static __implements__ = IDummyUtility;
     }
+    registry.register(DummyUtility);
 
     const util = new IDummyUtility();
 
@@ -38,11 +38,11 @@ describe('Global Registry', function () {
     class IDummyUtility extends UtilityInterface {
     }
 
-    @registry.register
     class DummyUtility extends Utility<IDummyUtility> {
       static __implements__ = IDummyUtility;
       static __name__ = 'basic';
     }
+    registry.register(DummyUtility);
 
     const util = new IDummyUtility('basic');
 
@@ -54,17 +54,17 @@ describe('Global Registry', function () {
     class IDummyUtility extends UtilityInterface {
     }
 
-    @registry.register
     class DummyUtilityBasic extends Utility<IDummyUtility> {
       static __implements__ = IDummyUtility;
       static __name__ = 'basic';
     }
+    registry.register(DummyUtilityBasic);
     
-    @registry.register
     class DummyUtilityNotMe extends Utility<IDummyUtility> {
       static __implements__ = IDummyUtility;
       static __name__ = 'not me';
     }
+    registry.register(DummyUtilityNotMe);
 
     const util = new IDummyUtility('basic');
 
@@ -98,11 +98,11 @@ describe('Global Registry', function () {
     class IUserAdapter extends AdapterInterface {
     }
 
-    @registry.register
     class UserAdapter extends Adapter<IUser> {
       static __implements__ = IUserAdapter;
       static __adapts__ = IUser;
     }
+    registry.register(UserAdapter);
 
     class User extends ObjectPrototype<any> {
       readonly __implements__ = [IUser];
@@ -124,11 +124,11 @@ describe('Global Registry', function () {
     class IUserAdapter extends AdapterInterface {
     }
 
-    @registry.register
     class UserAdapter extends Adapter<IUser> {
       static __implements__ = IUserAdapter;
       static __adapts__ = IUser;
     }
+    registry.register(UserAdapter);
 
     class User extends ObjectPrototype<any> {
       __implements__ = [IUser];
@@ -156,11 +156,11 @@ describe('Global Registry', function () {
     class IUserAdapter extends AdapterInterface {
     }
 
-    @registry.register
     class UserAdapter extends Adapter<IUser> {
       static __implements__ = IUserAdapter;
       static __adapts__ = IStrong;
     }
+    registry.register(UserAdapter);
 
     const theUser = new User();
 
@@ -177,11 +177,11 @@ describe('Global Registry', function () {
     class IUserAdapter extends AdapterInterface {
     }
 
-    @registry.register
     class UserAdapter extends Adapter<User> {
       static __implements__ = IUserAdapter;
       static __adapts__ = User;
     }
+    registry.register(UserAdapter);
 
     const theUser = new User();
 
@@ -199,11 +199,11 @@ describe('Global Registry', function () {
     class IUserAdapter extends AdapterInterface {
     }
 
-    @registry.register
     class UserAdapter extends Adapter<IUser> {
       static __implements__ = IUserAdapter;
       static __adapts__ = IUser;
     }
+    registry.register(UserAdapter);
 
     // TODO: This is pretty useless, should we support it?
     const ua = registry.getAdapter(IUser, IUserAdapter);
@@ -225,10 +225,10 @@ describe('Local Registry', function () {
     class IDummyUtility extends UtilityInterface {
     }
 
-    @registry.register
     class DummyUtility extends Utility<IDummyUtility> {
       static __implements__ = IDummyUtility;
     }
+    registry.register(DummyUtility);
 
     const util = new IDummyUtility(registry);
 
@@ -242,10 +242,10 @@ describe('Local Registry', function () {
     class IDummyUtility extends UtilityInterface {
     }
 
-    @localRegistry.register
     class DummyUtility extends Utility<IDummyUtility> {
       static __implements__ = IDummyUtility;
     }
+    localRegistry.register(DummyUtility);
 
     const util = new IDummyUtility(localRegistry);
     const util2 = new IDummyUtility(localRegistry2);
@@ -261,10 +261,10 @@ describe('Local Registry', function () {
     class IDummyUtility extends UtilityInterface {
     }
 
-    @localRegistry.register
     class DummyUtility extends Utility<IDummyUtility> {
       static __implements__ = IDummyUtility;
     }
+    localRegistry.register(DummyUtility);
 
     const util = new IDummyUtility(localRegistry);
     const util2 = new IDummyUtility();

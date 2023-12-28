@@ -42,7 +42,6 @@ describe('Readme Examples', function () {
     }
 
     // Create and register the actual adapter
-    @globalRegistry.register
     class DisplayWidget extends Adapter<IUser> {
       static __implements__ = IDisplayWidget;
       static __adapts__ = IUser;
@@ -51,6 +50,7 @@ describe('Readme Examples', function () {
         console.log(`My name is ${this.context.name}`)
       }
     }
+    globalRegistry.register(DisplayWidget);
 
 
     // Create our entity object instance
