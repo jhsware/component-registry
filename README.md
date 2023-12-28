@@ -25,17 +25,16 @@ import {
   ObjectInterface,
   ObjectPrototype,
   TAdapter,
+  globalRegistry as registry,
  } from 'component-registry'
 // We need an id factory for the interfaces
 const Interface = createInterfaceDecorator('test');
+const { register } = registry;
 
 // Entity object interface and class
 @Interface
 class  IUser extends ObjectInterface {
     name: string;
-  providedBy(obj: ObjectPrototype<any>) {
-    return super.providedBy(obj);
-  };
 }
 
 type TUser = TypeFromInterface<IUser>;
@@ -52,20 +51,14 @@ class IDisplayWidget extends AdapterInterface {
     render(): void { return };
 }
 
-class DisplayWidget extends Adapter {
+class DisplayWidget extends Adapter<IUser> {
   static __implements__ = IDisplayWidget;
-  constructor({ adapts, render, registry }: Omit<IDisplayWidget, 'interfaceId'> & TAdapter) {
-    super({ adapts, render, registry });
-  }
-}
-
-// Adapter instance that can operate on objects implementing IUser
-new DisplayWidget({
   static __adapts__ = IUser;
   render () {
-  console.log(`My name is ${this.context.name}`)
+    console.log(`My name is ${this.context.name}`)
   }
-})
+}
+register(DisplayAdapter);
 
 
 // Create our entity object instance

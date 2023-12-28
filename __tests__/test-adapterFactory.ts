@@ -57,7 +57,7 @@ describe('Adapter Factory', function () {
 
     type TUser = TypeFromInterface<IUser>;
     class User extends ObjectPrototype<TUser> implements TUser {
-      __implements__ = [IUser];
+      readonly __implements__ = [IUser];
       name: string;
     }
 
