@@ -66,7 +66,7 @@ const user = new User({ name: 'Julia' })
 
 // Look up the DisplayWidget adapter instance and invoke the render method
 new IDisplayWidget(user).render()
-// [console]$ I am a User
+// [console] My name is Julia
 ```
 
 ### The Global Registry ##
