@@ -6,7 +6,6 @@ type TAdapter<T> = {
 }
 
 export abstract class Adapter<TContext = ObjectPrototype<any>> implements TAdapter<TContext> {
-  //__implements__: typeof AdapterInterface;
   static __implements__: typeof AdapterInterface;
   static __adapts__: typeof ObjectPrototype<any> | ObjectInterface | MarkerInterface;
 
