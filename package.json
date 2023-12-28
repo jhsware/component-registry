@@ -42,12 +42,12 @@
     "jest-environment-jsdom": "^29.5.0",
     "parcel": "^2.8.3",
     "ts-jest": "^29.0.5",
-    "typescript": "^5.0.2"
+    "typescript": "^5.3.3"
   },
   "scripts": {
     "build": "npm run build:clean && NODE_ENV=production parcel build",
     "test": "NODE_ENV=production npm run build && NODE_ENV=test jest",
-    "test-debug": "NODE_ENV=test jest --no-timeouts --runInBand",
+    "test-debug": "parcel build && NODE_ENV=test jest --no-timeouts --runInBand",
     "prepublishOnly": "npm run build",
     "preversion": "npm run test",
     "postversion": "git push && git push --tags",

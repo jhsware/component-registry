@@ -31,7 +31,7 @@ const Interface = createInterfaceDecorator('test');
 
 // Entity object interface and class
 @Interface
-        class  IUser extends ObjectInterface {
+class  IUser extends ObjectInterface {
     name: string;
   providedBy(obj: ObjectPrototype<any>) {
     return super.providedBy(obj);

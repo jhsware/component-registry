@@ -3,7 +3,7 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "module": "es2020",
-    "target": "ES2021",
+    "target": "es2021",
     "moduleResolution": "Node",
     "lib": [
       "es2020",
