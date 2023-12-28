@@ -1,5 +1,5 @@
 import { Adapter } from './adapterFactory';
-import { isDevelopment, TDecorator } from './common'
+import { isDevelopment, TRegister } from './common'
 import { AdapterInterface, MarkerInterface, ObjectInterface } from './interfaceFactory';
 import { ObjectPrototype } from './objectFactory';
 
@@ -37,18 +37,18 @@ export type TAdapterRegistry = {
   adapters: Record<string, TAdapterEntry>;
   registerAdapter(adapter: Adapter<any>): void;
   getAdapter(obj: ObjectPrototype<any> | typeof ObjectInterface | typeof MarkerInterface, implementsInterface: AdapterInterface | typeof AdapterInterface): Adapter<any>;
-  register: TDecorator;
+  register: TRegister;
 }
 
 export class AdapterRegistry implements TAdapterRegistry {
   adapters;
   registerAdapter;
   getAdapter;
-  register: TDecorator;
+  register: TRegister;
 
   constructor() {
     this.adapters = {};
-    this.register = (target, context = undefined) => {
+    this.register = (target) => {
       this.registerAdapter(target);
       return target;
     }
