@@ -109,10 +109,10 @@ export class ObjectInterface {
   }
 }
 
-export class AdapterInterface {
+export class AdapterInterface<TContext = any> {
   static interfaceId: string;
 
-  context?: ObjectPrototype<any>;
+  context?: ObjectPrototype<TContext>;
 
   constructor(context: ObjectPrototype<any>, registry?: TAdapterRegistry) {
     const r = registry ?? globalRegistry;
