@@ -23,7 +23,7 @@ describe('Adapter Registry', function () {
     expect(typeof registry.getAdapter).toBe('function');
   });
 
-  it("can register adapter by interface", function () {
+  it("adapter with __Component__ method will return that method for use with React/Inferno", function () {
     const registry = new AdapterRegistry();
     const { register } = registry;
 

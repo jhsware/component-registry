@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/jhsware/component-registry.svg?branch=master)](https://travis-ci.org/jhsware/component-registry)
 [![gzip size](http://img.badgesize.io/https://unpkg.com/component-registry/dist/index.cjs.js?compression=gzip)](https://unpkg.com/component-registry/dist/index.cjs.js)
 
-The purpose of component-registry is to help you create reusable components that are easy to extend and customise. It is heavily inspired by battle proven concepts that have been available for many years in the Python community through the Zope Toolkit(ZTK).
+The purpose of component-registry is to help you create reusable components that are easy to extend and customise. It is heavily inspired by battle proven concepts that have been available for many years in the Python community through the Zope Toolkit (ZTK).
 
 Think of it as decoupled imports and elegant composition.
 
@@ -11,7 +11,7 @@ This is a rewrite of component-registry for Typescript. All the typechecking can
 
 Features that have been removed in the Typescript version:
 - multiple inheritance -- although very useful it brings magic which makes application code harder to understand
-- type checking -- this now done by Typescript
+- runtime type checking -- this is done by Typescript at compile time
 
 ### v2 for Javascript
 The Javascript version of component-registry is [available on the v2-branch](https://github.com/jhsware/component-registry/tree/v2-javascript).

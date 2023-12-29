@@ -1,3 +1,0 @@
-softTabs = true
-tabSize = 4
-excludeDirectories = "{node_modules,assets}"

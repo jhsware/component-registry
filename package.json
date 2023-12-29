@@ -24,7 +24,7 @@
   "sideEffects": false,
   "browserslist": "> 0.5%, not dead",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "targets": {
     "browser": {
@@ -32,16 +32,16 @@
     }
   },
   "dependencies": {
-    "@swc/helpers": "^0.4.14",
+    "@swc/helpers": "^0.5.3",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@parcel/packager-ts": "^2.8.3",
-    "@parcel/transformer-typescript-types": "^2.8.3",
+    "@parcel/packager-ts": "^2.10.3",
+    "@parcel/transformer-typescript-types": "^2.10.3",
     "@types/node": "^18.15.7",
-    "jest-environment-jsdom": "^29.5.0",
-    "parcel": "^2.8.3",
-    "ts-jest": "^29.0.5",
+    "jest-environment-jsdom": "^29.7.0",
+    "parcel": "^2.10.3",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.3.3"
   },
   "scripts": {
