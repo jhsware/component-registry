@@ -35,3 +35,24 @@ export class ObjectPrototype<T> {
     return data;
   };
 }
+
+/**
+ * Call this at the end of your class constructor to seal the object
+ * and set __implements__ as a non-enumerable property
+ * @param self Pass `this`
+ * @param cls Pass the class
+ * @param target Pass `new.target`
+ * @returns 
+ */
+export function seal(self: any, cls: any, target: any) {
+  if (cls === target) {
+    Object.defineProperty(self, '__implements__', {
+      value: self.__implements__ ?? [],
+      enumerable: false,
+      configurable: false,
+      writable: false,
+    });
+    Object.seal(self);
+  }
+  return self;
+}
