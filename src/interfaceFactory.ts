@@ -107,6 +107,8 @@ export class ObjectInterface {
     // If we came this far, the object doesn't implement this interface
     return false;
   }
+
+  toJSON(): any {}
 }
 
 export class AdapterInterface<TContext = any> {
