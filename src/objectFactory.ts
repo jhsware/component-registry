@@ -7,12 +7,12 @@ import {
 } from './utils'
 
 export class ObjectPrototype<T> {
-  __implements__: (typeof MarkerInterface | typeof ObjectInterface)[] = [];
+  readonly __implements__: (typeof MarkerInterface | typeof ObjectInterface)[] = [];
 
   constructor(data?: T) {
     if (isObject(data)) {
       for (const key of Object.keys(data)) {
-        if (isUndefined(this[key])) {
+        if (isUndefined(this[key]) && key !== '__implements__') {
           this[key] = data[key];
         }
       }
@@ -22,6 +22,8 @@ export class ObjectPrototype<T> {
   toJSON(): T {
     const data = {} as T;
     for (const key of Object.keys(this)) {
+      if (key === '__implements__') continue; // Skip __implements__ (it is set by the class)
+      
       const prop = this[key];
       if (isFunc(prop?.toJSON)) {
         // Recursively prepare objects for stringify, skipping member objects that don't have a toJSON method
