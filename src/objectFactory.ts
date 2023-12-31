@@ -1,4 +1,4 @@
-import { MarkerInterface, ObjectInterface } from './interfaceFactory'
+import { MarkerInterface, ObjectInterface, TypeFromInterface } from './interfaceFactory'
 
 import {
   isFunc,
@@ -9,7 +9,7 @@ import {
 export class ObjectPrototype<T> {
   readonly __implements__: (typeof MarkerInterface | typeof ObjectInterface)[] = [];
 
-  constructor(data?: T) {
+  constructor(data?: TypeFromInterface<T>) {
     if (isObject(data)) {
       for (const key of Object.keys(data)) {
         if (isUndefined(this[key]) && key !== '__implements__') {
@@ -44,7 +44,7 @@ export class ObjectPrototype<T> {
  * @param target Pass `new.target`
  * @returns 
  */
-export function seal(self: any, cls: any, target: any) {
+export function seal(self: any, cls: any, target: any) : void {
   if (cls === target) {
     Object.defineProperty(self, '__implements__', {
       value: self.__implements__ ?? [],
