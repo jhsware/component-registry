@@ -76,7 +76,7 @@ export class MarkerInterface {
   }
 }
 
-export type TypeFromInterface<T> = Omit<T, 'interfaceId' | 'providedBy'>; 
+export type TypeFromInterface<T> = Omit<T, 'interfaceId' | 'providedBy' | 'toJSON'>; 
 
 export class ObjectInterface {
   static interfaceId: string;
