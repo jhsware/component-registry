@@ -5,13 +5,13 @@ type TAdapter<T> = {
   context: T;
 }
 
-export abstract class Adapter<TContext = ObjectPrototype<any>> implements TAdapter<TContext> {
+export abstract class Adapter<IContext = ObjectPrototype<any>> implements TAdapter<IContext> {
   static __implements__: typeof AdapterInterface;
   static __adapts__: typeof ObjectPrototype<any> | ObjectInterface | MarkerInterface;
 
-  context: TContext;
+  context: IContext;
 
-  constructor(context: TContext) {
+  constructor(context: IContext) {
     this.context = context;
   }
 }
