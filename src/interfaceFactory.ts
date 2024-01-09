@@ -53,6 +53,9 @@ export function createInterfaceDecorator(namespace: string) {
 
 export class MarkerInterface {
   static interfaceId: string;
+
+  static init(self: ObjectPrototype<any>, params: any) {
+  }
   
   static providedBy(obj: ObjectPrototype<any>): boolean {
     return;
