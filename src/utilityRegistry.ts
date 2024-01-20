@@ -24,15 +24,15 @@ import { getInterfaceId, isUndefined } from './utils';
 
 type TUtilityEntry = {
   implementsInterface: UtilityInterface,
-  unnamedUtility: Utility<any>[] | undefined,
-  namedUtility: Record<string, Utility<any>>
+  unnamedUtility: Utility[] | undefined,
+  namedUtility: Record<string, Utility>
 }
 
 export type TUtilityRegistry = {
   utilities: Record<string, TUtilityEntry>;
-  registerUtility(utility: Utility<any>): void;
-  getUtility<T = any>(implementsInterface: UtilityInterface, name?: string, fallbackReturnValue?: any): Utility<T>;
-  getUtilities<T = any>(implementsInterface: UtilityInterface): Utility<T>[];
+  registerUtility(utility: Utility): void;
+  getUtility<T = any>(implementsInterface: UtilityInterface, name?: string, fallbackReturnValue?: any): Utility;
+  getUtilities<T = any>(implementsInterface: UtilityInterface): Utility[];
 }
 
 export class UtilityRegistry implements TUtilityRegistry {
@@ -85,7 +85,7 @@ export class UtilityRegistry implements TUtilityRegistry {
 
   // TODO: Implement hasUtility (return true/false), look at getUtility
 
-  getUtility<T = any>(implementsInterface, name = undefined): Utility<T> {
+  getUtility<T = any>(implementsInterface, name = undefined): Utility {
     /*
         Return an instance of a utility that implements the given interface
         and optionally has provided name.
@@ -101,7 +101,7 @@ export class UtilityRegistry implements TUtilityRegistry {
     return Util && (Util.__Component__ ?? new Util());
   }
 
-  getUtilities<T extends UtilityInterface = any>(implementsInterface): Utility<T>[] {
+  getUtilities<T extends UtilityInterface = any>(implementsInterface): Utility[] {
     /*
         Return a list of objects with utilities implementing the given interface. The name
         of named utilities is included.
@@ -114,12 +114,12 @@ export class UtilityRegistry implements TUtilityRegistry {
       return []
     }
 
-    let outp: Utility<T>[] = [];
+    let outp: Utility[] = [];
     if (utilities.unnamedUtility) {
       outp.push(new utilities.unnamedUtility());
     }
 
-    for (const Util of Object.values<Utility<T>>(utilities.namedUtility)) {
+    for (const Util of Object.values<Utility>(utilities.namedUtility)) {
       outp.push(new (Util as any)());
     }
 

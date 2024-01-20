@@ -6,10 +6,10 @@ import {
   isUndefined
 } from './utils'
 
-export class ObjectPrototype<T> {
-  readonly __implements__: (typeof MarkerInterface | typeof ObjectInterface)[] = [];
+export class ObjectPrototype<I> {
+  readonly __implements__: (MarkerInterface | ObjectInterface)[] = [];
 
-  constructor(data?: TypeFromInterface<T>) {
+  constructor(data?: TypeFromInterface<I>) {
     if (isObject(data)) {
       for (const key of Object.keys(data)) {
         if (isUndefined(this[key]) && key !== '__implements__') {
@@ -19,8 +19,8 @@ export class ObjectPrototype<T> {
     }
   }
 
-  toJSON(): T {
-    const data = {} as T;
+  toJSON(): I {
+    const data = {} as I;
     for (const key of Object.keys(this)) {
       if (key === '__implements__') continue; // Skip __implements__ (it is set by the class)
       

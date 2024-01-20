@@ -1,13 +1,16 @@
 import { ObjectInterface, MarkerInterface, AdapterInterface } from './interfaceFactory';
 import { ObjectPrototype } from './objectFactory';
 
-type TAdapter<T> = {
-  context: T;
+type TAdapter<I> = {
+  context: I;
 }
 
-export abstract class Adapter<IContext = ObjectPrototype<any>> implements TAdapter<IContext> {
-  static __implements__: typeof AdapterInterface;
-  static __adapts__: typeof ObjectPrototype<any> | ObjectInterface | MarkerInterface;
+type TImplements = AdapterInterface;
+type TAdapts = typeof ObjectPrototype<any> | ObjectInterface | MarkerInterface;
+
+export abstract class Adapter<IContext extends TAdapts> implements TAdapter<IContext> {
+  static __implements__: TImplements;
+  static __adapts__: TAdapts;
 
   context: IContext;
 
@@ -16,4 +19,6 @@ export abstract class Adapter<IContext = ObjectPrototype<any>> implements TAdapt
   }
 }
 
-export class AdapterNotFound {}
+export class AdapterNotFound {
+  context: undefined;
+}

@@ -33,10 +33,11 @@ type TAdapterEntry = {
   objectAdapters: Adapter<any>[]
 }
 
+
 export type TAdapterRegistry = {
   adapters: Record<string, TAdapterEntry>;
   registerAdapter(adapter: Adapter<any>): void;
-  getAdapter(obj: ObjectPrototype<any> | typeof ObjectInterface | typeof MarkerInterface, implementsInterface: AdapterInterface | typeof AdapterInterface): Adapter<any>;
+  getAdapter(obj: typeof ObjectPrototype<any> | ObjectInterface | MarkerInterface, implementsInterface: AdapterInterface): Adapter<any>;
   register: TRegister;
 }
 

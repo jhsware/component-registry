@@ -114,12 +114,13 @@ export class ObjectInterface {
   toJSON(): any {}
 }
 
-export class AdapterInterface<TContext = any> {
+type TAdapterContext = typeof ObjectPrototype<any> | ObjectInterface | MarkerInterface;
+export class AdapterInterface<IContext extends TAdapterContext = TAdapterContext> {
   static interfaceId: string;
 
-  context?: ObjectPrototype<TContext>;
+  // context: TAdapterContext;
 
-  constructor(context: ObjectPrototype<any>, registry?: TAdapterRegistry) {
+  constructor(context: IContext, registry?: TAdapterRegistry) {
     const r = registry ?? globalRegistry;
     return (r.getAdapter(context, this) ?? new AdapterNotFound());
   }

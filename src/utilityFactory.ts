@@ -6,9 +6,9 @@ export type TUtilityProps = {
   registry?: TUtilityRegistry,
 }
 
-export class Utility<TUtility> {
-  static __implements__: typeof UtilityInterface;
-  static __name__: string;
+export class Utility {
+  static __implements__: UtilityInterface;
+  static __name__?: string;
 }
 
 export class UtilityNotFound { }
