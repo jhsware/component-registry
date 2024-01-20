@@ -108,7 +108,7 @@ describe('Object Prototypes', function () {
         }
         type TUser = TypeFromInterface<IUser>;
 
-        class User extends ObjectPrototype<TUser> implements TUser {
+        class User extends ObjectPrototype<IUser> implements TUser {
             readonly __implements__ = [IUser];
             _userVal = 1;
             title: string;
@@ -135,7 +135,7 @@ describe('Object Prototypes', function () {
         };
         type TUser = TypeFromInterface<IUser>;
 
-        class User extends ObjectPrototype<TUser> implements TUser {
+        class User extends ObjectPrototype<IUser> implements TUser {
             readonly __implements__ = [IUser];
             title: string;
             child?: User;
@@ -166,7 +166,7 @@ describe('Object Prototypes', function () {
         }
         type TUser = TypeFromInterface<IUser>;
 
-        class User extends ObjectPrototype<TUser> implements TUser {
+        class User extends ObjectPrototype<IUser> implements TUser {
             readonly __implements__ = [IUser];
             title: string;
             empty?: string;
@@ -190,7 +190,7 @@ describe('Object Prototypes', function () {
         };
         type TUser = TypeFromInterface<IUser>;
 
-        class User extends ObjectPrototype<TUser> implements TUser{
+        class User extends ObjectPrototype<IUser> implements TUser{
             readonly __implements__ = [IUser];
             title: string;
             empty: string | null;
@@ -238,7 +238,7 @@ describe('Object Prototypes', function () {
         type TUser = TypeFromInterface<IUser>;
 
 
-        class User extends ObjectPrototype<TUser> implements TUser {
+        class User extends ObjectPrototype<IUser> implements TUser {
             readonly __implements__ = [IUser];
             myIProp?: IAsProp;
         }

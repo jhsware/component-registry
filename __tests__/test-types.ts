@@ -20,7 +20,7 @@ describe('Lookup gets correct type', function () {
     }
 
     type TUser = TypeFromInterface<IUser>;
-    class User extends ObjectPrototype<TUser> implements TUser {
+    class User extends ObjectPrototype<IUser> implements TUser {
       readonly __implements__ = [IUser];
       name: string;
       constructor({ name }: TUser) {
@@ -89,7 +89,7 @@ describe('ObjectPrototype gets type safety', function () {
     // An object prototype can be a mix of interfaces so we need to create
     // a type for it that can be used to provide typing in various places
     type TUser = TypeFromInterface<IUser>;
-    class User extends ObjectPrototype<TUser> implements TUser {
+    class User extends ObjectPrototype<IUser> implements TUser {
       readonly __implements__ = [IUser];
       name: string;
       // Named params provides hints during use

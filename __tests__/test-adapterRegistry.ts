@@ -32,7 +32,7 @@ describe('Adapter Registry', function () {
       name: string;
     }
     type TUser = TypeFromInterface<IUser>;
-    class User extends ObjectPrototype<TUser> implements TUser {
+    class User extends ObjectPrototype<IUser> implements TUser {
       readonly __implements__ = [IUser];
       name: string;
       constructor({ name }: TUser) {
@@ -73,7 +73,7 @@ describe('Adapter Registry', function () {
     }
 
     type TUser = TypeFromInterface<IUser>;
-    class User extends ObjectPrototype<TUser> implements TUser {
+    class User extends ObjectPrototype<IUser> implements TUser {
       readonly __implements__ = [IUser];
       name: string;
       constructor({ name }: TUser) {
@@ -125,7 +125,7 @@ describe('Adapter Registry', function () {
     register(NameAdapter);
 
     type TUser = TypeFromInterface<IUser>;
-    class User extends ObjectPrototype<TUser> implements TUser {
+    class User extends ObjectPrototype<IUser> implements TUser {
       __implements__ = [IUser];
       name: string;
     }

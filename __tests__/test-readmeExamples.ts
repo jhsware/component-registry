@@ -27,7 +27,7 @@ describe('Readme Examples', function () {
     }
 
     type TUser = TypeFromInterface<IUser>;
-    class User extends ObjectPrototype<TUser> implements TUser {
+    class User extends ObjectPrototype<IUser> implements TUser {
       readonly __implements__ = [IUser];
       name: string;
       constructor({ name }: TUser) {

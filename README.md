@@ -38,7 +38,7 @@ class  IUser extends ObjectInterface {
 }
 
 type TUser = TypeFromInterface<IUser>;
-class User extends ObjectPrototype<TUser> implements TUser {
+class User extends ObjectPrototype<IUser> implements TUser {
   readonly __implements__ = [IUser];
   name: string;
   constructor({ name }: TUser) {
@@ -47,14 +47,15 @@ class User extends ObjectPrototype<TUser> implements TUser {
 }
 
 // Adapter interface and class
-class IDisplayWidget extends AdapterInterface {
-    render(): void { return };
+class IDisplayWidget<IContext extends ObjectInterface> extends AdapterInterface<IContext> {
+  context: IContext;
+  static __Component__() {}
 }
 
 class DisplayWidget extends Adapter<IUser> {
   static __implements__ = IDisplayWidget;
   static __adapts__ = IUser;
-  render () {
+  static __Component__() {
     console.log(`My name is ${this.context.name}`)
   }
 }
@@ -67,6 +68,12 @@ const user = new User({ name: 'Julia' })
 // Look up the DisplayWidget adapter instance and invoke the render method
 new IDisplayWidget(user).render()
 // [console] My name is Julia
+```
+
+```typescript
+class IObjectPersist<IContext extends ObjectInterface> extends AdapterInterface<IContext> {
+  context: IContext;
+}
 ```
 
 ### The Global Registry ##
@@ -100,7 +107,7 @@ ObjectPrototypes contain a bit more than just data. They provide a property `__i
 ```typescript
 import { ObjectPrototype } from 'component-registry';
 type TEmployee = Omit<IEmployee & IUser & IHasAvatar, 'interfaceId' | 'providedBy'>;
-class Employee extends ObjectPrototype<TEmployee> implements TEmployee {
+class Employee extends ObjectPrototype<IEmployee> implements TEmployee {
   readonly __implements__ = [IEmployee, IUser, IHasAvatar];
   ...
 }
@@ -252,7 +259,7 @@ Another example of how to use a utility could be if you want to provide internat
 import { ObjectPrototype } from 'component-registry'
 
 type TUser = TypeFromInterface<IUser>;
-class User extends ObjectPrototype<TUser> implements TUser {
+class User extends ObjectPrototype<IUser> implements TUser {
     readonly __implements__ = [IUser];
     name: string;
     constructor({ name }: TUser) {

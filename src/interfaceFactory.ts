@@ -7,7 +7,8 @@ import {
   isString,
   isWildcard,
   isUndefined,
-  getInterfaceId
+  getInterfaceId,
+  isObject
 } from './utils'
 import { ObjectPrototype } from './objectFactory';
 import { TAdapterRegistry } from './adapterRegistry';
@@ -79,7 +80,7 @@ export class MarkerInterface {
   }
 }
 
-export type TypeFromInterface<T> = Omit<T, 'interfaceId' | 'providedBy' | 'toJSON'>; 
+export type TypeFromInterface<T> = Omit<T, 'interfaceId' | 'providedBy' | 'toJSON' | 'init'>; 
 
 export class ObjectInterface {
   static interfaceId: string;
@@ -88,6 +89,17 @@ export class ObjectInterface {
     // TODO: Create facade for context
     // - Check that it implements this interface
     // - Only expose subset of props using proxy
+  }
+
+  static init<IObj>(self, data?: any) {
+    if (isObject(data)) {
+      // Only set the properties defined by the interface
+      for (const key of Object.keys(this)) {
+        if (key !== '__implements__') {
+          self[key] = data[key];
+        }
+      }
+    }
   }
 
   static providedBy(obj: ObjectPrototype<any>): boolean {

@@ -56,7 +56,7 @@ describe('Adapter Factory', function () {
     register(NameAdapter);
 
     type TUser = TypeFromInterface<IUser>;
-    class User extends ObjectPrototype<TUser> implements TUser {
+    class User extends ObjectPrototype<IUser> implements TUser {
       readonly __implements__ = [IUser];
       name: string;
     }
@@ -76,7 +76,7 @@ describe('Adapter Factory', function () {
     }
 
     type TUser = TypeFromInterface<IUser>;
-    class User extends ObjectPrototype<TUser> implements TUser {
+    class User extends ObjectPrototype<IUser> implements TUser {
       __implements__ = [IUser];
       name: string;
     }
