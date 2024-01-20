@@ -98,7 +98,7 @@ export class ObjectInterface {
   static init<IObj>(self, data?: any) {
     if (isObject(data)) {
       // Only set the properties defined by the interface
-      for (const key of Object.keys(this)) {
+      for (const key of Object.keys(data)) {
         if (key !== '__implements__') {
           self[key] = data[key];
         }
