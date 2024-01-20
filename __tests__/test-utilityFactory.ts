@@ -11,7 +11,7 @@ describe('Utility Factory', function () {
     }
 
 
-    class TranslateUtil extends Utility<ITranslateUtil> {
+    class TranslateUtil extends Utility implements ITranslateUtil {
       static __implements__ = ITranslateUtil;
 
       translate(inp: string) {
@@ -30,7 +30,7 @@ describe('Utility Factory', function () {
       translate: (inp: string) => string;
     }
 
-    class TranslateUtil extends Utility<ITranslateUtil> {
+    class TranslateUtil extends Utility implements ITranslateUtil {
       static __implements__ = ITranslateUtil;
       static __name__ = 'sv';
 

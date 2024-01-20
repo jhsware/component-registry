@@ -23,7 +23,7 @@ describe('Global Registry', function () {
     class IDummyUtility extends UtilityInterface {
     }
 
-    class DummyUtility extends Utility<IDummyUtility> {
+    class DummyUtility extends Utility implements IDummyUtility {
       static __implements__ = IDummyUtility;
     }
     registry.register(DummyUtility);
@@ -38,7 +38,7 @@ describe('Global Registry', function () {
     class IDummyUtility extends UtilityInterface {
     }
 
-    class DummyUtility extends Utility<IDummyUtility> {
+    class DummyUtility extends Utility implements IDummyUtility {
       static __implements__ = IDummyUtility;
       static __name__ = 'basic';
     }
@@ -54,13 +54,13 @@ describe('Global Registry', function () {
     class IDummyUtility extends UtilityInterface {
     }
 
-    class DummyUtilityBasic extends Utility<IDummyUtility> {
+    class DummyUtilityBasic extends Utility implements IDummyUtility {
       static __implements__ = IDummyUtility;
       static __name__ = 'basic';
     }
     registry.register(DummyUtilityBasic);
     
-    class DummyUtilityNotMe extends Utility<IDummyUtility> {
+    class DummyUtilityNotMe extends Utility implements IDummyUtility {
       static __implements__ = IDummyUtility;
       static __name__ = 'not me';
     }
@@ -78,7 +78,7 @@ describe('Global Registry', function () {
   //      class  IDummyUtility extends ObjectInterface {
   //       // }
 
-  //     class DummyUtility_1 extends Utility<> {
+  //     class DummyUtility_1 extends Utility implements  {
   //         __implements__ IDummyUtility,
   //         name: 'one'
   //     });
@@ -225,7 +225,7 @@ describe('Local Registry', function () {
     class IDummyUtility extends UtilityInterface {
     }
 
-    class DummyUtility extends Utility<IDummyUtility> {
+    class DummyUtility extends Utility implements IDummyUtility {
       static __implements__ = IDummyUtility;
     }
     registry.register(DummyUtility);
@@ -242,7 +242,7 @@ describe('Local Registry', function () {
     class IDummyUtility extends UtilityInterface {
     }
 
-    class DummyUtility extends Utility<IDummyUtility> {
+    class DummyUtility extends Utility implements IDummyUtility {
       static __implements__ = IDummyUtility;
     }
     localRegistry.register(DummyUtility);
@@ -261,7 +261,7 @@ describe('Local Registry', function () {
     class IDummyUtility extends UtilityInterface {
     }
 
-    class DummyUtility extends Utility<IDummyUtility> {
+    class DummyUtility extends Utility implements IDummyUtility {
       static __implements__ = IDummyUtility;
     }
     localRegistry.register(DummyUtility);

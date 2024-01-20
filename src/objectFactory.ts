@@ -11,8 +11,8 @@ export class ObjectPrototype<IObj> {
 
   constructor(data?: any) {}
 
-  toJSON(): IObj {
-    const data = {} as IObj;
+  toJSON(): TypeFromInterface<IObj> {
+    const data = {};
     for (const key of Object.keys(this)) {
       if (key === '__implements__') continue; // Skip __implements__ (it is set by the class)
       
@@ -24,7 +24,7 @@ export class ObjectPrototype<IObj> {
         data[key] = prop;
       }
     }
-    return data;
+    return data as TypeFromInterface<IObj>;
   };
 }
 

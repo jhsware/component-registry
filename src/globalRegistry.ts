@@ -24,7 +24,7 @@ globalRegistry.register = (target: any, context: any = undefined) => {
   return target;
 }
 
-globalRegistry.lookup = (intrfc: UtilityInterface | AdapterInterface, objOrName?: string | typeof ObjectPrototype<any> | ObjectInterface | MarkerInterface | undefined) => {
+globalRegistry.lookup = (intrfc: UtilityInterface | AdapterInterface, objOrName?: string | ObjectPrototype<any> | ObjectInterface | MarkerInterface | undefined) => {
   if (intrfc instanceof UtilityInterface) {
     // TODO: Implement
     if (isWildcard(objOrName)) {

@@ -60,7 +60,7 @@ describe('Lookup gets correct type', function () {
       translate: (inp: string) => string;
     }
 
-    class TranslateUtil extends Utility<ITranslateUtil> {
+    class TranslateUtil extends Utility implements ITranslateUtil {
       static __implements__ = ITranslateUtil;
       static __name__ = 'sv';
 

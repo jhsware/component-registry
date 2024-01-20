@@ -364,7 +364,7 @@ new MyAdapter({
 Create an unamed utility that implements a given interface. It is automatically registered with the `globalRegistry` available in component-registry.
 
 ```typescript
-class utility extends Utility<> {
+class utility extends Utility implements  {
     __implements__ IInterface
 });
 ```

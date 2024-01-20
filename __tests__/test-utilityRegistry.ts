@@ -27,7 +27,7 @@ describe('Utility Registry', function () {
       translate(inp: string): string { return '' };
     }
 
-    class TranslateUtil extends Utility<ITranslateUtil> {
+    class TranslateUtil extends Utility implements ITranslateUtil {
       static __implements__ = ITranslateUtil;
       translate(inp: string) {
         return inp;
@@ -49,7 +49,7 @@ describe('Utility Registry', function () {
       translate: (inp: string) => string;
     }
 
-    class TranslateUtil extends Utility<ITranslateUtil> {
+    class TranslateUtil extends Utility implements ITranslateUtil {
       static __implements__ = ITranslateUtil;
 
       translate(inp: string) {
@@ -72,7 +72,7 @@ describe('Utility Registry', function () {
       translate: (inp: string) => string;
     }
 
-    class TranslateUtil extends Utility<ITranslateUtil> {
+    class TranslateUtil extends Utility implements ITranslateUtil {
       static __implements__ = ITranslateUtil;
       static __name__ = 'sv';
 
@@ -96,7 +96,7 @@ describe('Utility Registry', function () {
       translate: (inp: string) => string;
     }
 
-    class TranslateUtil extends Utility<ITranslateUtil> {
+    class TranslateUtil extends Utility implements ITranslateUtil {
       static __implements__ = ITranslateUtil;
       static __name__ = 'sv';
 
@@ -121,7 +121,7 @@ describe('Utility Registry', function () {
       translate: (inp: string) => string;
     }
 
-    class TranslateUtilSv extends Utility<ITranslateUtil> {
+    class TranslateUtilSv extends Utility implements ITranslateUtil {
       static __implements__ = ITranslateUtil;
       static __name__ = 'sv';
       translate(inp: string) {
@@ -130,7 +130,7 @@ describe('Utility Registry', function () {
     }
     register(TranslateUtilSv);
 
-    class TranslateUtilEn extends Utility<ITranslateUtil> {
+    class TranslateUtilEn extends Utility implements ITranslateUtil {
       static __implements__ = ITranslateUtil;
       static __name__ = 'en';
       translate(inp: string) {
@@ -156,7 +156,7 @@ describe('Utility Registry', function () {
       translate(inp: string): string { return '' };
     }
 
-    class TranslateUtil extends Utility<any> implements Omit<ITranslateUtil, 'interfaceId'> {
+    class TranslateUtil extends Utility implements any> implements Omit<ITranslateUtil, 'interfaceId' {
       static __implements__ = ITranslateUtil;
       translate(inp: string) {
         return inp;
@@ -164,7 +164,7 @@ describe('Utility Registry', function () {
     }
     register(TranslateUtil);
 
-    class TranslateUtilSv extends Utility<any> implements Omit<ITranslateUtil, 'interfaceId'> {
+    class TranslateUtilSv extends Utility implements any> implements Omit<ITranslateUtil, 'interfaceId' {
       static __implements__ = ITranslateUtil;
       static __name__ = 'sv';
       translate(inp: string) {
@@ -173,7 +173,7 @@ describe('Utility Registry', function () {
     }
     register(TranslateUtilSv);
 
-    class TranslateUtilEn extends Utility<any> implements Omit<ITranslateUtil, 'interfaceId'> {
+    class TranslateUtilEn extends Utility implements any> implements Omit<ITranslateUtil, 'interfaceId' {
       static __implements__ = ITranslateUtil;
       static __name__ = 'en';
       translate(inp: string) {
@@ -199,7 +199,7 @@ describe('Utility Registry', function () {
       translate: (inp: string) => string;
     }
 
-    class TranslateUtil extends Utility<ITranslateUtil> {
+    class TranslateUtil extends Utility implements ITranslateUtil {
       static __implements__ = ITranslateUtil;
 
       translate(inp: string) {
@@ -208,7 +208,7 @@ describe('Utility Registry', function () {
     }
     register(TranslateUtil);
     
-    class TranslateUtilSv extends Utility<ITranslateUtil> {
+    class TranslateUtilSv extends Utility implements ITranslateUtil {
       static __implements__ = ITranslateUtil;
       static __name__ = 'sv';
 
@@ -218,7 +218,7 @@ describe('Utility Registry', function () {
     }
     register(TranslateUtilSv);
     
-    class TranslateUtilEn extends Utility<ITranslateUtil> {
+    class TranslateUtilEn extends Utility implements ITranslateUtil {
       static __implements__ = ITranslateUtil;
       static __name__ = 'en';
 
@@ -260,7 +260,7 @@ describe('Utility Registry', function () {
 
   //     const IDummyUtility = new Interface({ name: "IDummyUtility" });
 
-  //     class DummyUtility_1 extends Utility<> {
+  //     class DummyUtility_1 extends Utility implements  {
   //         registry: registry,
   //         __implements__ IDummyUtility,
   //         name: 'one'

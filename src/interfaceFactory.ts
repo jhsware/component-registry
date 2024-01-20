@@ -80,10 +80,14 @@ export class MarkerInterface {
   }
 }
 
-export type TypeFromInterface<T> = Omit<T, 'interfaceId' | 'providedBy' | 'toJSON' | 'init'>; 
+export type TypeFromInterface<T> = Omit<T, 'interfaceId' | 'providedBy' | 'toJSON' | 'init' | '__implements__'>; 
 
 export class ObjectInterface {
   static interfaceId: string;
+
+  // This is only set so we can use interface as return type
+  // when creating an object, which allows properties to be hinted.
+  readonly __implements__: (MarkerInterface | ObjectInterface)[] = [];
   
   constructor(context: ObjectPrototype<any>) {
     // TODO: Create facade for context
@@ -126,13 +130,13 @@ export class ObjectInterface {
   toJSON(): any {}
 }
 
-type TAdapterContext = typeof ObjectPrototype<any> | ObjectInterface | MarkerInterface;
+type TAdapterContext = ObjectPrototype<any> | ObjectInterface | MarkerInterface;
 export class AdapterInterface<IContext extends TAdapterContext = TAdapterContext> {
   static interfaceId: string;
 
   // context: TAdapterContext;
 
-  constructor(context: IContext, registry?: TAdapterRegistry) {
+  constructor(context: ObjectPrototype<IContext>, registry?: TAdapterRegistry) {
     const r = registry ?? globalRegistry;
     return (r.getAdapter(context, this) ?? new AdapterNotFound());
   }
