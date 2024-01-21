@@ -95,7 +95,7 @@ export class ObjectInterface {
     // - Only expose subset of props using proxy
   }
 
-  static init<IObj>(self, data?: any) {
+  static init<IObj>(self: ObjectPrototype<any>, data?: any) {
     if (isObject(data)) {
       // Only set the properties defined by the interface
       for (const key of Object.keys(data)) {
