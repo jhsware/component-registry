@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { createInterfaceDecorator, MarkerInterface, ObjectInterface, ObjectPrototype, TypeFromInterface } from "../src/index";
+import { createInterfaceDecorator, MarkerInterface, ObjectInterface, ObjectPrototype, seal, TypeFromInterface } from "../src/index";
 // import { Schema } from '../__mocks__/mock-schema'
 const Interface = createInterfaceDecorator('test');
 
@@ -139,17 +139,22 @@ describe('Object Prototypes', function () {
             readonly __implements__ = [IUser];
             title: string;
             child?: User;
-        }
 
-        const user = new User({
-            title: "parent"
-        });
+            constructor(params: TUser) {
+                super();
+                IUser.init(this, params);
+                seal(this, User, new.target);
+            }
+        }
 
         const child = new User({
             title: "child"
         });
 
-        user.child = child;
+        const user = new User({
+            title: "parent",
+            child,
+        });
 
         const data = user.toJSON();
 
