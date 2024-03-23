@@ -9,7 +9,7 @@ import {
 export class ObjectPrototype<IObj> {
   readonly __implements__: (MarkerInterface | ObjectInterface)[] = [];
 
-  constructor(data?: any) {}
+  constructor(data?: TypeFromInterface<IObj>) {}
 
   toJSON(): TypeFromInterface<IObj> {
     const data = {};
